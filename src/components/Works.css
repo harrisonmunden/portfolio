@@ -1,0 +1,52 @@
+.works-page {
+    padding: 20px;
+  }
+  
+  .work-group {
+    margin-bottom: 30px;
+  }
+  
+  .work-images {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+  }
+  
+  .work-thumbnail {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .work-thumbnail:hover {
+    transform: scale(1.1);
+  }
+  
+  .lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .enlarged-image {
+    max-width: 90%;
+    max-height: 90%;
+  }
+  
+  .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+  }
