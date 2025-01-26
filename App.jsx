@@ -1,5 +1,5 @@
 import { HashRouter, Routes, Route } from "react-router-dom";
-import { About, Contact, Experience, Feedbacks, Hero, Navbar, Tech, Works, StarsCanvas } from './components';
+import { About, Contact, Experience, Feedbacks, Home, Navbar, Tech, Works, StarsCanvas } from './components';
 
 const App = () => {
   return (
@@ -11,7 +11,7 @@ const App = () => {
 
         {/* Define routes to switch between pages */}
         <Routes>
-          <Route path="/" element={<Hero />} />
+          <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/experience" element={<Experience />} />
           <Route path="/tech" element={<Tech />} />

@@ -1,0 +1,127 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Page Styling */
+.home-page {
+  font-family: "Bruno Ace SC", sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Aligns content towards the top */
+  align-items: center;
+  background-color: black;
+  background-image: url('../assets/backhoe.png');
+  background-repeat: no-repeat;
+  background-size: contain; /* Ensure the image scales properly */
+  background-position: center calc(100% + 170px); /* Positions the image even closer to the bottom */
+  color: #a3ffcd;
+  text-align: center;
+  overflow: hidden;
+  padding-top: 7%; /* Moves the text content higher */
+}
+
+/* Title Styling */
+.construction-title {
+  font-family: "Bruno Ace SC", sans-serif;
+  font-size: 3rem; /* Slightly larger text for better visual balance */
+  letter-spacing: 13px;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  margin-bottom: 10px; /* Adds spacing below the title */
+}
+
+/* Dots Animation */
+.dots {
+  display: inline-block;
+  width: 1.5em;
+  text-align: left;
+}
+
+.dots::after {
+  content: ""; /* Empty content initially */
+  display: inline-block;
+  animation: dots-animation 2s steps(4) infinite;
+}
+
+@keyframes dots-animation {
+  0% {
+      content: ""; /* One dot */
+  }
+  17% {
+      content: "."; /* One dot */
+  }
+  33% {
+      content: ".."; /* Two dots */
+  }
+  50% {
+      content: "..."; /* Three dots */
+  }
+  67% {
+      content: ".."; /* Three dots */
+  }
+  83% {
+      content: "."; /* Three dots */
+  }
+  0% {
+      content: ""; /* One dot */
+  }
+}
+
+
+/* Buttons Container */
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px; /* Adds space between buttons */
+  margin-top: 20px; /* Space between title and buttons */
+}
+
+/* Button Styling */
+.button {
+  font-family: "Space Mono", monospace;
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  color: #a3ffcd;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: 50px;
+  background-image: linear-gradient(black, black),
+    linear-gradient(to right, #59d98e, #52d0cb);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.button:hover {
+  transform: scale(1.1);
+  background-image: linear-gradient(to right, #59d98e, #52d0cb),
+    linear-gradient(to right, #59d98e, #52d0cb);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .home-page {
+    background-size: contain; /* Resize background for smaller screens */
+    background-position: center calc(100% - 20px); /* Adjust background even lower for mobile */
+    padding-top: 20%; /* Adds spacing above for content */
+  }
+
+  .construction-title {
+    padding-top: 90px;
+    font-size: 1.0rem;
+    letter-spacing: 10px;
+  }
+
+  .buttons-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .button {
+    font-size: 1rem;
+    padding: 10px 15px;
+  }
+}

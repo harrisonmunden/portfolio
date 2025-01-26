@@ -10,7 +10,7 @@ const Navbar = () => {
   const [toggle, setToggle] = useState(false);
 
   return (
-    <nav className={`${styles.paddingX} w-full flex items-center py-5 fixed top-0 z-20 bg-primary`}>
+    <nav className={`${styles.paddingX} w-full flex items-center py-5 fixed top-0 z-20 bg-header`}>
       <div className='w-full flex justify-between items-center max-w-7xl mx-auto'>
         <Link
           to="/"
@@ -21,7 +21,7 @@ const Navbar = () => {
           }}
         >
           {/* <img src={logo} alt="logo" className='w-14 h-14 object-contain' /> */}
-          <p className="text-white text-[18px] font-bold cursor-pointer">Harrison Munden</p>
+          <p className="text-white text-[18px] font-normal cursor-pointer">Harrison Munden</p>
         </Link>
         <ul className="list-none hidden sm:flex flex-10 gap-10">
           {navLinks.map((Link) => (
@@ -39,8 +39,8 @@ const Navbar = () => {
           <img 
             src={toggle ? close : logo}
             alt="menu"
-            className={`object-contain cursor-pointer ${toggle ? 'w-[20px] h-[20px]' : 'w-[60px] h-[60px]'}`}
-            style={{ position: 'absolute', top: '55%', left: '90%', transform: 'translate(-50%, -50%)' }} // Center the image
+            className={`object-contain cursor-pointer ${toggle ? 'w-[20px] h-[30px]' : 'w-[20px] h-[30px]'}`}
+            style={{ position: 'absolute', top: '48%', left: '90%', transform: 'translate(-50%, -50%)' }} // Center the image
             onClick={() => setToggle(!toggle)}
           />
           <div 

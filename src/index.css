@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@0,100..900;1,100..900&family=Jura:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Chivo+Mono:ital,wght@0,100..900;1,100..900&family=Jura:wght@300..700&family=Martian+Mono:wght@100..800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -8,9 +8,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Jura", sans-serif;
+  font-family: "Chivo Mono", serif;
+  font-weight: 100;
   scroll-behavior: smooth;
   color-scheme: dark;
+  letter-spacing: 2px;
 }
 
 .hash-span {
