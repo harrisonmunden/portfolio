@@ -1,0 +1,96 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: "Space Mono", monospace;
+    background-color: #f4f4f4; /* Dark gray background */
+    color: #000;
+  }
+  
+  /* Main Container */
+  .about-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Left-align content */
+    justify-content: flex-start; /* Move content higher up */
+    height: 100vh;
+    padding: 50px; /* Add padding around the page */
+    color: #252525;
+    padding-top: 10%; /* Moves the text content higher */
+
+  }
+  
+  /* Intro Section Styling */
+  .intro-section {
+    margin-bottom: 50px;
+  }
+  
+  .intro-text {
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  
+  .name {
+    font-size: 6rem; /* Make the name much larger */
+    font-weight: 700;
+    line-height: 1.2;
+    background: linear-gradient(to right, #77FFB0, black);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  /* About Links */
+  .about-links {
+    margin-top: 50px; /* Space below intro section */
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .about-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 4.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .about-item:hover {
+    transform: scale(1.05);
+  }
+  
+  .label {
+    color: #252525;
+  }
+  
+  .arrow {
+    color: limegreen;
+    font-size: 2rem;
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .name {
+      font-size: 4rem;
+    }
+  
+    .intro-text {
+      font-size: 1.5rem;
+    }
+  
+    .about-links {
+      gap: 20px;
+    }
+  
+    .about-item {
+      font-size: 1.5rem;
+    }
+  }
+  
