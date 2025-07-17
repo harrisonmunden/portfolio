@@ -10,6 +10,21 @@ const Home = () => {
         backgroundImage: `url(${backhoe})`, // Dynamically set the background image
       }}
     >
+      <div className="home-main-content">
+        <img
+          src="/src/assets/placeholder-hero.png"
+          alt="Hero"
+          className="hero-img"
+        />
+        <div className="home-intro">
+          <h1 className="home-title">
+            Welcome to Harrison Munden's Portfolio
+          </h1>
+          <p className="home-description">
+            Placeholder for a short introduction or tagline. Add your text here.
+          </p>
+        </div>
+      </div>
       <h1 className="construction-title">
         Under Construction<span className="dots"></span>
       </h1>

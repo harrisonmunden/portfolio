@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;700;900&display=swap');
+
 .works-page {
     padding: 20px;
   }
@@ -24,29 +26,166 @@
     transform: scale(1.1);
   }
   
-  .lightbox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  /* Decorative Circles and Title */
+.works-header {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+.works-circles {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1.2rem;
+  margin-bottom: -1.5rem;
+  margin-left: -2rem;
+}
+.circle {
+  width: 2.2rem;
+  height: 2.2rem;
+  background: #b6e5df;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.works-main-title {
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: #4ebd8b;
+  margin: 0 0 2.5rem 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+/* Section Titles */
+.section-title {
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 2.5rem 0 1.2rem 0.2rem;
+  letter-spacing: 0.04em;
+}
+
+/* Video Games Row */
+.video-games-row {
+  display: flex;
+  gap: 2.2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+.video-game-card {
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+  padding: 0.4rem;
+  background: #fff;
+  transition: transform 0.15s;
+  cursor: pointer;
+}
+.video-game-card:hover {
+  transform: translateY(-6px) scale(1.04);
+}
+.border-blue { border: 5px solid #b6e5ff; }
+.border-yellow { border: 5px solid #ffe9a7; }
+.border-pink { border: 5px solid #f7b6e5; }
+.video-game-img {
+  display: block;
+  width: 260px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 1.1rem;
+  background: #eee;
+}
+
+/* 3D Artwork Grid */
+.artwork-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* More randomized/artistic tile sizes */
+.artwork-size1 { grid-column: span 2; grid-row: span 2; }
+.artwork-size2 { grid-column: span 3; grid-row: span 1; }
+.artwork-size3 { grid-column: span 1; grid-row: span 2; }
+.artwork-size4 { grid-column: span 2; grid-row: span 1; }
+.artwork-size5 { grid-column: span 1; grid-row: span 1; }
+.artwork-size6 { grid-column: span 3; grid-row: span 2; }
+
+.artwork-card {
+  background: none;
+  border-radius: 1.2rem;
+  box-shadow: none;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  transition: transform 0.25s cubic-bezier(.4,2,.6,1);
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+.artwork-card:hover {
+  z-index: 2;
+  transform: scale(1.13);
+  box-shadow: none;
+}
+.artwork-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1.2rem;
+  background: none;
+  transition: box-shadow 0.2s;
+  display: block;
+  aspect-ratio: unset;
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.lightbox .close {
+  position: absolute;
+  top: 2.5rem;
+  right: 3rem;
+  font-size: 3rem;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+}
+.enlarged-image {
+  max-width: 80vw;
+  max-height: 80vh;
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .artwork-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
-  
-  .enlarged-image {
-    max-width: 90%;
-    max-height: 90%;
+  .video-game-img {
+    width: 180px;
+    height: 100px;
   }
-  
-  .close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    color: white;
-    font-size: 30px;
-    cursor: pointer;
+}
+@media (max-width: 600px) {
+  .artwork-grid {
+    grid-template-columns: 1fr;
   }
+  .works-main-title {
+    font-size: 2.1rem;
+  }
+  .section-title {
+    font-size: 1.3rem;
+  }
+  .video-game-img {
+    width: 100px;
+    height: 60px;
+  }
+}
