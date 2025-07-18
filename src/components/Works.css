@@ -1,191 +1,278 @@
-@import url('https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 .works-page {
-    padding: 20px;
-  }
-  
-  .work-group {
-    margin-bottom: 30px;
-  }
-  
-  .work-images {
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-  }
-  
-  .work-thumbnail {
-    width: 150px;
-    height: 100px;
-    object-fit: cover;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-  }
-  
-  .work-thumbnail:hover {
-    transform: scale(1.1);
-  }
-  
-  /* Decorative Circles and Title */
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding: 40px 60px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Decorative Circles and Title */
 .works-header {
   position: relative;
-  margin-bottom: 2.5rem;
+  margin-bottom: 60px;
 }
+
 .works-circles {
   display: flex;
   flex-wrap: nowrap;
-  gap: 1.2rem;
-  margin-bottom: -1.5rem;
-  margin-left: -2rem;
+  gap: 12px;
+  margin-bottom: -20px;
+  margin-left: -20px;
+  overflow: hidden;
 }
+
 .circle {
-  width: 2.2rem;
-  height: 2.2rem;
-  background: #b6e5df;
+  width: 22px;
+  height: 22px;
+  background: #4ebd8b;
   border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
 .works-main-title {
-  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
-  font-size: 3.2rem;
-  font-weight: 900;
+  font-family: 'Inter', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
   color: #4ebd8b;
-  margin: 0 0 2.5rem 0.5rem;
-  letter-spacing: 0.05em;
+  margin: 0;
+  letter-spacing: -0.02em;
 }
 
 /* Section Titles */
 .section-title {
-  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
-  font-size: 2.2rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 32px;
   font-weight: 700;
-  margin: 2.5rem 0 1.2rem 0.2rem;
-  letter-spacing: 0.04em;
+  color: #1a1a1a;
+  margin: 60px 0 30px 0;
+  letter-spacing: -0.01em;
 }
 
-/* Video Games Row */
+/* Video Games Section */
 .video-games-row {
   display: flex;
-  gap: 2.2rem;
-  margin-bottom: 3rem;
-  flex-wrap: wrap;
+  gap: 30px;
+  margin-bottom: 80px;
+  justify-content: flex-start;
 }
+
 .video-game-card {
-  border-radius: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.13);
-  padding: 0.4rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 4px;
   background: #fff;
-  transition: transform 0.15s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+  border: 1px solid #e0e0e0;
 }
+
 .video-game-card:hover {
-  transform: translateY(-6px) scale(1.04);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
-.border-blue { border: 5px solid #b6e5ff; }
-.border-yellow { border: 5px solid #ffe9a7; }
-.border-pink { border: 5px solid #f7b6e5; }
+
+.border-blue { border: 1px solid #e0e0e0; }
+.border-yellow { border: 1px solid #e0e0e0; }
+.border-pink { border: 1px solid #e0e0e0; }
+
 .video-game-img {
   display: block;
-  width: 260px;
-  height: 140px;
+  width: 280px;
+  height: 180px;
   object-fit: cover;
-  border-radius: 1.1rem;
-  background: #eee;
+  border-radius: 8px;
+  background: #f0f0f0;
 }
 
-/* 3D Artwork Grid */
+/* 3D Artwork Grid - JavaScript Controlled Hover Effects */
 .artwork-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 2rem;
-  margin-bottom: 3rem;
+  column-count: 3;
+  column-gap: 40px;
+  margin-bottom: 60px;
 }
-
-/* More randomized/artistic tile sizes */
-.artwork-size1 { grid-column: span 2; grid-row: span 2; }
-.artwork-size2 { grid-column: span 3; grid-row: span 1; }
-.artwork-size3 { grid-column: span 1; grid-row: span 2; }
-.artwork-size4 { grid-column: span 2; grid-row: span 1; }
-.artwork-size5 { grid-column: span 1; grid-row: span 1; }
-.artwork-size6 { grid-column: span 3; grid-row: span 2; }
 
 .artwork-card {
+  break-inside: avoid;
+  margin-bottom: 40px;
   background: none;
-  border-radius: 1.2rem;
+  border-radius: 0;
   box-shadow: none;
   padding: 0;
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-  transition: transform 0.25s cubic-bezier(.4,2,.6,1);
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-}
-.artwork-card:hover {
-  z-index: 2;
-  transform: scale(1.13);
-  box-shadow: none;
-}
-.artwork-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 1.2rem;
-  background: none;
-  transition: box-shadow 0.2s;
   display: block;
-  aspect-ratio: unset;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
 }
 
-/* Lightbox */
+/* Hovered image grows */
+.artwork-card.hovered {
+  transform: scale(1.15);
+  z-index: 2;
+}
+
+/* Other images dim when one is hovered */
+.artwork-card.dimmed {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+.artwork-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0;
+  background: #f0f0f0;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Light shadow on hovered image */
+.artwork-card.hovered .artwork-img {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+/* Lightbox with smooth transition */
 .lightbox {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
+
+.lightbox.active {
+  opacity: 1;
+}
+
 .lightbox .close {
   position: absolute;
-  top: 2.5rem;
-  right: 3rem;
-  font-size: 3rem;
+  top: 30px;
+  right: 40px;
+  font-size: 36px;
   color: #fff;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 300;
+  z-index: 1001;
+  transition: opacity 0.2s ease;
 }
-.enlarged-image {
-  max-width: 80vw;
+
+.lightbox .close:hover {
+  opacity: 0.7;
+}
+
+.lightbox-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  max-width: 90vw;
+  max-height: 90vh;
+  padding: 20px;
+}
+
+.lightbox-image {
+  max-width: 60%;
   max-height: 80vh;
-  border-radius: 1.2rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.lightbox-text {
+  color: #fff;
+  max-width: 300px;
+  font-family: 'Inter', sans-serif;
+}
+
+.lightbox-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.lightbox-year {
+  font-size: 18px;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.lightbox-description {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e0e0e0;
 }
 
 /* Responsive */
-@media (max-width: 900px) {
-  .artwork-grid {
-    grid-template-columns: repeat(3, 1fr);
+@media (max-width: 1200px) {
+  .works-page {
+    padding: 30px 40px;
   }
+  
   .video-game-img {
-    width: 180px;
-    height: 100px;
+    width: 240px;
+    height: 160px;
+  }
+  
+  .artwork-grid {
+    column-gap: 35px;
   }
 }
-@media (max-width: 600px) {
+
+@media (max-width: 900px) {
   .artwork-grid {
-    grid-template-columns: 1fr;
+    column-count: 2;
+    column-gap: 30px;
   }
-  .works-main-title {
-    font-size: 2.1rem;
+  
+  .video-games-row {
+    flex-direction: column;
+    gap: 20px;
   }
-  .section-title {
-    font-size: 1.3rem;
-  }
+  
   .video-game-img {
-    width: 100px;
-    height: 60px;
+    width: 100%;
+    height: 200px;
+  }
+  
+  .lightbox-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .lightbox-image {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 600px) {
+  .works-page {
+    padding: 20px;
+  }
+  
+  .works-main-title {
+    font-size: 36px;
+  }
+  
+  .section-title {
+    font-size: 24px;
+  }
+  
+  .artwork-grid {
+    column-count: 2;
+    column-gap: 25px;
+  }
+  
+  .lightbox-content {
+    padding: 10px;
+  }
+  
+  .lightbox-title {
+    font-size: 24px;
   }
 }
