@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Works.css'; // For custom styling
 import { motion } from 'framer-motion';
+import { useFadeInOnVisible } from './hooks/useFadeInOnVisible';
 
 const videoGames = [
 	{ id: 1, src: '/src/assets/3DArtwork/BusyGirlCover.png', alt: 'Escape Game', border: 'blue' },
@@ -60,13 +61,13 @@ const Works = ({ goTo, hideWorkNav }) => {
 		const centerY = rect.height / 2;
 		const mouseX = event.clientX - rect.left;
 		const mouseY = event.clientY - rect.top;
-		
-		// Check if cursor is within 30px of the center
-		const distanceFromCenter = Math.sqrt(
-			Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2)
-		);
-		
-		if (distanceFromCenter <= 125) {
+		const boxHalf = 92.5; // 125px box
+		if (
+			mouseX > centerX - boxHalf &&
+			mouseX < centerX + boxHalf &&
+			mouseY > centerY - boxHalf &&
+			mouseY < centerY + boxHalf
+		) {
 			setHoveredImageId(imageId);
 		} else {
 			setHoveredImageId(null);
@@ -104,6 +105,7 @@ const Works = ({ goTo, hideWorkNav }) => {
 							alt={img.alt}
 							className="video-game-img"
 							onClick={() => openImage(img)}
+							loading="lazy"
 						/>
 					</div>
 				))}
@@ -112,21 +114,28 @@ const Works = ({ goTo, hideWorkNav }) => {
 			{/* 3D Artwork Section */}
 			<h2 className="section-title artwork-title">3D Artwork</h2>
 			<div className="artwork-grid">
-				{artwork.map((img) => (
-					<div 
-						key={img.id} 
-						className={`artwork-card ${hoveredImageId && hoveredImageId !== img.id ? 'dimmed' : ''} ${hoveredImageId === img.id ? 'hovered' : ''}`}
-						onMouseMove={(e) => handleImageMouseMove(e, img.id)}
-						onMouseLeave={handleImageLeave}
-					>
-						<img
-							src={img.src}
-							alt={img.alt}
-							className="artwork-img"
-							onClick={() => openImage(img)}
-						/>
-					</div>
-				))}
+				{artwork.map((img) => {
+					const [ref, visible] = useFadeInOnVisible();
+					const isHovered = hoveredImageId === img.id;
+					const isDimmed = hoveredImageId && hoveredImageId !== img.id;
+					return (
+						<div 
+							key={img.id} 
+							className={`artwork-card${isHovered ? ' hovered' : ''}${isDimmed ? ' dimmed' : ''}`}
+							onMouseMove={(e) => handleImageMouseMove(e, img.id)}
+							onMouseLeave={handleImageLeave}
+						>
+							<img
+								ref={ref}
+								src={img.src}
+								alt={img.alt}
+								className={`artwork-img${visible ? ' fade-in-visible' : ''}`}
+								onClick={() => openImage(img)}
+								loading="lazy"
+							/>
+						</div>
+					);
+				})}
 			</div>
 
 			{/* Enhanced Lightbox */}
