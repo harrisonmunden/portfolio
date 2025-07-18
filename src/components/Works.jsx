@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Works.css'; // For custom styling
+import { motion } from 'framer-motion';
 
 const videoGames = [
 	{ id: 1, src: '/src/assets/3DArtwork/BusyGirlCover.png', alt: 'Escape Game', border: 'blue' },
@@ -38,7 +39,7 @@ const artwork = [
 	{ id: 28, src: '/src/assets/3DArtwork/WormSong.png', alt: 'Worm Song', title: 'Worm Song', year: '2023' },
 ];
 
-const Works = () => {
+const Works = ({ goTo, hideWorkNav }) => {
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [lightboxActive, setLightboxActive] = useState(false);
 	const [hoveredImageId, setHoveredImageId] = useState(null);
@@ -80,7 +81,17 @@ const Works = () => {
 		<div className="works-page">
 			{/* Header */}
 			<div className="works-header">
-				<h1 className="works-main-title">Work</h1>
+				{!hideWorkNav && (
+					<motion.h1
+						className="works-main-title"
+						onClick={() => goTo && goTo('home')}
+						style={{cursor: goTo ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: '8px'}}
+						layoutId="work-nav"
+					>
+						<span>Work</span>
+						<motion.img src="/src/assets/GlassyObjects/About/Chevron.png" alt="chevron" className="chevron-img" layoutId="work-chevron" />
+					</motion.h1>
+				)}
 			</div>
 
 			{/* Video Games Section */}

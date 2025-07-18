@@ -1,5 +1,6 @@
 import React from "react";
 import "./styles/about.css";
+import { motion } from 'framer-motion';
 
 const aboutHeaders = {
   Tesla: '/src/assets/AboutAssets/About/TeslaAboutHeader.png',
@@ -7,8 +8,9 @@ const aboutHeaders = {
   DFR: '/src/assets/AboutAssets/About/DFRAboutHeader.png',
 };
 const bulletImg = '/src/assets/AboutAssets/About/Bullet.png';
+const chevronImg = '/src/assets/GlassyObjects/About/Chevron.png';
 
-const About = () => {
+const About = ({ goTo, hideAboutNav }) => {
   const experiences = [
     {
       id: 1,
@@ -49,7 +51,12 @@ const About = () => {
     <div className="about-container">
       {/* Header */}
       <div className="about-header">
-        <h1 className="about-title">About</h1>
+        {!hideAboutNav && (
+          <motion.h1 className="about-title" layoutId="about-nav" style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: goTo ? 'pointer' : 'default'}} onClick={() => goTo && goTo('home')}>
+            <span>about</span>
+            <motion.img src={chevronImg} alt="chevron" className="chevron-img" layoutId="about-chevron" />
+          </motion.h1>
+        )}
       </div>
 
       {/* Experience Timeline */}

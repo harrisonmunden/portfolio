@@ -1,32 +1,190 @@
-import { HashRouter, Routes, Route } from "react-router-dom";
-import { About, Contact, Experience, Feedbacks, Hero, Navbar, Tech, Works, StarsCanvas, Home } from './components';
+// ---- SHARED HEADER ANIMATION CONFIG ----
+// To control the shared header (work/about) transition:
+// - stiffness: higher = snappier, lower = longer/more bounce
+// - damping: lower = more bounce, higher = less bounce
+// - bounce: higher = more bounce
+export const HEADER_ANIMATION = {
+  type: 'spring',
+  stiffness: 230,
+  damping: 20,
+  bounce: 0.2,
+};
+// ----------------------------------------
+
+const PAGE_BOUNCE = {
+  type: 'spring',
+  stiffness: 230,
+  damping: 20,
+  bounce: 0.2,
+};
+
+import React, { useState, useEffect } from 'react';
+import { About, Works, Home } from './components';
+import { AnimatePresence, motion } from 'framer-motion';
+
+const SHARED_CHEVRON_SRC = '/src/assets/GlassyObjects/About/Chevron.png';
+
+const SharedWorkHeader = ({ page, goTo }) => {
+  const isHome = page === 'home';
+  if (!(page === 'home' || page === 'work')) return null;
+  return (
+    <motion.div
+      layout
+      layoutId="work-nav"
+      className="shared-work-header"
+      style={{
+        position: 'absolute',
+        left: isHome ? 100 : 60,
+        top: isHome ? 320 : 60,
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
+        fontSize: isHome ? 66 : 88,
+        letterSpacing: '0.085em',
+        fontFamily: 'Martian Mono, Courier New, Courier, monospace',
+        background: 'linear-gradient(90deg, #77FFB0 0%, #000000 130%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+      }}
+      onClick={() => goTo(isHome ? 'work' : 'home')}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={HEADER_ANIMATION}
+    >
+      <span>work</span>
+      <motion.img
+        src={SHARED_CHEVRON_SRC}
+        alt="chevron"
+        className="chevron-img"
+        layoutId="work-chevron"
+        style={{
+          width: isHome ? 55 : 55,
+          marginLeft: 8,
+          marginTop: 0,
+        }}
+        initial={false}
+        animate={{ width: isHome ? 55 : 55 , rotate: isHome ? 0 : 90}}
+        transition={HEADER_ANIMATION}
+      />
+    </motion.div>
+  );
+};
+
+const SharedAboutHeader = ({ page, goTo }) => {
+  const isHome = page === 'home';
+  if (!(page === 'home' || page === 'about')) return null;
+  return (
+    <motion.div
+      layout
+      layoutId="about-nav"
+      className="shared-about-header"
+      style={{
+        position: 'absolute',
+        left: isHome ? 100 : 60,
+        top: isHome ? 420 : 60,
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
+        fontSize: isHome ? 66 : 88,
+        letterSpacing: '0.085em',
+        fontFamily: 'Martian Mono, Courier New, Courier, monospace',
+        background: 'linear-gradient(90deg, #77FFB0 0%, #000000 130%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+      }}
+      onClick={() => goTo(isHome ? 'about' : 'home')}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={HEADER_ANIMATION}
+    >
+      <span>about</span>
+      <motion.img
+        src={SHARED_CHEVRON_SRC}
+        alt="chevron"
+        className="chevron-img"
+        layoutId="about-chevron"
+        style={{
+          width: isHome ? 55 : 55, 
+          marginLeft: 8,
+          marginTop: 0,
+        }}
+        initial={false}
+        animate={{ width: isHome ? 55 : 55, rotate: isHome ? 0 : 90 }}
+        transition={HEADER_ANIMATION}
+      />
+    </motion.div>
+  );
+};
 
 const App = () => {
-  return (
-    <HashRouter>
-      <div className="relative z-0 bg-primary">
-        <div className="bg-hero-pattern bg-cover bg-no-repeat bg-center">
-          <Navbar />
-        </div>
+  const [page, setPage] = useState('home');
+  const [showWorksContent, setShowWorksContent] = useState(false);
+  const [showAboutContent, setShowAboutContent] = useState(false);
 
-        {/* Define routes to switch between pages */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/experience" element={<Experience />} />
-          <Route path="/tech" element={<Tech />} />
-          <Route path="/work" element={<Works />} />
-          <Route path="/feedbacks" element={<Feedbacks />} />
-          <Route path="/contact" element={
-            <div className="relative z-0">
-              <Contact />
-              <StarsCanvas />
-            </div>
-          } />
-        </Routes>
-      </div>
-    </HashRouter>
-  )
-}
+  // Reset content visibility when leaving the page
+  useEffect(() => {
+    if (page !== 'work') setShowWorksContent(false);
+    if (page !== 'about') setShowAboutContent(false);
+  }, [page]);
+
+  const goTo = (target) => setPage(target);
+
+  return (
+    <div className="relative z-0 bg-primary" style={{ minHeight: '100vh', position: 'relative' }}>
+      <AnimatePresence mode="wait">
+        <SharedWorkHeader key="work-header" page={page} goTo={goTo} />
+      </AnimatePresence>
+      <AnimatePresence mode="wait">
+        <SharedAboutHeader key="about-header" page={page} goTo={goTo} />
+      </AnimatePresence>
+      <AnimatePresence mode="wait">
+        {page === 'home' && (
+          <motion.div
+            key="home"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -40 }}
+            transition={PAGE_BOUNCE}
+            style={{ position: 'relative', zIndex: 1 }}
+          >
+            <Home goTo={goTo} hideWorkNav hideAboutNav />
+          </motion.div>
+        )}
+        {page === 'work' && (
+          <motion.div
+            key="work"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -40 }}
+            transition={PAGE_BOUNCE}
+            style={{ position: 'relative', zIndex: 1 }}
+            onAnimationComplete={() => setShowWorksContent(true)}
+          >
+            {showWorksContent && <Works goTo={goTo} hideWorkNav />}
+          </motion.div>
+        )}
+        {page === 'about' && (
+          <motion.div
+            key="about"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -40 }}
+            transition={PAGE_BOUNCE}
+            style={{ position: 'relative', zIndex: 1 }}
+            onAnimationComplete={() => setShowAboutContent(true)}
+          >
+            {showAboutContent && <About goTo={goTo} hideAboutNav />}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default App;
