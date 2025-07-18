@@ -14,8 +14,8 @@ const Home = ({ goTo, hideWorkNav, hideAboutNav }) => {
             </div>
             
             <div className="name-section">
-              <h1 className="name-first">Joe</h1>
-              <h1 className="name-last">Shmoe</h1>
+              <h1 className="name-first">Harrison</h1>
+              <h1 className="name-last">Munden</h1>
             </div>
           </div>
           

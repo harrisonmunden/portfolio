@@ -35,18 +35,16 @@ const SharedWorkHeader = ({ page, goTo }) => {
       style={{
         position: 'absolute',
         left: isHome ? 100 : 60,
-        top: isHome ? 320 : 60,
+        top: isHome ? 420 : 50,
         zIndex: 10,
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
         fontSize: isHome ? 66 : 88,
+        fontWeight: 900,
+        color: '#1a1a1a',
         letterSpacing: '0.085em',
         fontFamily: 'Martian Mono, Courier New, Courier, monospace',
-        background: 'linear-gradient(90deg, #77FFB0 0%, #000000 130%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
       }}
       onClick={() => goTo(isHome ? 'work' : 'home')}
       initial={{ opacity: 1 }}
@@ -84,18 +82,16 @@ const SharedAboutHeader = ({ page, goTo }) => {
       style={{
         position: 'absolute',
         left: isHome ? 100 : 60,
-        top: isHome ? 420 : 60,
+        top: isHome ? 500 : 50,
         zIndex: 10,
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
         fontSize: isHome ? 66 : 88,
+        fontWeight: 900,
+        color: '#1a1a1a',
         letterSpacing: '0.085em',
         fontFamily: 'Martian Mono, Courier New, Courier, monospace',
-        background: 'linear-gradient(90deg, #77FFB0 0%, #000000 130%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
       }}
       onClick={() => goTo(isHome ? 'about' : 'home')}
       initial={{ opacity: 1 }}

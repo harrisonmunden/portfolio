@@ -49,13 +49,21 @@ body {
 .about-title {
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
   font-size: 88px;
-  font-weight: 900;
-  background: linear-gradient(90deg, #4ebd8b 0%, #000000 25%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-weight: 700;
+  /* background: linear-gradient(90deg, #4ebd8b 0%, #000000 25%); */
+  /* -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; */
+  /* background-clip: text; */
   margin-bottom: -40px;
   letter-spacing: 0.05em;
+}
+
+.shared-about-header,
+.shared-work-header {
+  color: #1a1a1a !important;
+  font-weight: 900 !important;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace !important;
+  background: none !important;
 }
 
 /* Experience Timeline */
