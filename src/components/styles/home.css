@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;700;900&display=swap');
+
 /* General Reset */
 * {
   margin: 0;
@@ -7,121 +9,215 @@
 
 /* Page Styling */
 .home-page {
-  font-family: "Bruno Ace SC", sans-serif;
-  height: 100vh;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  min-height: 100vh;
+  background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Aligns content towards the top */
+  justify-content: space-between;
+  padding: 180px 40px 0px 40px;
+  position: relative;
+}
+
+/* Main Content Container */
+.home-content {
+  display: flex;
+  width: 100%;
+  max-width: 1400px;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+/* Left Side - Text Section */
+.home-text-section {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  z-index: 2;
+}
+
+/* Name and Greeting Row */
+.name-greeting-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* Name Section */
+.name-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.name-first {
+  font-size: 108px;
+  font-weight: 900;
+  background: linear-gradient(90deg, #77FFB0 0%, #000000 130%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding-left: 150px;
+  padding-top: 10px;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  line-height: 0.9;
+  letter-spacing: 0.085em;
+}
+
+.name-last {
+  font-size: 108px;
+  font-weight: 900;
+  background: linear-gradient(90deg, #77FFB0 0%, #000000 130%);
+  padding-left: 150px;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  line-height: 0.9;
+  letter-spacing: 0.085em;
+}
+
+/* Greeting */
+.greeting {
+  display: flex;
+  margin-left: 50px;
+  align-items: flex-start;
+  padding-top: 20px;
+}
+
+.greeting-text {
+  font-size: 60px;
+  font-weight: 700;
+  color: #1a1a1a;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+}
+
+/* Navigation Links */
+.navigation-links {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.nav-link {
+  font-size: 66px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-left: 50px;
+  text-decoration: none;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  display: flex;
   align-items: center;
-  background-color: black;
-  background-image: url('../assets/backhoe.png');
-  background-repeat: no-repeat;
-  background-size: contain; /* Ensure the image scales properly */
-  background-position: center calc(100% + 170px); /* Positions the image even closer to the bottom */
-  color: #a3ffcd;
-  text-align: center;
-  overflow: hidden;
-  padding-top: 7%; /* Moves the text content higher */
+  gap: 1px;
+  transition: color 0.2s ease;
 }
 
-/* Title Styling */
-.construction-title {
-  font-family: "Bruno Ace SC", sans-serif;
-  font-size: 3rem; /* Slightly larger text for better visual balance */
-  letter-spacing: 13px;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-  margin-bottom: 10px; /* Adds spacing below the title */
+.nav-link:hover {
+  color: #4ebd8b;
 }
 
-/* Dots Animation */
-.dots {
-  display: inline-block;
-  width: 1.5em;
-  text-align: left;
+.chevron-img {
+  width: 55px;
+  height: auto;
+  margin-left: 8px;
 }
 
-.dots::after {
-  content: ""; /* Empty content initially */
-  display: inline-block;
-  animation: dots-animation 2s steps(4) infinite;
-}
-
-@keyframes dots-animation {
-  0% {
-      content: ""; /* One dot */
-  }
-  17% {
-      content: "."; /* One dot */
-  }
-  33% {
-      content: ".."; /* Two dots */
-  }
-  50% {
-      content: "..."; /* Three dots */
-  }
-  67% {
-      content: ".."; /* Three dots */
-  }
-  83% {
-      content: "."; /* Three dots */
-  }
-  0% {
-      content: ""; /* One dot */
-  }
-}
-
-
-/* Buttons Container */
-.buttons-container {
+/* Person Figure at Bottom */
+.home-figure-section {
+  position: absolute;
+  bottom: -20px;
+  right: 0;
+  width: 50%;
+  height: 70%;
   display: flex;
   justify-content: center;
-  gap: 30px; /* Adds space between buttons */
-  margin-top: 20px; /* Space between title and buttons */
+  align-items: flex-end;
+  z-index: 1;
 }
 
-/* Button Styling */
-.button {
-  font-family: "Space Mono", monospace;
-  font-size: 1.2rem;
-  padding: 10px 20px;
-  color: #a3ffcd;
-  text-decoration: none;
-  border: 2px solid transparent;
-  border-radius: 50px;
-  background-image: linear-gradient(black, black),
-    linear-gradient(to right, #59d98e, #52d0cb);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  transition: transform 0.2s ease, background-color 0.3s ease;
+.person-figure {
+  max-width: 100%;
+  max-height: 100%;
+  padding-top: 25px;
+  padding-left: 50px;
+  height: auto;
+  object-fit: contain;
 }
 
-.button:hover {
-  transform: scale(1.1);
-  background-image: linear-gradient(to right, #59d98e, #52d0cb),
-    linear-gradient(to right, #59d98e, #52d0cb);
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .name-first,
+  .name-last {
+    font-size: 72px;
+  }
+  
+  .greeting-text {
+    font-size: 28px;
+  }
+  
+  .nav-link {
+    font-size: 32px;
+  }
+  
+  .chevron {
+    font-size: 24px;
+  }
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .home-page {
-    background-size: contain; /* Resize background for smaller screens */
-    background-position: center calc(100% - 20px); /* Adjust background even lower for mobile */
-    padding-top: 20%; /* Adds spacing above for content */
+    padding: 40px 20px 20px 20px;
   }
-
-  .construction-title {
-    padding-top: 90px;
-    font-size: 1.0rem;
-    letter-spacing: 10px;
-  }
-
-  .buttons-container {
+  
+  .name-greeting-row {
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
   }
+  
+  .name-first,
+  .name-last {
+    font-size: 60px;
+  }
+  
+  .greeting-text {
+    font-size: 24px;
+  }
+  
+  .nav-link {
+    font-size: 28px;
+  }
+  
+  .chevron {
+    font-size: 20px;
+  }
+  
+  .home-figure-section {
+    width: 60%;
+    height: 50%;
+  }
+}
 
-  .button {
-    font-size: 1rem;
-    padding: 10px 15px;
+@media (max-width: 600px) {
+  .name-first,
+  .name-last {
+    font-size: 48px;
+  }
+  
+  .greeting-text {
+    font-size: 20px;
+  }
+  
+  .nav-link {
+    font-size: 24px;
+  }
+  
+  .chevron {
+    font-size: 18px;
+  }
+  
+  .home-figure-section {
+    width: 70%;
+    height: 40%;
   }
 }
