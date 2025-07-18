@@ -1,96 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;700;900&display=swap');
+
 /* General Reset */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: "Space Mono", monospace;
-    background-color: #f4f4f4; /* Dark gray background */
-    color: #000;
-  }
-  
-  /* Main Container */
-  .about-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Left-align content */
-    justify-content: flex-start; /* Move content higher up */
-    height: 100vh;
-    padding: 50px; /* Add padding around the page */
-    color: #252525;
-    padding-top: 10%; /* Moves the text content higher */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+body {
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  background-color: #f5f5f5;
+  color: #1a1a1a;
+}
+
+/* Main Container */
+.about-container {
+  min-height: 100vh;
+  padding: 120px 60px 40px 60px; /* Added top padding to avoid navbar */
+  background-color: #f5f5f5;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+}
+
+/* Header Section */
+.about-header {
+  position: relative;
+  margin-bottom: 60px;
+}
+
+.about-circles {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  margin-bottom: -20px;
+  margin-left: -20px;
+  overflow: hidden;
+  justify-content: flex-end;
+}
+
+.circle {
+  width: 22px;
+  height: 22px;
+  background: #4ebd8b;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  opacity: 0.7;
+}
+
+.about-title {
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  font-size: 48px;
+  font-weight: 900;
+  background: linear-gradient(90deg, #4ebd8b 0%, #000000 25%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+/* Experience Timeline */
+.experience-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100vw;
+  max-width: none;
+  margin-left: calc(-1 * (100vw - 100%) / 4);
+}
+
+.experience-item {
+  width: 100vw;
+  max-width: none;
+  margin-left: calc(-1 * (100vw - 100%) / 2);
+}
+
+/* Section Header Image */
+.about-header-img {
+  width: 57vw;
+  max-width: 100vw;
+  height: auto;
+  margin-bottom: 32px;
+  margin-top: 40px;
+  display: block;
+}
+
+/* Experience Content */
+.experience-content {
+  flex: 1;
+  padding-left: 0;
+}
+
+/* Job Header */
+.job-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.job-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #1a1a1a;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  margin: 0;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+}
+
+.job-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+}
+
+.job-dates {
+  font-size: 14px;
+  color: #666;
+  background-color: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+}
+
+.tech-tag {
+  font-size: 14px;
+  color: #666;
+  background-color: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+}
+
+/* Job Description */
+.job-description {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.description-point {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  width: 85vw;
+  max-width: none;
+  margin-left: 5vw;
+}
+
+/* Bullet Image */
+.about-bullet-img {
+  width: 6.5vw;
+  max-width: 100vw;
+  height: auto;
+  margin-top: 7px;
+  flex-shrink: 0;
+  display: block;
+  align-self: flex-start;
+}
+
+.point-text {
+  font-size: 17px;
+  line-height: 1.4;
+  color: #333;
+  margin: 0;
+  flex: 1;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  padding-left: 20px;
+  text-indent: 65px;
+  margin-left: -65px;
+  word-break: break-word;
+  display: block;
+  font-weight: 700;
+}
+
+/* Remove timeline marker/line styles */
+.timeline-marker, .timeline-marker::after, .point-marker, .point-marker::after {
+  display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .about-container {
+    padding: 100px 40px 30px 40px;
   }
-  
-  /* Intro Section Styling */
-  .intro-section {
-    margin-bottom: 50px;
+  .about-title {
+    font-size: 42px;
   }
-  
-  .intro-text {
-    font-size: 2rem;
-    font-weight: 400;
-    margin-bottom: 10px;
+  .job-title {
+    font-size: 22px;
   }
-  
-  .name {
-    font-size: 6rem; /* Make the name much larger */
-    font-weight: 700;
-    line-height: 1.2;
-    background: linear-gradient(to right, #77FFB0, black);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .about-header-img {
+    width: 320px;
   }
-  
-  /* About Links */
-  .about-links {
-    margin-top: 50px; /* Space below intro section */
-    display: flex;
+}
+
+@media (max-width: 900px) {
+  .about-container {
+    padding: 80px 30px 25px 30px;
+  }
+  .about-title {
+    font-size: 36px;
+  }
+  .job-header {
     flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .job-title {
+    font-size: 20px;
+  }
+  .experience-timeline {
     gap: 30px;
   }
-  
-  .about-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 4.5rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s ease;
+  .about-header-img {
+    width: 220px;
   }
-  
-  .about-item:hover {
-    transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+  .about-container {
+    padding: 80px 20px 20px 20px;
   }
-  
-  .label {
-    color: #252525;
+  .about-title {
+    font-size: 32px;
   }
-  
-  .arrow {
-    color: limegreen;
-    font-size: 2rem;
+  .job-title {
+    font-size: 18px;
   }
-  
-  /* Responsiveness */
-  @media (max-width: 768px) {
-    .name {
-      font-size: 4rem;
-    }
-  
-    .intro-text {
-      font-size: 1.5rem;
-    }
-  
-    .about-links {
-      gap: 20px;
-    }
-  
-    .about-item {
-      font-size: 1.5rem;
-    }
+  .point-text {
+    font-size: 14px;
   }
+  .experience-item {
+    gap: 15px;
+  }
+  .experience-content {
+    padding-left: 0;
+  }
+  .about-header-img {
+    width: 100%;
+    max-width: 100%;
+  }
+}
   

@@ -1,41 +1,81 @@
 import React from "react";
 import "./styles/about.css";
 
+const aboutHeaders = {
+  Tesla: '/src/assets/AboutAssets/About/TeslaAboutHeader.png',
+  Ford: '/src/assets/AboutAssets/About/FordAboutHeader.png',
+  DFR: '/src/assets/AboutAssets/About/DFRAboutHeader.png',
+};
+const bulletImg = '/src/assets/AboutAssets/About/Bullet.png';
+
 const About = () => {
+  const experiences = [
+    {
+      id: 1,
+      title: "3D UI Developer",
+      company: "Tesla",
+      headerImg: aboutHeaders.Tesla,
+      description: [
+        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
+        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
+        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like"
+      ]
+    },
+    {
+      id: 2,
+      title: "HMI Design Intern",
+      company: "Ford",
+      headerImg: aboutHeaders.Ford,
+      description: [
+        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
+        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
+        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like"
+      ]
+    },
+    {
+      id: 3,
+      title: "Body Designer",
+      company: "Dartmouth Formula Racing",
+      headerImg: aboutHeaders.DFR,
+      description: [
+        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
+        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
+        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like"
+      ]
+    }
+  ];
+
   return (
     <div className="about-container">
-      <div className="intro-section">
-        <span className="intro-text">Hi, I'm</span>
-        <h1 className="name">Harrison Munden</h1>
-      </div>
-      <div className="about-main-content">
-        <img
-          src="/src/assets/placeholder-profile.png"
-          alt="Profile"
-          className="profile-img"
-        />
-        <div className="about-details">
-          <div className="about-section">
-            <div className="about-item">
-              <span className="label">goals</span>
-              <span className="arrow">&#9660;</span>
-            </div>
-            <div className="about-dropdown">
-              <p>Placeholder for goals description. Add your goals here.</p>
-            </div>
-          </div>
-          <div className="about-section">
-            <div className="about-item">
-              <span className="label">experience</span>
-              <span className="arrow">&#9660;</span>
-            </div>
-            <div className="about-dropdown">
-              <p>
-                Placeholder for experience description. Add your experience here.
-              </p>
-            </div>
-          </div>
+      {/* Header with decorative circles */}
+      <div className="about-header">
+        <div className="about-circles">
+          {[...Array(8)].map((_, i) => (
+            <span key={i} className="circle" />
+          ))}
         </div>
+        <h1 className="about-title">About</h1>
+      </div>
+
+      {/* Experience Timeline */}
+      <div className="experience-timeline">
+        {experiences.map((experience) => (
+          <div key={experience.id} className="experience-item custom-timeline">
+            {/* Section header image only */}
+            <img src={experience.headerImg} alt={experience.company + ' header'} className="about-header-img" />
+            <div className="experience-content">
+              {/* Description points with bullet image */}
+              <div className="job-description">
+                {experience.description.map((point, index) => (
+                  <div key={index} className="description-point">
+                    <img src={bulletImg} alt="bullet" className="about-bullet-img" />
+                    <p className="point-text">{point}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
