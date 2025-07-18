@@ -47,13 +47,8 @@ const About = () => {
 
   return (
     <div className="about-container">
-      {/* Header with decorative circles */}
+      {/* Header */}
       <div className="about-header">
-        <div className="about-circles">
-          {[...Array(8)].map((_, i) => (
-            <span key={i} className="circle" />
-          ))}
-        </div>
         <h1 className="about-title">About</h1>
       </div>
 

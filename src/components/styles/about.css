@@ -48,13 +48,13 @@ body {
 
 .about-title {
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
-  font-size: 48px;
+  font-size: 88px;
   font-weight: 900;
   background: linear-gradient(90deg, #4ebd8b 0%, #000000 25%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin: 0;
+  margin-bottom: -40px;
   letter-spacing: 0.05em;
 }
 
@@ -76,7 +76,7 @@ body {
 
 /* Section Header Image */
 .about-header-img {
-  width: 57vw;
+  width: 60vw;
   max-width: 100vw;
   height: auto;
   margin-bottom: 32px;

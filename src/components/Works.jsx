@@ -78,13 +78,8 @@ const Works = () => {
 
 	return (
 		<div className="works-page">
-			{/* Decorative Circles and Title */}
+			{/* Header */}
 			<div className="works-header">
-				<div className="works-circles">
-					{[...Array(15)].map((_, i) => (
-						<span key={i} className="circle" />
-					))}
-				</div>
 				<h1 className="works-main-title">Work</h1>
 			</div>
 
