@@ -72,7 +72,7 @@ const Works = ({ goTo, hideWorkNav }) => {
     const centerY = rect.height / 2;
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
-    const boxHalf = 62.5;
+    const boxHalf = 92.5;
     if (
       mouseX > centerX - boxHalf &&
       mouseX < centerX + boxHalf &&

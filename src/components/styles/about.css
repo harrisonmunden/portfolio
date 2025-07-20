@@ -235,26 +235,27 @@ body {
 
 @media (max-width: 600px) {
   .about-container {
-    padding: 80px 20px 20px 20px;
+    padding: 60px 8px 8px 28px;
+  }
+  .about-header {
+    margin-bottom: 24px;
   }
   .about-title {
-    font-size: 32px;
-  }
-  .job-title {
     font-size: 18px;
-  }
-  .point-text {
-    font-size: 14px;
-  }
-  .experience-item {
-    gap: 15px;
-  }
-  .experience-content {
-    padding-left: 0;
+    margin-bottom: 16px !important;
   }
   .about-header-img {
     width: 100%;
     max-width: 100%;
+    margin-bottom: 16px;
+    margin-top: 16px;
+  }
+  .experience-item {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .point-text {
+    font-size: 13px;
   }
 }
   

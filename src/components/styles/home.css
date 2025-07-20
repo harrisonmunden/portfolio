@@ -199,25 +199,40 @@
 }
 
 @media (max-width: 600px) {
+  .home-page {
+    padding: 20px 8px 8px 8px;
+  }
+  
   .name-first,
   .name-last {
-    font-size: 48px;
+    font-size: 32px;
+    padding-left: 20px;
   }
   
   .greeting-text {
-    font-size: 20px;
+    font-size: 16px;
   }
   
   .nav-link {
-    font-size: 24px;
+    font-size: 18px;
+    margin-left: 20px;
   }
   
-  .chevron {
-    font-size: 18px;
+  .chevron-img {
+    width: 20px;
   }
   
   .home-figure-section {
     width: 70%;
     height: 40%;
+  }
+  
+  .name-greeting-row {
+    gap: 10px;
+  }
+  
+  .greeting {
+    margin-left: 20px;
+    padding-top: 10px;
   }
 }

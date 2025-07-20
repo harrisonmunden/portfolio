@@ -26,6 +26,7 @@ const SHARED_CHEVRON_SRC = '/src/assets/GlassyObjects/About/Chevron.png';
 
 const SharedWorkHeader = ({ page, goTo }) => {
   const isHome = page === 'home';
+  const isMobile = window.innerWidth <= 600;
   if (!(page === 'home' || page === 'work')) return null;
   return (
     <motion.div
@@ -34,13 +35,13 @@ const SharedWorkHeader = ({ page, goTo }) => {
       className="shared-work-header"
       style={{
         position: 'absolute',
-        left: isHome ? 100 : 60,
-        top: isHome ? 420 : 50,
+        left: isHome ? (isMobile ? 25 : 100) : (isMobile ? 20 : 60),
+        top: isHome ? (isMobile ? 320 : 420) : (isMobile ? 20 : 50),
         zIndex: 10,
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
-        fontSize: isHome ? 66 : 88,
+        fontSize: isHome ? (isMobile ? 46 : 66) : (isMobile ? 40 : 88),
         fontWeight: 900,
         color: '#1a1a1a',
         letterSpacing: '0.085em',
@@ -59,12 +60,12 @@ const SharedWorkHeader = ({ page, goTo }) => {
         className="chevron-img"
         layoutId="work-chevron"
         style={{
-          width: isHome ? 55 : 55,
+          width: isHome ? 55 : (isMobile ? 29 : 55),
           marginLeft: 8,
           marginTop: 0,
         }}
         initial={false}
-        animate={{ width: isHome ? 55 : 55 , rotate: isHome ? 0 : 90}}
+        animate={{ width: isHome ? 55 : (isMobile ? 29 : 55), rotate: isHome ? 0 : 90}}
         transition={HEADER_ANIMATION}
       />
     </motion.div>
@@ -73,6 +74,7 @@ const SharedWorkHeader = ({ page, goTo }) => {
 
 const SharedAboutHeader = ({ page, goTo }) => {
   const isHome = page === 'home';
+  const isMobile = window.innerWidth <= 600;
   if (!(page === 'home' || page === 'about')) return null;
   return (
     <motion.div
@@ -81,13 +83,13 @@ const SharedAboutHeader = ({ page, goTo }) => {
       className="shared-about-header"
       style={{
         position: 'absolute',
-        left: isHome ? 100 : 60,
-        top: isHome ? 500 : 50,
+        left: isHome ? (isMobile ? 25 : 100) : (isMobile ? 20 : 60),
+        top: isHome ? (isMobile ? 390 : 500) : (isMobile ? 20 : 50),
         zIndex: 10,
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
-        fontSize: isHome ? 66 : 88,
+        fontSize: isHome ? (isMobile ? 46 : 66) : (isMobile ? 40 : 88),
         fontWeight: 900,
         color: '#1a1a1a',
         letterSpacing: '0.085em',
@@ -106,12 +108,12 @@ const SharedAboutHeader = ({ page, goTo }) => {
         className="chevron-img"
         layoutId="about-chevron"
         style={{
-          width: isHome ? 55 : 55, 
+          width: isHome ? 55 : (isMobile ? 29 : 55), 
           marginLeft: 8,
           marginTop: 0,
         }}
         initial={false}
-        animate={{ width: isHome ? 55 : 55, rotate: isHome ? 0 : 90 }}
+        animate={{ width: isHome ? 55 : (isMobile ? 29 : 55), rotate: isHome ? 0 : 90 }}
         transition={HEADER_ANIMATION}
       />
     </motion.div>

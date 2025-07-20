@@ -310,27 +310,42 @@
 
 @media (max-width: 600px) {
   .works-page {
-    padding: 80px 20px 20px 20px;
+    padding: 65px 8px 8px 8px;
   }
-  
+  .works-header {
+    margin-bottom: 24px;
+  }
   .works-main-title {
-    font-size: 36px;
+    font-size: 20px;
+    margin-bottom: 8px;
   }
-  
   .section-title {
-    font-size: 24px;
+    font-size: 18px;
+    margin: 32px 0 12px 0;
   }
-  
+  .video-games-row {
+    gap: 15px;
+  }
+  .video-game-img {
+    width: 120px;
+    height: 80px;
+  }
   .artwork-grid {
     column-count: 2;
-    column-gap: 25px;
+    column-gap: 14px;
   }
-  
+  .artwork-card {
+    margin-bottom: 14px;
+  }
+  .artwork-img {
+    max-height: none;
+    width: 100%;
+    height: auto;
+  }
   .lightbox-content {
-    padding: 10px;
+    padding: 4px;
   }
-  
   .lightbox-title {
-    font-size: 24px;
+    font-size: 18px;
   }
 }
