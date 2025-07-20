@@ -120,14 +120,6 @@ const SharedAboutHeader = ({ page, goTo }) => {
 
 const App = () => {
   const [page, setPage] = useState('home');
-  const [showWorksContent, setShowWorksContent] = useState(false);
-  const [showAboutContent, setShowAboutContent] = useState(false);
-
-  // Reset content visibility when leaving the page
-  useEffect(() => {
-    if (page !== 'work') setShowWorksContent(false);
-    if (page !== 'about') setShowAboutContent(false);
-  }, [page]);
 
   const goTo = (target) => setPage(target);
 
@@ -160,9 +152,8 @@ const App = () => {
             exit={{ opacity: 0, y: -40 }}
             transition={PAGE_BOUNCE}
             style={{ position: 'relative', zIndex: 1 }}
-            onAnimationComplete={() => setShowWorksContent(true)}
           >
-            {showWorksContent && <Works goTo={goTo} hideWorkNav />}
+            <Works goTo={goTo} hideWorkNav />
           </motion.div>
         )}
         {page === 'about' && (
@@ -173,9 +164,8 @@ const App = () => {
             exit={{ opacity: 0, y: -40 }}
             transition={PAGE_BOUNCE}
             style={{ position: 'relative', zIndex: 1 }}
-            onAnimationComplete={() => setShowAboutContent(true)}
           >
-            {showAboutContent && <About goTo={goTo} hideAboutNav />}
+            <About goTo={goTo} hideAboutNav />
           </motion.div>
         )}
       </AnimatePresence>
