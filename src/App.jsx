@@ -21,6 +21,7 @@ const PAGE_BOUNCE = {
 import React, { useState, useEffect } from 'react';
 import { About, Works, Home } from './components';
 import { AnimatePresence, motion } from 'framer-motion';
+import PersonFigure from './components/PersonFigure';
 
 const SHARED_CHEVRON_SRC = '/src/assets/GlassyObjects/About/Chevron.png';
 
@@ -133,6 +134,10 @@ const App = () => {
       <AnimatePresence mode="wait">
         <SharedAboutHeader key="about-header" page={page} goTo={goTo} />
       </AnimatePresence>
+      
+      {/* Person Figure Animation */}
+      <PersonFigure page={page} />
+      
       <AnimatePresence mode="wait">
         {page === 'home' && (
           <motion.div

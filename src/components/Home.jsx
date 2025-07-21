@@ -35,15 +35,6 @@ const Home = ({ goTo, hideWorkNav, hideAboutNav }) => {
           </div>
         </div>
       </div>
-      
-      {/* Person figure at bottom */}
-      <div className="home-figure-section">
-        <img 
-          src="/src/assets/GlassyObjects/About/PersonFigure.png" 
-          alt="Person Figure" 
-          className="person-figure"
-        />
-      </div>
     </div>
   );
 };
