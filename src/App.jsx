@@ -126,6 +126,13 @@ const App = () => {
 
   const goTo = (target) => setPage(target);
 
+  // Expose goToHome globally for PersonFigure click-to-home
+  useEffect(() => {
+    console.log('MEEP');
+    window.goToHome = () => goTo('home');
+    return () => { window.goToHome = undefined; };
+  }, []);
+
   return (
     <div className="relative z-0 bg-primary" style={{ minHeight: '100vh', position: 'relative' }}>
       <AnimatePresence mode="wait">

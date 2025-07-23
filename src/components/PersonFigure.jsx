@@ -209,9 +209,39 @@ const PersonFigure = ({ page }) => {
   const DRAG_THRESHOLD = 8;
   const [dragActive, setDragActive] = useState({}); // { index: true/false }
   const dragStartPos = useRef({});
+  const navTargetRef = useRef({});
+  const NAV_CLICK_THRESHOLD = 8; // px
+
+  // Utility: check if a point is inside a DOMRect
+  function pointInRect(x, y, rect) {
+    return (
+      x >= rect.left && x <= rect.right &&
+      y >= rect.top && y <= rect.bottom
+    );
+  }
+  // Utility: check if two rects overlap
+  function rectsOverlap(r1, r2) {
+    return !(
+      r1.right < r2.left ||
+      r1.left > r2.right ||
+      r1.bottom < r2.top ||
+      r1.top > r2.bottom
+    );
+  }
 
   const handlePointerDown = (index, e) => {
     const point = e.touches ? e.touches[0] : e;
+    // Get head image rect
+    const headImg = e.currentTarget;
+    const headRect = headImg.getBoundingClientRect();
+    // Get nav target rects
+    const navRects = [];
+    document.querySelectorAll('.about-title, .works-main-title, .chevron-img').forEach(el => {
+      navRects.push(el.getBoundingClientRect());
+    });
+    // Check if any nav rect overlaps the head rect
+    const overlapsNav = navRects.some(navRect => rectsOverlap(headRect, navRect));
+    navTargetRef.current[index] = overlapsNav;
     dragStartPos.current[index] = { x: point.clientX, y: point.clientY };
     setDragActive((prev) => ({ ...prev, [index]: false }));
   };
@@ -229,9 +259,29 @@ const PersonFigure = ({ page }) => {
   };
 
   const handlePointerUp = (index, e) => {
-    // If drag never activated, let event bubble (so title can be clicked)
+    const point = e.touches ? e.touches[0] : e;
+    const start = dragStartPos.current[index];
     setDragActive((prev) => ({ ...prev, [index]: false }));
     dragStartPos.current[index] = null;
+    // --- NAV CLICK LOGIC ---
+    // Recompute overlap in case of scroll/move
+    const headImg = e.currentTarget;
+    const headRect = headImg.getBoundingClientRect();
+    const navRects = [];
+    document.querySelectorAll('.about-title, .works-main-title, .chevron-img').forEach(el => {
+      navRects.push(el.getBoundingClientRect());
+    });
+    const overlapsNav = navRects.some(navRect => rectsOverlap(headRect, navRect));
+    if (overlapsNav && start) {
+      const dx = point.clientX - start.x;
+      const dy = point.clientY - start.y;
+      if (Math.sqrt(dx * dx + dy * dy) < NAV_CLICK_THRESHOLD) {
+        if (typeof window.goToHome === 'function') {
+          window.goToHome();
+        }
+      }
+    }
+    navTargetRef.current[index] = false;
   };
 
   return (
