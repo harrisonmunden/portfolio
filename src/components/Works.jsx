@@ -53,10 +53,10 @@ const modelTiles = [
   },
   {
     id: 2,
-    label: 'Future Model',
-    img: '/src/assets/3DArtwork/thumbnails/BusyGirlCover.webp', // Placeholder
-    modelPath: '/src/assets/3DModels/Car.glb',
-    texturePath: '/src/assets/3DModels/CarAlbedo.png',
+    label: 'Flowers Model',
+    img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Use Flower artwork as a placeholder thumbnail
+    modelPath: '/src/assets/3DModels/Flowers.glb',
+    texturePath: '/src/assets/3DModels/FlowersTexture.png',
   },
   {
     id: 3,
@@ -69,7 +69,7 @@ const modelTiles = [
 
 const BATCH_SIZE = 12;
 
-const Works = ({ goTo, hideWorkNav }) => {
+const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [lightboxActive, setLightboxActive] = useState(false);
   const [hoveredImageId, setHoveredImageId] = useState(null);
@@ -146,10 +146,16 @@ const Works = ({ goTo, hideWorkNav }) => {
 
   // No test button or debug logic
 
+  useEffect(() => {
+    if (onModelViewerOpenChange) {
+      onModelViewerOpenChange(modelViewerOpen);
+    }
+  }, [modelViewerOpen, onModelViewerOpenChange]);
+
   return (
     <div className="works-page">
       {/* Header */}
-      <div className="works-header">
+      <div className={`works-header${modelViewerOpen ? ' faded' : ''}`}>
         {!hideWorkNav && (
           <motion.h1
             className="works-main-title"

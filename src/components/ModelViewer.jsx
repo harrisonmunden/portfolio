@@ -68,13 +68,26 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
     let targetTheta = cameraTheta;
     let targetPhi = cameraPhi;
     let targetRadius = cameraRadius;
-    const target = new THREE.Vector3(0, 0.7, 0); // look at car center (adjust y as needed)
+    // Lower the camera target for Flowers model
+    let target;
+    if (modelPath && modelPath.includes('Flowers.glb')) {
+      target = new THREE.Vector3(0, 8, 0); // Lower y for Flowers (even more)
+    } else {
+      target = new THREE.Vector3(0, 0.7, 0); // Default (Car)
+    }
     // Slightly wider FOV on mobile for a better view
     camera = new THREE.PerspectiveCamera(isMobile ? 48 : 30, width / height, 0.1, 100);
     function updateCamera() {
       camera.position.x = cameraRadius * Math.sin(cameraPhi) * Math.cos(cameraTheta) + target.x;
       camera.position.y = cameraRadius * Math.cos(cameraPhi) + target.y;
       camera.position.z = cameraRadius * Math.sin(cameraPhi) * Math.sin(cameraTheta) + target.z;
+      // Prevent camera from going below the floor for Flowers model
+      if (modelPath && modelPath.includes('Flowers.glb')) {
+        const floorY = target.y; // y=8 for flowers
+        if (camera.position.y < floorY) {
+          camera.position.y = floorY;
+        }
+      }
       camera.lookAt(target);
     }
     updateCamera();
@@ -91,11 +104,19 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
     const composer = new EffectComposer(renderer);
     const renderPass = new RenderPass(scene, camera);
     composer.addPass(renderPass);
+    let bloomStrength = 1.5;
+    let bloomRadius = 0.3;
+    let bloomThreshold = 0.22;
+    if (modelPath && modelPath.includes('Flowers.glb')) {
+      bloomStrength = 0.45;
+      bloomRadius = 0.08;
+      bloomThreshold = 0.28;
+    }
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(width, height),
-      1.5, // much higher strength
-      0.3, // much higher radius
-      0.22 // lower threshold for more glow
+      bloomStrength,
+      bloomRadius,
+      bloomThreshold
     );
     composer.addPass(bloomPass);
 
@@ -134,16 +155,24 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
                 if (child.geometry && child.geometry.attributes.uv) {
                   // Copy over basic material properties
                   const oldMat = child.material;
+                  let metalness = 0.95;
+                  let roughness = 0.15;
+                  let envMapIntensity = 2.5;
+                  if (modelPath && modelPath.includes('Flowers.glb')) {
+                    metalness = 0.45;
+                    roughness = 0.45;
+                    envMapIntensity = 0.7;
+                  }
                   child.material = new THREE.MeshStandardMaterial({
                     map: texture,
                     color: oldMat.color ? oldMat.color : new THREE.Color(0xffffff),
-                    metalness: 0.95,
-                    roughness: 0.15,
+                    metalness,
+                    roughness,
                     transparent: oldMat.transparent,
                     opacity: oldMat.opacity,
                     side: oldMat.side,
                   });
-                  child.material.envMapIntensity = 2.5;
+                  child.material.envMapIntensity = envMapIntensity;
                   child.material.needsUpdate = true;
                 }
               }
@@ -157,9 +186,17 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
         // Make all meshes highly reflective, even if no texture
         model.traverse((child) => {
           if (child.isMesh && child.material) {
-            child.material.metalness = 1;
-            child.material.roughness = 0.05;
-            child.material.envMapIntensity = 2.5;
+            let metalness = 1;
+            let roughness = 0.05;
+            let envMapIntensity = 2.5;
+            if (modelPath && modelPath.includes('Flowers.glb')) {
+              metalness = 0.45;
+              roughness = 0.45;
+              envMapIntensity = 0.7;
+            }
+            child.material.metalness = metalness;
+            child.material.roughness = roughness;
+            child.material.envMapIntensity = envMapIntensity;
             child.material.needsUpdate = true;
           }
         });
@@ -208,16 +245,20 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
     let isDragging = false;
     let lastX = 0, lastY = 0;
     let isRightButton = false;
-    const minPhi = 0.2, maxPhi = Math.PI - 0.2;
+    // Prevent going underneath for Flowers model
+    const minPhi = (modelPath && modelPath.includes('Flowers.glb')) ? 0.45 : 0.08;
+    const maxPhi = Math.PI - 0.2;
     const minRadius = 2, maxRadius = 60;
     function onPointerDown(e) {
       isDragging = true;
       lastX = e.clientX;
       lastY = e.clientY;
       isRightButton = e.button === 2;
+      resetIdleTimer();
     }
     function onPointerUp() {
       isDragging = false;
+      resetIdleTimer();
     }
     function onPointerMove(e) {
       if (!isDragging) return;
@@ -225,9 +266,22 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
       const dy = e.clientY - lastY;
       if (!isRightButton && e.buttons === 1) {
         // Left button: orbit
-        targetTheta += dx * 0.008;
-        targetPhi -= dy * 0.008;
-        targetPhi = Math.max(minPhi, Math.min(maxPhi, targetPhi));
+        let nextTheta = targetTheta + dx * 0.008;
+        let nextPhi = targetPhi - dy * 0.008;
+        nextPhi = Math.max(minPhi, Math.min(maxPhi, nextPhi));
+        // For Flowers, prevent phi that would go below the floor
+        if (modelPath && modelPath.includes('Flowers.glb')) {
+          const nextY = cameraRadius * Math.cos(nextPhi) + target.y;
+          const floorY = target.y;
+          if (nextY >= floorY) {
+            targetTheta = nextTheta;
+            targetPhi = nextPhi;
+          }
+          // else: do not update phi/theta, cancel motion
+        } else {
+          targetTheta = nextTheta;
+          targetPhi = nextPhi;
+        }
       } else if (isRightButton || e.buttons === 2) {
         // Right button: zoom
         targetRadius += dy * 0.03;
@@ -235,10 +289,12 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
       }
       lastX = e.clientX;
       lastY = e.clientY;
+      resetIdleTimer();
     }
     function onWheel(e) {
       targetRadius += e.deltaY * 0.002;
       targetRadius = Math.max(minRadius, Math.min(maxRadius, targetRadius));
+      resetIdleTimer();
     }
     renderer.domElement.addEventListener('pointerdown', onPointerDown);
     renderer.domElement.addEventListener('pointerup', onPointerUp);
@@ -248,6 +304,52 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
     renderer.domElement.oncontextmenu = (e) => e.preventDefault();
 
     // Animation loop
+    // Idle camera reset logic
+    let idleTimeoutId = null;
+    let resetAnimId = null;
+    const initialCamera = {
+      theta: cameraTheta,
+      phi: cameraPhi,
+      radius: cameraRadius,
+    };
+    function resetIdleTimer() {
+      if (idleTimeoutId) clearTimeout(idleTimeoutId);
+      if (resetAnimId) cancelAnimationFrame(resetAnimId);
+      idleTimeoutId = setTimeout(() => {
+        animateCameraToInitial();
+      }, 5000);
+    }
+    function animateCameraToInitial() {
+      const startTheta = targetTheta;
+      const startPhi = targetPhi;
+      const startRadius = targetRadius;
+      const endTheta = initialCamera.theta;
+      const endPhi = initialCamera.phi;
+      const endRadius = initialCamera.radius;
+      const duration = 900;
+      let startTime = null;
+      function animateBack(ts) {
+        if (!startTime) startTime = ts;
+        const elapsed = ts - startTime;
+        const t = Math.min(1, elapsed / duration);
+        // Ease out cubic
+        const ease = 1 - Math.pow(1 - t, 3);
+        targetTheta = startTheta + (endTheta - startTheta) * ease;
+        targetPhi = startPhi + (endPhi - startPhi) * ease;
+        targetRadius = startRadius + (endRadius - startRadius) * ease;
+        if (t < 1) {
+          resetAnimId = requestAnimationFrame(animateBack);
+        } else {
+          targetTheta = endTheta;
+          targetPhi = endPhi;
+          targetRadius = endRadius;
+        }
+      }
+      resetAnimId = requestAnimationFrame(animateBack);
+    }
+    // Start idle timer on mount
+    resetIdleTimer();
+
     const animate = () => {
       animationId = requestAnimationFrame(animate);
       // Smoothly interpolate camera values
@@ -256,7 +358,6 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
       cameraPhi += (targetPhi - cameraPhi) * lerpFactor;
       cameraRadius += (targetRadius - cameraRadius) * lerpFactor;
       updateCamera();
-
       composer.render();
     };
     animate();
@@ -276,6 +377,8 @@ const ModelViewer = ({ modelPath, texturePath, onClose }) => {
     return () => {
       isMounted = false;
       cancelAnimationFrame(animationId);
+      if (idleTimeoutId) clearTimeout(idleTimeoutId);
+      if (resetAnimId) cancelAnimationFrame(resetAnimId);
       window.removeEventListener('resize', handleResize);
       if (renderer && renderer.domElement) {
         renderer.domElement.removeEventListener('pointerdown', onPointerDown);

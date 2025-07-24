@@ -11,6 +11,13 @@
 .works-header {
   position: relative;
   margin-bottom: 60px;
+  transition: opacity 0.4s cubic-bezier(.4,2,.6,1);
+}
+
+.works-header.faded {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(.4,2,.6,1);
 }
 
 .works-circles {

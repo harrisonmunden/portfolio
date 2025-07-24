@@ -123,28 +123,35 @@ const SharedAboutHeader = ({ page, goTo }) => {
 
 const App = () => {
   const [page, setPage] = useState('home');
+  const [modelViewerOpen, setModelViewerOpen] = useState(false);
 
   const goTo = (target) => setPage(target);
 
   // Expose goToHome globally for PersonFigure click-to-home
   useEffect(() => {
-    console.log('MEEP');
     window.goToHome = () => goTo('home');
     return () => { window.goToHome = undefined; };
   }, []);
 
+  // Fade style for header and PersonFigure
+  const fadeStyle = modelViewerOpen ? { opacity: 0, pointerEvents: 'none', transition: 'opacity 0.4s cubic-bezier(.4,2,.6,1)' } : {};
+
   return (
     <div className="relative z-0 bg-primary" style={{ minHeight: '100vh', position: 'relative' }}>
       <AnimatePresence mode="wait">
-        <SharedWorkHeader key="work-header" page={page} goTo={goTo} />
+        <div style={fadeStyle}>
+          <SharedWorkHeader key="work-header" page={page} goTo={goTo} />
+        </div>
       </AnimatePresence>
       <AnimatePresence mode="wait">
-        <SharedAboutHeader key="about-header" page={page} goTo={goTo} />
+        <div style={fadeStyle}>
+          <SharedAboutHeader key="about-header" page={page} goTo={goTo} />
+        </div>
       </AnimatePresence>
-      
       {/* Person Figure Animation */}
-      <PersonFigure page={page} />
-      
+      <div style={fadeStyle}>
+        <PersonFigure page={page} />
+      </div>
       <AnimatePresence mode="wait">
         {page === 'home' && (
           <motion.div
@@ -167,7 +174,7 @@ const App = () => {
             transition={PAGE_BOUNCE}
             style={{ position: 'relative', zIndex: 1 }}
           >
-            <Works goTo={goTo} hideWorkNav />
+            <Works goTo={goTo} hideWorkNav onModelViewerOpenChange={setModelViewerOpen} />
           </motion.div>
         )}
         {page === 'about' && (
