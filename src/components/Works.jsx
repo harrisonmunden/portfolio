@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './Works.css';
 import { motion } from 'framer-motion';
 import { useFadeInOnVisible } from './hooks/useFadeInOnVisible';
+import ModelViewer from './ModelViewer';
 
 let globalVisibleCount = 8; // or your BATCH_SIZE
 
@@ -42,6 +43,30 @@ const artwork = [
   { id: 28, src: '/src/assets/3DArtwork/WormSong.png', thumbnailSrc: '/src/assets/3DArtwork/thumbnails/WormSong.webp', alt: 'Worm Song', title: 'Worm Song', year: '2023' },
 ];
 
+const modelTiles = [
+  {
+    id: 1,
+    label: 'Car Model',
+    img: '/src/assets/3DArtwork/thumbnails/Car.webp', // Placeholder, update if you have a car thumbnail
+    modelPath: '/src/assets/3DModels/Car.glb',
+    texturePath: '/src/assets/3DModels/CarAlbedo.png',
+  },
+  {
+    id: 2,
+    label: 'Future Model',
+    img: '/src/assets/3DArtwork/thumbnails/BusyGirlCover.webp', // Placeholder
+    modelPath: '/src/assets/3DModels/Car.glb',
+    texturePath: '/src/assets/3DModels/CarAlbedo.png',
+  },
+  {
+    id: 3,
+    label: 'Concept Model',
+    img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Placeholder
+    modelPath: '/src/assets/3DModels/Car.glb',
+    texturePath: '/src/assets/3DModels/CarAlbedo.png',
+  },
+];
+
 const BATCH_SIZE = 12;
 
 const Works = ({ goTo, hideWorkNav }) => {
@@ -51,6 +76,9 @@ const Works = ({ goTo, hideWorkNav }) => {
   const [visibleCount, setVisibleCount] = useState(globalVisibleCount);
   const [lightboxImageLoaded, setLightboxImageLoaded] = useState(false);
   const sentinelRef = useRef();
+  const [modelViewerOpen, setModelViewerOpen] = useState(false);
+  const [modelViewerProps, setModelViewerProps] = useState({});
+  const [clickedModelTile, setClickedModelTile] = useState(null);
 
   const openImage = (image) => {
     setSelectedImage(image);
@@ -116,6 +144,8 @@ const Works = ({ goTo, hideWorkNav }) => {
 
   // Never reset visibleCount to a lower value
 
+  // No test button or debug logic
+
   return (
     <div className="works-page">
       {/* Header */}
@@ -132,6 +162,38 @@ const Works = ({ goTo, hideWorkNav }) => {
           </motion.h1>
         )}
       </div>
+
+      {/* 3D Models Section (now first) */}
+      <h2 className="section-title models-title">Load 3D Models</h2>
+      <div className="models-row">
+        {modelTiles.map((tile) => (
+          <div
+            key={tile.id}
+            className="model-tile"
+            onClick={() => {
+              setModelViewerProps({ modelPath: tile.modelPath, texturePath: tile.texturePath });
+              setModelViewerOpen(true);
+              setClickedModelTile(tile.id);
+              setTimeout(() => setClickedModelTile(null), 250);
+            }}
+            style={{
+              cursor: 'pointer',
+              transform: clickedModelTile === tile.id ? 'scale(1.58)' : 'scale(1)',
+              transition: 'transform 0.18s cubic-bezier(.4,2,.6,1)'
+            }}
+          >
+            <img src={tile.img} alt={tile.label} className="model-tile-img" loading="lazy" />
+            <div className="model-tile-label">{tile.label}</div>
+          </div>
+        ))}
+      </div>
+      {modelViewerOpen && (
+        <ModelViewer
+          modelPath={modelViewerProps.modelPath}
+          texturePath={modelViewerProps.texturePath}
+          onClose={() => setModelViewerOpen(false)}
+        />
+      )}
 
       {/* Video Games Section */}
       <h2 className="section-title video-games-title">Video Games</h2>
