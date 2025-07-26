@@ -47,6 +47,7 @@ const modelTiles = [
   {
     id: 1,
     label: 'Car Model',
+    title: 'Car Model',
     img: '/src/assets/3DArtwork/thumbnails/Car.webp', // Placeholder, update if you have a car thumbnail
     modelPath: '/src/assets/3DModels/Car.glb',
     texturePath: '/src/assets/3DModels/CarAlbedo.png',
@@ -54,6 +55,7 @@ const modelTiles = [
   {
     id: 2,
     label: 'Flowers Model',
+    title: 'Flowers Model',
     img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Use Flower artwork as a placeholder thumbnail
     modelPath: '/src/assets/3DModels/Flowers.glb',
     texturePath: '/src/assets/3DModels/FlowersTexture.png',
@@ -61,6 +63,7 @@ const modelTiles = [
   {
     id: 3,
     label: 'Concept Model',
+    title: 'Concept Model',
     img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Placeholder
     modelPath: '/src/assets/3DModels/Car.glb',
     texturePath: '/src/assets/3DModels/CarAlbedo.png',
@@ -177,7 +180,11 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
             key={tile.id}
             className="model-tile"
             onClick={() => {
-              setModelViewerProps({ modelPath: tile.modelPath, texturePath: tile.texturePath });
+              setModelViewerProps({ 
+                modelPath: tile.modelPath, 
+                texturePath: tile.texturePath,
+                title: tile.title
+              });
               setModelViewerOpen(true);
               setClickedModelTile(tile.id);
               setTimeout(() => setClickedModelTile(null), 250);
@@ -198,6 +205,7 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
           modelPath={modelViewerProps.modelPath}
           texturePath={modelViewerProps.texturePath}
           onClose={() => setModelViewerOpen(false)}
+          title={modelViewerProps.title || "3D Model Viewer"}
         />
       )}
 
