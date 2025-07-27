@@ -9,6 +9,7 @@ const aboutHeaders = {
 };
 const bulletImg = '/src/assets/AboutAssets/About/Bullet.png';
 const chevronImg = '/src/assets/GlassyObjects/About/Chevron.png';
+const computerSelfieImg = '/src/assets/AboutAssets/ComputerSelfe-450x600-q92.webp';
 
 const BATCH_SIZE = 1;
 let globalVisibleCount = BATCH_SIZE;
@@ -88,6 +89,35 @@ const About = ({ goTo, hideAboutNav }) => {
             <motion.img src={chevronImg} alt="chevron" className="chevron-img" layoutId="about-chevron" />
           </motion.h1>
         )}
+      </div>
+
+      {/* Photo Section */}
+      <div className="about-photo-section">
+        <div className="about-intro-section">
+          <h2 className="about-intro-title">Hi, I'm Harrison</h2>
+          <p className="about-intro-text">
+            I'm a 3D UI Developer and designer passionate about creating immersive digital experiences. 
+            With expertise in 3D modeling, shader scripting, and interactive design, I bridge the gap 
+            between technology and creativity. Currently working at Tesla, where I  work on3D design 
+            and engineering for charging, energy, and mobile applications.
+          </p>
+        </div>
+        <div className="about-photo-container">
+          <div className="photo-container">
+            <img 
+              src={computerSelfieImg} 
+              alt="Computer selfie" 
+              className="about-photo"
+              loading="lazy"
+              srcSet={`
+                /src/assets/AboutAssets/ComputerSelfe-200x260-q92.webp 200w,
+                /src/assets/AboutAssets/ComputerSelfe-350x450-q92.webp 350w,
+                /src/assets/AboutAssets/ComputerSelfe-450x600-q92.webp 450w
+              `}
+              sizes="(max-width: 600px) 200px, (max-width: 900px) 350px, 450px"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Experience Timeline */}

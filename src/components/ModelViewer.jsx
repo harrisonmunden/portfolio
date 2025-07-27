@@ -111,8 +111,8 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     const composer = new EffectComposer(renderer);
     const renderPass = new RenderPass(scene, camera);
     composer.addPass(renderPass);
-    let bloomStrength = 1.5;
-    let bloomRadius = 0.3;
+    let bloomStrength = 1.2;
+    let bloomRadius = 0.15;
     let bloomThreshold = 0.22;
     if (modelPath && modelPath.includes('Flowers.glb')) {
       bloomStrength = 0.45;
@@ -172,6 +172,55 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       }
     }
 
+    // Create animated dots for car scene
+    const dots = [];
+    if (modelPath && modelPath.includes('Car.glb')) {
+      const dotColors = [0xEEFFF9, 0x9CD7BF, 0x4BB793]; // Different shades of green
+      const layerConfigs = [
+        { radius: 15, count: 20, delay: 0.1, color: 0xEEFFF9 },   // Layer 1: closest, fastest
+        { radius: 25, count: 30, delay: 0.3, color: 0x9CD7BF },   // Layer 2: medium, medium delay
+        { radius: 35, count: 40, delay: 2.6, color: 0x4BB793 }    // Layer 3: farthest, slowest
+      ];
+      
+      layerConfigs.forEach((layer, layerIndex) => {
+        for (let i = 0; i < layer.count; i++) {
+          // Create tiny dot geometry
+          const dotGeometry = new THREE.SphereGeometry(0.05, 8, 6);
+          const dotMaterial = new THREE.MeshBasicMaterial({
+            color: layer.color,
+            transparent: true,
+            opacity: 0.7
+          });
+          const dot = new THREE.Mesh(dotGeometry, dotMaterial);
+          
+          // Random position on the layer's radius
+          const angle = Math.random() * Math.PI * 2;
+          const height = (Math.random() - 0.5) * 10; // Random height variation
+          const radiusVariation = (Math.random() - 0.5) * 3; // Random radius variation
+          const finalRadius = layer.radius + radiusVariation;
+          dot.position.set(
+            Math.cos(angle) * finalRadius,
+            height,
+            Math.sin(angle) * finalRadius
+          );
+          
+          // Store layer info for animation
+          dot.userData.layerIndex = layerIndex;
+          dot.userData.delay = layer.delay;
+          dot.userData.originalPosition = dot.position.clone();
+          dot.userData.originalRadius = finalRadius; // Store the random radius
+          dot.userData.velocity = new THREE.Vector3(
+            (Math.random() - 0.5) * 0.01,
+            (Math.random() - 0.5) * 0.01,
+            (Math.random() - 0.5) * 0.01
+          );
+          
+          scene.add(dot);
+          dots.push(dot);
+        }
+      });
+    }
+
     // Load Model
     const loader = new GLTFLoader();
     loader.load(
@@ -190,6 +239,110 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         model.rotation.y = startY;
         scene.add(model);
         modelLoaded = true;
+        
+        // Load floor for Car scene
+        if (modelPath && modelPath.includes('Car.glb')) {
+          console.log('Loading CarFloor.glb for Car scene');
+          console.log('Model path:', modelPath);
+          loader.load(
+            '/src/assets/3DModels/CarFloor.glb',
+            (floorGltf) => {
+              if (!isMounted) return;
+              console.log('CarFloor loaded successfully');
+              const floor = floorGltf.scene;
+              
+              // Position floor for car scene
+              floor.position.y = -0.5; // Slightly below the car
+              // Floor rotation will be updated in animation loop to match car
+              floor.userData.isCarFloor = true;
+              
+              // Create pulsing light shader for the floor
+              let meshCount = 0;
+              floor.traverse((child) => {
+                if (child.isMesh) {
+                  meshCount++;
+                  console.log('Applying shader to CarFloor mesh', meshCount);
+                  // Create custom shader material with pulsing light effect
+                  const vertexShader = `
+                    varying vec2 vUv;
+                    void main() {
+                      vUv = uv;
+                      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                  `;
+                  
+                                    const fragmentShader = `
+                    uniform float time;
+                    uniform float lightTime;
+                    varying vec2 vUv;
+                    
+                    void main() {
+                      // Create moving white pulse that travels along UV.y only
+                      // Calculate position of the pulse (moves from bottom to top)
+                      float pulsePosition = mod(lightTime * 0.6, 1.0); // 0 to 1 over time
+                      float pulseWidth = 0.15; // Width of the pulse
+                      float pulseDistance = abs(vUv.y * 0.8 - pulsePosition);
+                      
+                      // Create a soft white pulse with gentle falloff
+                      float whitePulse = 1.0 - smoothstep(0.0, pulseWidth * 2.0, pulseDistance);
+                      whitePulse = pow(whitePulse, 0.8); // Softer falloff
+                      
+                      // Simple base color without noise
+                      vec3 baseColor = vec3(0.01, 0.04, 0.03);
+                      vec3 greenColor = vec3(0.0, 0.4, 0.3) * whitePulse;
+                      
+                      // Combine - green pulse with reduced intensity
+                      vec3 finalColor = baseColor + greenColor * 0.15;
+                      
+                      // Fade alpha at edges based on UV.y
+                      float edgeFade = smoothstep(0.0, 0.3, vUv.y) * smoothstep(1.0, 0.7, vUv.y);
+                      float alpha = 0.8 * edgeFade;
+                      
+                      gl_FragColor = vec4(finalColor, alpha);
+                    }
+                  `;
+                  
+                  // Create shader material
+                  const shaderMaterial = new THREE.ShaderMaterial({
+                    vertexShader: vertexShader,
+                    fragmentShader: fragmentShader,
+                    uniforms: {
+                      time: { value: 0.0 },
+                      lightTime: { value: 0.0 }
+                    },
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    alphaTest: 0.01
+                  });
+                  
+                  child.material = shaderMaterial;
+                  child.material.needsUpdate = true;
+                  // Mark this mesh as having a shader
+                  child.userData.hasShader = true;
+                  console.log('Shader applied to CarFloor mesh', meshCount);
+                }
+              });
+              
+              console.log('Total meshes found in CarFloor:', meshCount);
+              
+              // Mark floor for animation
+              floor.userData.isFloor = true;
+              floor.scale.setScalar(0); // Start at scale 0
+              
+              scene.add(floor);
+              console.log('CarFloor added to scene');
+              
+              // If no texture, start spin-in (floor is loaded)
+              if (!texturePath) {
+                startSpinIn();
+              }
+            },
+            undefined,
+            (error) => {
+              console.error('Error loading car floor:', error);
+            }
+          );
+        }
         
         // Load floor only for flowers scene
         if (modelPath && modelPath.includes('Flowers.glb')) {
@@ -490,6 +643,37 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       cameraRadius += (targetRadius - cameraRadius) * lerpFactor;
       updateCamera();
       
+      // Update shader time for car floor and match car rotation
+      let shaderUpdateCount = 0;
+      let totalObjects = 0;
+      scene.traverse((child) => {
+        totalObjects++;
+        if (child.userData && child.userData.hasShader && child.material) {
+          shaderUpdateCount++;
+          child.material.uniforms.time.value += 0.016; // ~60fps
+          child.material.uniforms.lightTime.value += 0.016; // ~60fps for light translation
+          
+          // Debug: log the lightTime value every 60 frames (once per second)
+          if (Math.floor(child.material.uniforms.lightTime.value * 60) % 60 === 0) {
+            console.log('LightTime value:', child.material.uniforms.lightTime.value, 'for shader', shaderUpdateCount);
+          }
+          
+          // Force material update
+          child.material.needsUpdate = true;
+        }
+        
+        // Match car floor rotation to car model
+        if (child.userData && child.userData.isCarFloor && model) {
+          child.rotation.y = model.rotation.y;
+        }
+      });
+      
+      if (shaderUpdateCount === 0) {
+        console.log('No shaders found to update in animation loop. Total objects in scene:', totalObjects);
+      } else {
+        console.log('Updated', shaderUpdateCount, 'shaders in animation loop');
+      }
+      
       // Update floating rings with viscous motion (only for flowers scene)
       if (rings.length > 0) {
         rings.forEach((ring, index) => {
@@ -518,6 +702,8 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
           ring.rotation.z += 0.0005;
         });
       }
+      
+
       
       composer.render();
     };
