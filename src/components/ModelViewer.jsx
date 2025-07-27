@@ -36,7 +36,11 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       if (texture.matrixAutoUpdate !== undefined) {
         texture.matrixAutoUpdate = false;
         const m = new THREE.Matrix3();
-        const angle = Math.PI / 2; // 90 degrees
+        let angle = Math.PI / 2; // 90 degrees default
+        // Rotate an additional 90 degrees for purse scene to reduce back lighting
+        if (modelPath && modelPath.includes('purse1.glb')) {
+          angle = -Math.PI * 2; // 180 degrees total (90 + 90)
+        }
         m.set(
           Math.cos(angle), 0, Math.sin(angle),
           0, 1, 0,
@@ -68,21 +72,73 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     if (modelPath && modelPath.includes('Motorcycle.glb')) {
       initialDistance = 15; // Much closer for motorcycle
     }
+    if (modelPath && modelPath.includes('purse1.glb')) {
+      initialDistance = 25; // Medium distance for purse
+    }
     let cameraTheta = Math.PI / 2; // horizontal angle
     let cameraPhi = Math.PI / 2.2; // vertical angle
     let cameraRadius = initialDistance;
     let targetTheta = cameraTheta;
     let targetPhi = cameraPhi;
     let targetRadius = cameraRadius;
-    // Lower the camera target for Flowers model
-    let target;
-    if (modelPath && modelPath.includes('Flowers.glb')) {
-      target = new THREE.Vector3(0, 5, 0); // Look at a point higher up in the flowers geometry
+    
+    // ========================================
+    // CUSTOM CAMERA LANDING POSITIONS
+    // ========================================
+    // Configure the final landing position for each scene here
+    // These values will be used after the spin-in animation completes
+    
+    let landingConfig = {
+      theta: cameraTheta,
+      phi: cameraPhi,
+      radius: cameraRadius,
+      target: null // Will be set based on model
+    };
+    
+    // Custom landing positions for each scene
+    if (modelPath && modelPath.includes('Car.glb')) {
+      // Car scene landing position
+      landingConfig = {
+        theta: Math.PI / 2, // 90 degrees
+        phi: Math.PI / 2.2, // Slightly above horizontal
+        radius: 47,
+        target: new THREE.Vector3(0, 0.7, 0)
+      };
+    } else if (modelPath && modelPath.includes('Flowers.glb')) {
+      // Flowers scene landing position
+      landingConfig = {
+        theta: Math.PI / 2,
+        phi: Math.PI / 2.2,
+        radius: 60,
+        target: new THREE.Vector3(0, 5, 0)
+      };
     } else if (modelPath && modelPath.includes('Motorcycle.glb')) {
-      target = new THREE.Vector3(0, 2, 0); // Look at a point lower for motorcycle
-    } else {
-      target = new THREE.Vector3(0, 0.7, 0); // Default (Car)
+      // Motorcycle scene landing position
+      landingConfig = {
+        theta: Math.PI / 2,
+        phi: Math.PI / 2.2,
+        radius: 15,
+        target: new THREE.Vector3(0, 2, 0)
+      };
+    } else if (modelPath && modelPath.includes('purse1.glb')) {
+      // Purse scene landing position
+      landingConfig = {
+        theta: 3.3,
+        phi: 2.34,
+        radius: 30,
+        target: new THREE.Vector3(0, 0, 0) // Will be updated when model loads
+      };
     }
+    
+    // Apply landing config to current camera state
+    cameraTheta = landingConfig.theta;
+    cameraPhi = landingConfig.phi;
+    cameraRadius = landingConfig.radius;
+    targetTheta = cameraTheta;
+    targetPhi = cameraPhi;
+    targetRadius = cameraRadius;
+    // Lower the camera target for Flowers model
+    let target = landingConfig.target;
     // Slightly wider FOV on mobile for a better view
     camera = new THREE.PerspectiveCamera(isMobile ? 48 : 30, width / height, 0.1, 100);
     function updateCamera() {
@@ -126,6 +182,11 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       bloomStrength = 0.45;
       bloomRadius = 0.08;
       bloomThreshold = 0.28;
+    } else if (modelPath && modelPath.includes('purse1.glb')) {
+      // Reduce bloom for purse scene
+      bloomStrength = 0.1;
+      bloomRadius = 0.05;
+      bloomThreshold = 0.35;
     }
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(width, height),
@@ -234,7 +295,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     if (modelPath && modelPath.includes('Motorcycle.glb')) {
       const bandConfigs = [
         { radius: 0.7, color: 0xffffff, height: 0 },    // Inner band - smaller and white
-        { radius: 1.35, color: 0xffffff, height: 0 },   // Middle band - smaller and white
+        { radius: 1.352, color: 0xffffff, height: 0 },   // Middle band - smaller and white
         { radius: 2.1, color: 0xffffff, height: 0 }    // Outer band - smaller and white
       ];
       
@@ -300,6 +361,94 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         
         scene.add(model);
         modelLoaded = true;
+        
+        // For purse model, ensure spin-in starts
+        if (modelPath && modelPath.includes('purse1.glb')) {
+          console.log('Purse model detected');
+          console.log('Texture path:', texturePath);
+          console.log('Model loaded:', modelLoaded);
+          
+          // Calculate the center of the purse object
+          const box = new THREE.Box3().setFromObject(model);
+          const center = box.getCenter(new THREE.Vector3());
+          target.copy(center);
+          console.log('Purse center:', center);
+          
+          // Update camera target to purse center
+          if (modelPath && modelPath.includes('purse1.glb')) {
+            target = center;
+            landingConfig.target = center; // Update landing config target
+          }
+          
+          // Load purse table
+          console.log('Loading PurseTable.glb for purse scene');
+          loader.load(
+            '/src/assets/3DModels/PurseTable.glb',
+            (tableGltf) => {
+              if (!isMounted) return;
+              console.log('PurseTable loaded successfully');
+              const table = tableGltf.scene;
+              
+              // Position table below the purse
+              table.position.y = -0.05; // Moved up from -2
+              table.rotation.y = Math.PI / 4 + 0.16 + Math.PI; // Rotate 45 degrees
+              table.userData.isPurseTable = true;
+              
+              // Load and apply table texture
+              const textureLoader = new THREE.TextureLoader();
+              textureLoader.load(
+                '/src/assets/3DModels/PurseTableAlbedo.png',
+                (texture) => {
+                  if (!isMounted) return;
+                  texture.flipY = false;
+                  texture.encoding = THREE.sRGBEncoding;
+                  
+                  table.traverse((child) => {
+                    if (child.isMesh) {
+                      // Only apply if mesh has UVs
+                      if (child.geometry && child.geometry.attributes.uv) {
+                        child.material = new THREE.MeshStandardMaterial({
+                          map: texture,
+                          metalness: 0.4,
+                          roughness: 0.2,
+                          envMapIntensity: 1.0
+                        });
+                        child.material.needsUpdate = true;
+                      }
+                    }
+                  });
+                },
+                undefined,
+                (error) => {
+                  console.error('Error loading table texture:', error);
+                }
+              );
+              
+              // Mark table for animation
+              table.userData.isTable = true;
+              // Start table at rotated position (no scaling)
+              table.rotation.y = Math.PI / 4 + 0.16 + Math.PI + Math.PI * 2; // Start rotated 360 degrees more
+              
+              scene.add(table);
+              console.log('PurseTable added to scene');
+              
+              // If no texture, start spin-in (table is loaded)
+              if (!texturePath) {
+                startSpinIn();
+              }
+            },
+            undefined,
+            (error) => {
+              console.error('Error loading purse table:', error);
+            }
+          );
+          
+          // If no texture, start spin-in immediately
+          if (!texturePath) {
+            console.log('Starting spin-in for purse (no texture)');
+            startSpinIn();
+          }
+        }
         
         // Load floor for Car scene
         if (modelPath && modelPath.includes('Car.glb')) {
@@ -474,7 +623,13 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         if (!texturePath) {
           startSpinIn();
         }
+        
+        // For purse model, ensure spin-in starts even without texture
+        if (modelPath && modelPath.includes('purse1.glb') && !texturePath) {
+          startSpinIn();
+        }
         if (texturePath) {
+          console.log('Loading texture:', texturePath);
           const textureLoader = new THREE.TextureLoader();
           textureLoader.load(texturePath, (texture) => {
             if (!isMounted) return;
@@ -493,6 +648,11 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                     metalness = 0.45;
                     roughness = 0.45;
                     envMapIntensity = 0.7;
+                  } else if (modelPath && modelPath.includes('purse1.glb')) {
+                    // Make purse less shiny
+                    metalness = 0.3;
+                    roughness = 0.8;
+                    envMapIntensity = 0.3;
                   }
                   child.material = new THREE.MeshStandardMaterial({
                     map: texture,
@@ -509,7 +669,19 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               }
             });
             textureLoaded = true;
+            console.log('Texture loaded, modelLoaded:', modelLoaded);
             if (modelLoaded) {
+              console.log('Starting spin-in for texture-loaded model');
+              startSpinIn();
+            }
+          },
+          undefined,
+          (error) => {
+            console.error('Error loading texture:', error);
+            // If texture fails to load, still start spin-in
+            textureLoaded = true;
+            if (modelLoaded) {
+              console.log('Starting spin-in after texture load error');
               startSpinIn();
             }
           });
@@ -524,7 +696,11 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               metalness = 0.45;
               roughness = 0.45;
               envMapIntensity = 0.7;
-            }
+            } else if (modelPath && modelPath.includes('purse1.glb')) {
+              // Make purse less shiny
+              metalness = 0.6;
+              roughness = 0.1;
+              envMapIntensity = 0.1;            }
             child.material.metalness = metalness;
             child.material.roughness = roughness;
             child.material.envMapIntensity = envMapIntensity;
@@ -547,13 +723,16 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       }
     );
     function startSpinIn() {
+      console.log('startSpinIn called, spinInStarted:', spinInStarted);
       if (spinInStarted) return;
       spinInStarted = true;
+      console.log('Setting spinInStarted to true');
       // Pre-warm GPU for first render
       if (renderer && scene && camera) {
         renderer.compile(scene, camera);
       }
       // Fade out spinner
+      console.log('Setting loading to false');
       setLoading(false);
       // Fade in scene from black, then start animation
       setTimeout(() => {
@@ -575,6 +754,12 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               if (child.userData && child.userData.isFloor) {
                 child.scale.setScalar(ease);
               }
+              // Animate table rotation (no scaling)
+              if (child.userData && child.userData.isTable) {
+                const startRotation = Math.PI / 4 + 0.16 + Math.PI + Math.PI * 2;
+                const endRotation = Math.PI / 4 + 0.16 + Math.PI;
+                child.rotation.y = startRotation + (endRotation - startRotation) * ease;
+              }
             });
             
             // Animate light bands scale from 0 to 1 (only for motorcycle)
@@ -592,6 +777,10 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               scene.traverse((child) => {
                 if (child.userData && child.userData.isFloor) {
                   child.scale.setScalar(1);
+                }
+                // Set table to final rotation
+                if (child.userData && child.userData.isTable) {
+                  child.rotation.y = Math.PI / 4 + 0.16 + Math.PI;
                 }
               });
               // Set light bands to final scale (only for motorcycle)
@@ -729,6 +918,18 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       cameraPhi += (targetPhi - cameraPhi) * lerpFactor;
       cameraRadius += (targetRadius - cameraRadius) * lerpFactor;
       updateCamera();
+      
+      // Log camera parameters every frame
+      console.log('Camera Parameters:', {
+        theta: cameraTheta,
+        phi: cameraPhi,
+        radius: cameraRadius,
+        targetTheta: targetTheta,
+        targetPhi: targetPhi,
+        targetRadius: targetRadius,
+        position: camera.position.clone(),
+        target: target.clone()
+      });
       
       // Update shader time for car floor and match car rotation
       let shaderUpdateCount = 0;

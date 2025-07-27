@@ -68,6 +68,14 @@ const modelTiles = [
     modelPath: '/src/assets/3DModels/Motorcycle.glb',
     texturePath: '/src/assets/3DModels/MotorcycleAlbedo.png',
   },
+  {
+    id: 4,
+    label: 'Purse Model',
+    title: 'Purse Model',
+    img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Placeholder thumbnail
+    modelPath: '/src/assets/3DModels/purse1.glb',
+    texturePath: '/src/assets/3DModels/Purse1Texture.png',
+  },
 ];
 
 const BATCH_SIZE = 12;
