@@ -65,6 +65,9 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     if (modelPath && modelPath.includes('Flowers.glb')) {
       initialDistance = 60; // Even farther for flowers scene
     }
+    if (modelPath && modelPath.includes('Motorcycle.glb')) {
+      initialDistance = 15; // Much closer for motorcycle
+    }
     let cameraTheta = Math.PI / 2; // horizontal angle
     let cameraPhi = Math.PI / 2.2; // vertical angle
     let cameraRadius = initialDistance;
@@ -75,6 +78,8 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     let target;
     if (modelPath && modelPath.includes('Flowers.glb')) {
       target = new THREE.Vector3(0, 5, 0); // Look at a point higher up in the flowers geometry
+    } else if (modelPath && modelPath.includes('Motorcycle.glb')) {
+      target = new THREE.Vector3(0, 2, 0); // Look at a point lower for motorcycle
     } else {
       target = new THREE.Vector3(0, 0.7, 0); // Default (Car)
     }
@@ -88,12 +93,15 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       // Shift the entire view down by 30 points
       camera.position.y += 20;
       
-      // Prevent camera from going below the floor for Flowers model
+      // Adjust camera height for different models
       if (modelPath && modelPath.includes('Flowers.glb')) {
         const floorY = 0; // y=0 for flowers pivot point
         if (camera.position.y < floorY) {
           camera.position.y = floorY;
         }
+      }
+      if (modelPath && modelPath.includes('Motorcycle.glb')) {
+        camera.position.y -= 15; // Lower camera for motorcycle
       }
       camera.lookAt(target);
     }
@@ -221,6 +229,53 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       });
     }
 
+    // Create dynamic light bands for motorcycle scene
+    const lightBands = [];
+    if (modelPath && modelPath.includes('Motorcycle.glb')) {
+      const bandConfigs = [
+        { radius: 0.7, color: 0xffffff, height: 0 },    // Inner band - smaller and white
+        { radius: 1.35, color: 0xffffff, height: 0 },   // Middle band - smaller and white
+        { radius: 2.1, color: 0xffffff, height: 0 }    // Outer band - smaller and white
+      ];
+      
+      bandConfigs.forEach((config, index) => {
+        // Create ring geometry for the band
+        const ringGeometry = new THREE.TorusGeometry(config.radius, 0.02, 16, 64);
+        const bandMaterial = new THREE.MeshBasicMaterial({
+          color: config.color,
+          transparent: true,
+          opacity: 0.1, // Much less opaque by default
+          side: THREE.DoubleSide,
+          depthWrite: false, // Disable depth writing
+          depthTest: false, // Disable depth testing - render as overlay
+          blending: THREE.AdditiveBlending // Additive blending for light effect
+        });
+        const band = new THREE.Mesh(ringGeometry, bandMaterial);
+        
+        // Position the band horizontally at camera target, behind the motorcycle
+        band.position.set(target.x, target.y + config.height, target.z - 20); // Much further back to ensure behind geometry
+        
+        // Store band data for animation
+        band.userData.bandIndex = index;
+        band.userData.baseRadius = config.radius;
+        band.userData.targetRadius = config.radius;
+        band.userData.currentRadius = config.radius;
+        band.userData.opacity = 0.1; // Base opacity
+        band.userData.targetOpacity = 0.1; // Base opacity
+        band.userData.lastCameraTheta = cameraTheta;
+        band.userData.lastCameraPhi = cameraPhi;
+        band.userData.movementThreshold = 0.001; // Minimum movement to trigger bands
+        band.userData.scaleInProgress = true; // Track scale-in animation
+        
+        // Set render order to ensure bands render behind everything
+        band.renderOrder = -1; // Simple negative render order
+        band.scale.setScalar(0); // Start at scale 0 for scale-in animation
+        band.userData.initialScaleComplete = false; // Track if initial scale is done
+        scene.add(band);
+        lightBands.push(band);
+      });
+    }
+
     // Load Model
     const loader = new GLTFLoader();
     loader.load(
@@ -237,6 +292,12 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         }
         const startY = targetY + 1.5;
         model.rotation.y = startY;
+        
+        // Ensure motorcycle model renders on top of everything
+        if (modelPath && modelPath.includes('Motorcycle.glb')) {
+          model.renderOrder = 1; // Simple positive render order
+        }
+        
         scene.add(model);
         modelLoaded = true;
         
@@ -467,6 +528,14 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             child.material.metalness = metalness;
             child.material.roughness = roughness;
             child.material.envMapIntensity = envMapIntensity;
+            
+            // Ensure motorcycle renders in front of bands
+            if (modelPath && modelPath.includes('Motorcycle.glb')) {
+              child.renderOrder = 1; // Simple positive render order
+              child.material.depthWrite = true;
+              child.material.depthTest = true;
+            }
+            
             child.material.needsUpdate = true;
           }
         });
@@ -508,6 +577,13 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               }
             });
             
+            // Animate light bands scale from 0 to 1 (only for motorcycle)
+            if (modelPath && modelPath.includes('Motorcycle.glb')) {
+              lightBands.forEach((band) => {
+                band.scale.setScalar(ease);
+              });
+            }
+            
             if (t < 1 && isMounted) {
               requestAnimationFrame(animateSpinIn);
             } else if (model) {
@@ -518,6 +594,13 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                   child.scale.setScalar(1);
                 }
               });
+              // Set light bands to final scale (only for motorcycle)
+              if (modelPath && modelPath.includes('Motorcycle.glb')) {
+                lightBands.forEach((band) => {
+                  band.scale.setScalar(1);
+                  band.userData.initialScaleComplete = true; // Mark initial scale as complete
+                });
+              }
             }
           }
           requestAnimationFrame(animateSpinIn);
@@ -532,7 +615,11 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     // Prevent going underneath for Flowers model
     const minPhi = (modelPath && modelPath.includes('Flowers.glb')) ? 0.08 : 0.08;
     const maxPhi = (modelPath && modelPath.includes('Flowers.glb')) ? Math.PI - 0.02 : Math.PI - 0.2;
-    const minRadius = 2, maxRadius = 60;
+    let minRadius = 2, maxRadius = 60;
+    if (modelPath && modelPath.includes('Motorcycle.glb')) {
+      minRadius = 1; // Allow closer zoom for motorcycle
+      maxRadius = 30; // Limit max zoom for motorcycle
+    }
     function onPointerDown(e) {
       isDragging = true;
       lastX = e.clientX;
@@ -703,7 +790,52 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         });
       }
       
-
+      // Update dynamic light bands for motorcycle scene
+      if (lightBands.length > 0) {
+        const cameraMovement = Math.abs(cameraTheta - targetTheta) + Math.abs(cameraPhi - targetPhi);
+        const isMoving = cameraMovement > 0.001;
+        
+        lightBands.forEach((band) => {
+          // Calculate movement intensity
+          const thetaDiff = Math.abs(cameraTheta - band.userData.lastCameraTheta);
+          const phiDiff = Math.abs(cameraPhi - band.userData.lastCameraPhi);
+          const totalMovement = thetaDiff + phiDiff;
+          
+          // Update target opacity and scale based on movement
+          if (isMoving && totalMovement > band.userData.movementThreshold) {
+            band.userData.targetOpacity = Math.min(0.8, band.userData.targetOpacity + totalMovement * 2);
+            band.userData.targetRadius = band.userData.baseRadius + totalMovement * 20; // Expand radius
+          } else {
+            band.userData.targetOpacity = Math.max(0.1, band.userData.targetOpacity - 0.02); // Return to base opacity
+            band.userData.targetRadius = Math.max(band.userData.baseRadius, band.userData.targetRadius - 0.5); // Contract radius
+          }
+          
+          // Smoothly interpolate opacity and radius
+          band.userData.opacity += (band.userData.targetOpacity - band.userData.opacity) * 0.1;
+          band.userData.currentRadius += (band.userData.targetRadius - band.userData.currentRadius) * 0.1;
+          
+          // Update band appearance
+          band.material.opacity = band.userData.opacity;
+          
+          // Apply radius scaling only after initial scale-in animation is complete
+          if (band.userData.initialScaleComplete) {
+            band.scale.setScalar(band.userData.currentRadius / band.userData.baseRadius);
+          }
+          
+          // Keep bands centered relative to camera view (stationary in view)
+          const cameraDirection = new THREE.Vector3();
+          camera.getWorldDirection(cameraDirection);
+          const bandCenter = target.clone().add(cameraDirection.clone().multiplyScalar(-12)); // Move much further back
+          band.position.set(bandCenter.x, bandCenter.y, bandCenter.z);
+          
+          // Make band face the camera
+          band.lookAt(camera.position);
+          
+          // Store current camera position for next frame
+          band.userData.lastCameraTheta = cameraTheta;
+          band.userData.lastCameraPhi = cameraPhi;
+        });
+      }
       
       composer.render();
     };

@@ -62,11 +62,11 @@ const modelTiles = [
   },
   {
     id: 3,
-    label: 'Concept Model',
-    title: 'Concept Model',
-    img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Placeholder
-    modelPath: '/src/assets/3DModels/Car.glb',
-    texturePath: '/src/assets/3DModels/CarAlbedo.png',
+    label: 'Motorcycle Model',
+    title: 'Motorcycle Model',
+    img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Placeholder thumbnail
+    modelPath: '/src/assets/3DModels/Motorcycle.glb',
+    texturePath: '/src/assets/3DModels/MotorcycleAlbedo.png',
   },
 ];
 

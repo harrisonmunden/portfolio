@@ -9,7 +9,7 @@ const aboutHeaders = {
 };
 const bulletImg = '/src/assets/AboutAssets/About/Bullet.png';
 const chevronImg = '/src/assets/GlassyObjects/About/Chevron.png';
-const computerSelfieImg = '/src/assets/AboutAssets/ComputerSelfe-450x600-q92.webp';
+const computerSelfieImg = '/src/assets/AboutAssets/ComputerSelfe-600x800-q90.webp';
 
 const BATCH_SIZE = 1;
 let globalVisibleCount = BATCH_SIZE;
@@ -110,9 +110,9 @@ const About = ({ goTo, hideAboutNav }) => {
               className="about-photo"
               loading="lazy"
               srcSet={`
-                /src/assets/AboutAssets/ComputerSelfe-200x260-q92.webp 200w,
-                /src/assets/AboutAssets/ComputerSelfe-350x450-q92.webp 350w,
-                /src/assets/AboutAssets/ComputerSelfe-450x600-q92.webp 450w
+                /src/assets/AboutAssets/ComputerSelfe-250x330-q90.webp 250w,
+                /src/assets/AboutAssets/ComputerSelfe-450x600-q90.webp 450w,
+                /src/assets/AboutAssets/ComputerSelfe-600x800-q90.webp 600w
               `}
               sizes="(max-width: 600px) 200px, (max-width: 900px) 350px, 450px"
             />
