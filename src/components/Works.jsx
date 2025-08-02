@@ -48,33 +48,37 @@ const modelTiles = [
     id: 1,
     label: 'Car Model',
     title: 'Car Model',
-    img: '/src/assets/3DArtwork/thumbnails/Car.webp', // Placeholder, update if you have a car thumbnail
+    img: '/src/assets/3DArtwork/thumbnails/Car.webp',
     modelPath: '/src/assets/3DModels/Car.glb',
     texturePath: '/src/assets/3DModels/CarAlbedo.png',
+    style: 'default'
   },
   {
     id: 2,
     label: 'Flowers Model',
     title: 'Flowers Model',
-    img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Use Flower artwork as a placeholder thumbnail
+    img: '/src/assets/3DArtwork/thumbnails/Flower.webp',
     modelPath: '/src/assets/3DModels/Flowers.glb',
     texturePath: '/src/assets/3DModels/FlowersTexture.png',
+    style: 'default'
   },
   {
     id: 3,
     label: 'Motorcycle Model',
     title: 'Motorcycle Model',
-    img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Placeholder thumbnail
+    img: '/src/assets/3DArtwork/thumbnails/Flower.webp',
     modelPath: '/src/assets/3DModels/Motorcycle.glb',
     texturePath: '/src/assets/3DModels/MotorcycleAlbedo.png',
+    style: 'default'
   },
   {
     id: 4,
     label: 'Purse Model',
     title: 'Purse Model',
-    img: '/src/assets/3DArtwork/thumbnails/Flower.webp', // Placeholder thumbnail
+    img: '/src/assets/3DModels/Purse1Cover.png',
     modelPath: '/src/assets/3DModels/purse1.glb',
     texturePath: '/src/assets/3DModels/Purse1Texture.png',
+    style: 'cover'
   },
 ];
 
@@ -186,7 +190,7 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
         {modelTiles.map((tile) => (
           <div
             key={tile.id}
-            className="model-tile"
+            className={`model-tile model-tile-${tile.style}`}
             onClick={() => {
               setModelViewerProps({ 
                 modelPath: tile.modelPath, 
@@ -204,7 +208,7 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
             }}
           >
             <img src={tile.img} alt={tile.label} className="model-tile-img" loading="lazy" />
-            <div className="model-tile-label">{tile.label}</div>
+            {tile.style === 'default' && <div className="model-tile-label">{tile.label}</div>}
           </div>
         ))}
       </div>

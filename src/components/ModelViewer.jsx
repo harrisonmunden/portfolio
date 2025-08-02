@@ -164,10 +164,20 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     updateCamera();
 
     // Renderer
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer = new THREE.WebGLRenderer({ 
+      antialias: true, 
+      alpha: true,
+      powerPreference: "high-performance",
+      stencil: false,
+      depth: true
+    });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for performance
     renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
     mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -426,8 +436,8 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               
               // Mark table for animation
               table.userData.isTable = true;
-              // Start table at rotated position (no scaling)
-              table.rotation.y = Math.PI / 4 + 0.16 + Math.PI + Math.PI * 2; // Start rotated 360 degrees more
+              // Start table at same rotation as purse
+              table.rotation.y = startY; // Match purse starting rotation
               
               scene.add(table);
               console.log('PurseTable added to scene');
@@ -754,11 +764,9 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               if (child.userData && child.userData.isFloor) {
                 child.scale.setScalar(ease);
               }
-              // Animate table rotation (no scaling)
+              // Animate table rotation to match purse
               if (child.userData && child.userData.isTable) {
-                const startRotation = Math.PI / 4 + 0.16 + Math.PI + Math.PI * 2;
-                const endRotation = Math.PI / 4 + 0.16 + Math.PI;
-                child.rotation.y = startRotation + (endRotation - startRotation) * ease;
+                child.rotation.y = startY + (targetY - startY) * ease; // Match purse rotation exactly
               }
             });
             
@@ -778,9 +786,9 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                 if (child.userData && child.userData.isFloor) {
                   child.scale.setScalar(1);
                 }
-                // Set table to final rotation
+                // Set table to final rotation (match purse)
                 if (child.userData && child.userData.isTable) {
-                  child.rotation.y = Math.PI / 4 + 0.16 + Math.PI;
+                  child.rotation.y = targetY;
                 }
               });
               // Set light bands to final scale (only for motorcycle)
