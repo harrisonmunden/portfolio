@@ -48,34 +48,34 @@ const modelTiles = [
     id: 1,
     label: 'Car Model',
     title: 'Car Model',
-    img: '/src/assets/3DArtwork/thumbnails/Car.webp',
+    img: '/src/assets/3DModels/CarCover-compressed.webp',
     modelPath: '/src/assets/3DModels/Car.glb',
     texturePath: '/src/assets/3DModels/CarAlbedo.png',
-    style: 'default'
+    style: 'cover'
   },
   {
     id: 2,
     label: 'Flowers Model',
     title: 'Flowers Model',
-    img: '/src/assets/3DArtwork/thumbnails/Flower.webp',
+    img: '/src/assets/3DModels/FlowersCover-compressed.webp',
     modelPath: '/src/assets/3DModels/Flowers.glb',
     texturePath: '/src/assets/3DModels/FlowersTexture.png',
-    style: 'default'
+    style: 'cover'
   },
   {
     id: 3,
     label: 'Motorcycle Model',
     title: 'Motorcycle Model',
-    img: '/src/assets/3DArtwork/thumbnails/Flower.webp',
+    img: '/src/assets/3DModels/MotorcycleCover-compressed.webp',
     modelPath: '/src/assets/3DModels/Motorcycle.glb',
     texturePath: '/src/assets/3DModels/MotorcycleAlbedo.png',
-    style: 'default'
+    style: 'cover'
   },
   {
     id: 4,
     label: 'Purse Model',
     title: 'Purse Model',
-    img: '/src/assets/3DModels/Purse1Cover.png',
+    img: '/src/assets/3DModels/PurseCover-compressed.webp',
     modelPath: '/src/assets/3DModels/purse1.glb',
     texturePath: '/src/assets/3DModels/Purse1Texture.png',
     style: 'cover'
