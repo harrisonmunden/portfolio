@@ -19,8 +19,8 @@ const COVER_IMAGES = [
   'PurseCover.png'
 ];
 
-// Target size for model tile covers (similar to other thumbnails)
-const TARGET_SIZE = { width: 300, height: 300 };
+// Target size for model tile covers (preserve 16:9 aspect ratio)
+const TARGET_SIZE = { width: 300, height: 169 };
 
 // Ensure output directory exists
 if (!fs.existsSync(OUTPUT_DIR)) {
@@ -41,7 +41,7 @@ async function compressCoverImage(sourceFileName, quality = 85) {
   try {
     await sharp(sourcePath)
       .resize(TARGET_SIZE.width, TARGET_SIZE.height, {
-        fit: 'cover',
+        fit: 'inside',
         position: 'center'
       })
       .webp({ 

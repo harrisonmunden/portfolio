@@ -50,8 +50,7 @@ const modelTiles = [
     title: 'Car Model',
     img: '/src/assets/3DModels/CarCover-compressed.webp',
     modelPath: '/src/assets/3DModels/Car.glb',
-    texturePath: '/src/assets/3DModels/CarAlbedo.png',
-    style: 'cover'
+    texturePath: '/src/assets/3DModels/CarAlbedo.png'
   },
   {
     id: 2,
@@ -59,8 +58,7 @@ const modelTiles = [
     title: 'Flowers Model',
     img: '/src/assets/3DModels/FlowersCover-compressed.webp',
     modelPath: '/src/assets/3DModels/Flowers.glb',
-    texturePath: '/src/assets/3DModels/FlowersTexture.png',
-    style: 'cover'
+    texturePath: '/src/assets/3DModels/FlowersTexture.png'
   },
   {
     id: 3,
@@ -68,8 +66,7 @@ const modelTiles = [
     title: 'Motorcycle Model',
     img: '/src/assets/3DModels/MotorcycleCover-compressed.webp',
     modelPath: '/src/assets/3DModels/Motorcycle.glb',
-    texturePath: '/src/assets/3DModels/MotorcycleAlbedo.png',
-    style: 'cover'
+    texturePath: '/src/assets/3DModels/MotorcycleAlbedo.png'
   },
   {
     id: 4,
@@ -77,8 +74,7 @@ const modelTiles = [
     title: 'Purse Model',
     img: '/src/assets/3DModels/PurseCover-compressed.webp',
     modelPath: '/src/assets/3DModels/purse1.glb',
-    texturePath: '/src/assets/3DModels/Purse1Texture.png',
-    style: 'cover'
+    texturePath: '/src/assets/3DModels/Purse1Texture.png'
   },
 ];
 
@@ -93,7 +89,6 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
   const sentinelRef = useRef();
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
   const [modelViewerProps, setModelViewerProps] = useState({});
-  const [clickedModelTile, setClickedModelTile] = useState(null);
 
   const openImage = (image) => {
     setSelectedImage(image);
@@ -190,7 +185,7 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
         {modelTiles.map((tile) => (
           <div
             key={tile.id}
-            className={`model-tile model-tile-${tile.style}`}
+            className="model-tile"
             onClick={() => {
               setModelViewerProps({ 
                 modelPath: tile.modelPath, 
@@ -198,17 +193,9 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
                 title: tile.title
               });
               setModelViewerOpen(true);
-              setClickedModelTile(tile.id);
-              setTimeout(() => setClickedModelTile(null), 250);
-            }}
-            style={{
-              cursor: 'pointer',
-              transform: clickedModelTile === tile.id ? 'scale(1.58)' : 'scale(1)',
-              transition: 'transform 0.18s cubic-bezier(.4,2,.6,1)'
             }}
           >
             <img src={tile.img} alt={tile.label} className="model-tile-img" loading="lazy" />
-            {tile.style === 'default' && <div className="model-tile-label">{tile.label}</div>}
           </div>
         ))}
       </div>
