@@ -162,7 +162,7 @@ const App = () => {
             transition={PAGE_BOUNCE}
             style={{ position: 'relative', zIndex: 1 }}
           >
-            <Home goTo={goTo} hideWorkNav hideAboutNav />
+            <Home goTo={goTo} hideWorkNav hideAboutNav={true} />
           </motion.div>
         )}
         {page === 'work' && (
@@ -186,7 +186,7 @@ const App = () => {
             transition={PAGE_BOUNCE}
             style={{ position: 'relative', zIndex: 1 }}
           >
-            <About goTo={goTo} hideAboutNav />
+            <About goTo={goTo} hideAboutNav={true} />
           </motion.div>
         )}
       </AnimatePresence>
