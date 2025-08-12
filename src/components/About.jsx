@@ -3,13 +3,13 @@ import "./styles/about.css";
 import { motion } from 'framer-motion';
 
 const aboutHeaders = {
-  Tesla: '/src/assets/AboutAssets/About/TeslaAboutHeader.png',
-  Ford: '/src/assets/AboutAssets/About/FordAboutHeader.png',
-  DFR: '/src/assets/AboutAssets/About/DFRAboutHeader.png',
+  Tesla: '/AboutAssets/About/TeslaAboutHeader.png',
+  Ford: '/AboutAssets/About/FordAboutHeader.png',
+  DFR: '/AboutAssets/About/DFRAboutHeader.png',
 };
-const bulletImg = '/src/assets/AboutAssets/About/Bullet.png';
-const chevronImg = '/src/assets/GlassyObjects/About/Chevron.png';
-const computerSelfieImg = '/src/assets/AboutAssets/ComputerSelfe-600x800-q90.webp';
+const bulletImg = '/AboutAssets/About/Bullet.png';
+const chevronImg = '/GlassyObjects/About/Chevron.png';
+const computerSelfieImg = '/AboutAssets/ComputerSelfe-600x800-q90.webp';
 
 const BATCH_SIZE = 1;
 let globalVisibleCount = BATCH_SIZE;
@@ -109,11 +109,9 @@ const About = ({ goTo, hideAboutNav }) => {
               alt="Computer selfie" 
               className="about-photo"
               loading="lazy"
-              srcSet={`
-                /src/assets/AboutAssets/ComputerSelfe-250x330-q90.webp 250w,
-                /src/assets/AboutAssets/ComputerSelfe-450x600-q90.webp 450w,
-                /src/assets/AboutAssets/ComputerSelfe-600x800-q90.webp 600w
-              `}
+              srcSet={`/AboutAssets/ComputerSelfe-250x330-q90.webp 250w,
+                /AboutAssets/ComputerSelfe-450x600-q90.webp 450w,
+                /AboutAssets/ComputerSelfe-600x800-q90.webp 600w`}
               sizes="(max-width: 600px) 200px, (max-width: 900px) 350px, 450px"
             />
           </div>

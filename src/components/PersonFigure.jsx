@@ -290,7 +290,7 @@ const PersonFigure = ({ page }) => {
       {/* Always render the persistent head with layoutId */}
       <motion.img
         layoutId="shared-head"
-        src="/src/assets/GlassyObjects/About/Head.webp"
+                          src="/GlassyObjects/About/Head.webp"
         alt="Head"
         drag
         dragMomentum={false}
@@ -366,7 +366,7 @@ const PersonFigure = ({ page }) => {
           >
             {/* Body */}
             <motion.img
-              src="/src/assets/GlassyObjects/About/Body.webp"
+              src="/GlassyObjects/About/Body.webp"
               alt="Body"
               style={{
                 width: '100%',
@@ -399,7 +399,7 @@ const PersonFigure = ({ page }) => {
               return (
                 <motion.img
                   key={`head-${index}`}
-                  src="/src/assets/GlassyObjects/About/Head.webp"
+                  src="/GlassyObjects/About/Head.webp"
                   alt="Head"
                   drag
                   onPointerDown={(e) => handlePointerDown(index, e)}

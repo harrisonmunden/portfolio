@@ -23,13 +23,13 @@ const Home = ({ goTo, hideWorkNav, hideAboutNav }) => {
             {!hideWorkNav && (
               <motion.button className="nav-link" onClick={() => goTo('work')} layoutId="work-nav" style={{background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
                 <span>work</span>
-                <motion.img src="/src/assets/GlassyObjects/About/Chevron.png" alt="chevron" className="chevron-img" layoutId="work-chevron" />
+                <motion.img src="/GlassyObjects/About/Chevron.png" alt="chevron" className="chevron-img" layoutId="work-chevron" />
               </motion.button>
             )}
             {!hideAboutNav && (
               <motion.button className="nav-link" onClick={() => goTo('about')} layoutId="about-nav" style={{background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
                 <span>about</span>
-                <motion.img src="/src/assets/GlassyObjects/About/Chevron.png" alt="chevron" className="chevron-img" layoutId="about-chevron" />
+                <motion.img src="/GlassyObjects/About/Chevron.png" alt="chevron" className="chevron-img" layoutId="about-chevron" />
               </motion.button>
             )}
           </div>

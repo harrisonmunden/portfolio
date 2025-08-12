@@ -29,7 +29,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     scene.background = new THREE.Color(0x000000);
 
     // Load EXR environment map for lighting
-    new EXRLoader().load('/src/assets/3DModels/studio_small_09_2k.exr', (texture) => {
+    new EXRLoader().load('/3DModels/studio_small_09_2k.exr', (texture) => {
       if (!isMounted) return;
       texture.mapping = THREE.EquirectangularReflectionMapping;
       // Rotate the environment map 90 degrees around Y
@@ -393,7 +393,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
           // Load purse table
           console.log('Loading PurseTable.glb for purse scene');
           loader.load(
-            '/src/assets/3DModels/PurseTable.glb',
+            '/3DModels/PurseTable.glb',
             (tableGltf) => {
               if (!isMounted) return;
               console.log('PurseTable loaded successfully');
@@ -407,7 +407,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               // Load and apply table texture
               const textureLoader = new THREE.TextureLoader();
               textureLoader.load(
-                '/src/assets/3DModels/PurseTableAlbedo.png',
+                '/3DModels/PurseTableAlbedo.png',
                 (texture) => {
                   if (!isMounted) return;
                   texture.flipY = false;
@@ -465,7 +465,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
           console.log('Loading CarFloor.glb for Car scene');
           console.log('Model path:', modelPath);
           loader.load(
-            '/src/assets/3DModels/CarFloor.glb',
+            '/3DModels/CarFloor.glb',
             (floorGltf) => {
               if (!isMounted) return;
               console.log('CarFloor loaded successfully');
@@ -567,7 +567,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         // Load floor only for flowers scene
         if (modelPath && modelPath.includes('Flowers.glb')) {
           loader.load(
-            '/src/assets/3DModels/Floor.glb',
+            '/3DModels/Floor.glb',
             (floorGltf) => {
               if (!isMounted) return;
               const floor = floorGltf.scene;
@@ -578,7 +578,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             // Load and apply floor texture with alpha channel
             const textureLoader = new THREE.TextureLoader();
             textureLoader.load(
-              '/src/assets/3DModels/FloorTextureFlower.png',
+              '/3DModels/FloorTextureFlower.png',
               (texture) => {
                 if (!isMounted) return;
                 texture.flipY = false;

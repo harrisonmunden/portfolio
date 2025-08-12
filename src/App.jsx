@@ -23,7 +23,7 @@ import { About, Works, Home } from './components';
 import { AnimatePresence, motion } from 'framer-motion';
 import PersonFigure from './components/PersonFigure';
 
-const SHARED_CHEVRON_SRC = '/src/assets/GlassyObjects/About/Chevron.png';
+const SHARED_CHEVRON_SRC = '/GlassyObjects/About/Chevron.png';
 
 const SharedWorkHeader = ({ page, goTo }) => {
   const isHome = page === 'home';
