@@ -125,7 +125,10 @@ const App = () => {
   const [page, setPage] = useState('home');
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
 
-  const goTo = (target) => setPage(target);
+  const goTo = (target) => {
+    if (target === 'about') return; // Prevent navigation to about page
+    setPage(target);
+  };
 
   // Expose goToHome globally for PersonFigure click-to-home
   useEffect(() => {
@@ -143,11 +146,11 @@ const App = () => {
           <SharedWorkHeader key="work-header" page={page} goTo={goTo} />
         </div>
       </AnimatePresence>
-      <AnimatePresence mode="wait">
+      {/* <AnimatePresence mode="wait">
         <div style={fadeStyle}>
           <SharedAboutHeader key="about-header" page={page} goTo={goTo} />
         </div>
-      </AnimatePresence>
+      </AnimatePresence> */}
       {/* Person Figure Animation */}
       <div style={fadeStyle}>
         <PersonFigure page={page} />
@@ -177,7 +180,7 @@ const App = () => {
             <Works goTo={goTo} hideWorkNav onModelViewerOpenChange={setModelViewerOpen} />
           </motion.div>
         )}
-        {page === 'about' && (
+        {/* {page === 'about' && (
           <motion.div
             key="about"
             initial={{ opacity: 0, y: 40 }}
@@ -188,7 +191,7 @@ const App = () => {
           >
             <About goTo={goTo} hideAboutNav={true} />
           </motion.div>
-        )}
+        )} */}
       </AnimatePresence>
     </div>
   );
