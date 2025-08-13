@@ -28,7 +28,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 }
 
 // Compress cover image with specific dimensions and quality
-async function compressCoverImage(sourceFileName, quality = 85) {
+async function compressCoverImage(sourceFileName, quality = 98) {
   const sourcePath = path.join(SOURCE_DIR, sourceFileName);
   const baseName = path.parse(sourceFileName).name;
   const outputPath = path.join(OUTPUT_DIR, `${baseName}-compressed.webp`);
@@ -80,7 +80,7 @@ async function main() {
   
   for (const coverImage of COVER_IMAGES) {
     console.log(`\n📱 Processing: ${coverImage}`);
-    const result = await compressCoverImage(coverImage, 85);
+    const result = await compressCoverImage(coverImage, 98);
     if (result) {
       results.push(result);
     }

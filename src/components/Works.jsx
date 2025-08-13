@@ -3,13 +3,15 @@ import './Works.css';
 import { motion } from 'framer-motion';
 import { useFadeInOnVisible } from './hooks/useFadeInOnVisible';
 import ModelViewer from './ModelViewer';
+import { useNavigate } from 'react-router-dom';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 
 let globalVisibleCount = 8; // or your BATCH_SIZE
 
 const videoGames = [
-  { id: 1, src: '/3DArtwork/BusyGirlCover.png', thumbnailSrc: '/3DArtwork/thumbnails/BusyGirlCover.webp', alt: 'Escape Game', border: 'blue' },
-  { id: 2, src: '/3DArtwork/Flower.png', thumbnailSrc: '/3DArtwork/thumbnails/Flower.webp', alt: 'Flower Game', border: 'yellow' },
-  { id: 3, src: '/3DArtwork/HerProfilePhoto.png', thumbnailSrc: '/3DArtwork/thumbnails/HerProfilePhoto.webp', alt: 'Bossy Girl', border: 'pink' },
+  { id: 1, src: '/VideoGameAssets/BusyGirlCover.png', thumbnailSrc: '/VideoGameAssets/BusyGirlCover-compressed.webp', alt: 'Busy Girl', title: 'Busy Girl', year: '2023', route: '/game/busy-girl' },
+  { id: 2, src: '/VideoGameAssets/MaestroCover.png', thumbnailSrc: '/VideoGameAssets/MaestroCover-compressed.webp', alt: 'Maestro', title: 'Maestro', year: '2023', route: '/game/maestro' },
+  { id: 3, src: '/VideoGameAssets/PaparazziEscapeCover.png', thumbnailSrc: '/VideoGameAssets/PaparazziEscapeCover-compressed.webp', alt: 'Paparazzi Escape', title: 'Paparazzi Escape', year: '2023', route: '/game/paparazzi-escape' },
 ];
 
 const artwork = [
@@ -81,6 +83,7 @@ const modelTiles = [
 const BATCH_SIZE = 12;
 
 const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
+  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const [lightboxActive, setLightboxActive] = useState(false);
   const [hoveredImageId, setHoveredImageId] = useState(null);
@@ -89,6 +92,9 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
   const sentinelRef = useRef();
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
   const [modelViewerProps, setModelViewerProps] = useState({});
+  
+  // Use custom scroll restoration hook
+  useScrollToTop();
 
   const openImage = (image) => {
     setSelectedImage(image);
@@ -210,16 +216,15 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
 
       {/* Video Games Section */}
       <h2 className="section-title video-games-title">Video Games</h2>
-      <div className="video-games-row">
-        {videoGames.map((img) => (
-          <div key={img.id} className={`video-game-card border-${img.border}`}>
-            <img
-              src={img.thumbnailSrc}
-              alt={img.alt}
-              className="video-game-img"
-              onClick={() => openImage(img)}
-              loading="lazy"
-            />
+      <div className="models-row">
+        {videoGames.map((game) => (
+          <div
+            key={game.id}
+            className="model-tile"
+            onClick={() => navigate(game.route)}
+            style={{ cursor: 'pointer' }}
+          >
+            <img src={game.thumbnailSrc} alt={game.alt} className="model-tile-img" loading="lazy" />
           </div>
         ))}
       </div>

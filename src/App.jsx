@@ -5,6 +5,8 @@ import PersonFigure from './components/PersonFigure';
 import Home from './components/Home';
 import Works from './components/Works';
 import About from './components/About';
+import VideoGamePage from './components/VideoGamePage';
+import { useScrollToTop } from './hooks/useScrollToTop';
 
 // Animation constants
 const PAGE_BOUNCE = {
@@ -19,6 +21,13 @@ const HEADER_ANIMATION = {
   stiffness: 230,
   damping: 20,
   bounce: 0.2,
+};
+
+// Faster, simpler animation for video game pages
+const GAME_PAGE_ANIMATION = {
+  type: 'tween',
+  duration: 0.2,
+  ease: 'easeOut',
 };
 
 // Shared header components
@@ -128,15 +137,20 @@ const AppContent = () => {
   const location = useLocation();
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
   
+  // Use custom scroll restoration hook
+  useScrollToTop();
+  
   // Get current page from URL path
   const getCurrentPage = () => {
     const path = location.pathname;
     if (path === '/work') return 'work';
     if (path === '/about') return 'about';
+    if (path.startsWith('/game/')) return 'game';
     return 'home';
   };
   
   const currentPage = getCurrentPage();
+  const isGamePage = currentPage === 'game';
 
   const goTo = (target) => {
     if (target === 'about') return; // Prevent navigation to about page
@@ -158,20 +172,25 @@ const AppContent = () => {
 
   return (
     <div className="relative z-0 bg-primary" style={{ minHeight: '100vh', position: 'relative' }}>
-      <AnimatePresence mode="wait">
-        <div style={fadeStyle}>
-          <SharedWorkHeader key="work-header" page={currentPage} goTo={goTo} />
-        </div>
-      </AnimatePresence>
-      <AnimatePresence mode="wait">
-        <div style={fadeStyle}>
-          <SharedAboutHeader key="about-header" page={currentPage} goTo={goTo} />
-        </div>
-      </AnimatePresence>
-      {/* Person Figure Animation */}
-      <div style={fadeStyle}>
-        <PersonFigure page={currentPage} />
-      </div>
+      {/* Only show navigation headers and PersonFigure on home/work pages, not on game pages */}
+      {!isGamePage && (
+        <>
+          <AnimatePresence mode="wait">
+            <div style={fadeStyle}>
+              <SharedWorkHeader key="work-header" page={currentPage} goTo={goTo} />
+            </div>
+          </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <div style={fadeStyle}>
+              <SharedAboutHeader key="about-header" page={currentPage} goTo={goTo} />
+            </div>
+          </AnimatePresence>
+          {/* Person Figure Animation */}
+          <div style={fadeStyle}>
+            <PersonFigure page={currentPage} />
+          </div>
+        </>
+      )}
       
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
@@ -197,6 +216,18 @@ const AppContent = () => {
               style={{ position: 'relative', zIndex: 1 }}
             >
               <Works goTo={goTo} hideWorkNav onModelViewerOpenChange={setModelViewerOpen} />
+            </motion.div>
+          } />
+          <Route path="/game/:gameId" element={
+            <motion.div
+              key={`game-${location.pathname}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={GAME_PAGE_ANIMATION}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <VideoGamePage />
             </motion.div>
           } />
           {/* {page === 'about' && (
