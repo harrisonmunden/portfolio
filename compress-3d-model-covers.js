@@ -3,105 +3,91 @@ import path from 'path';
 import sharp from 'sharp';
 import { fileURLToPath } from 'url';
 
-// Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configuration
 const SOURCE_DIR = './src/assets/3DModels';
 const OUTPUT_DIR = './src/assets/3DModels';
 
-// Cover images to compress
 const COVER_IMAGES = [
   'CarCover.png',
-  'FlowersCover.png', 
+  'FlowersCover.png',
   'MotorcycleCover.png',
   'PurseCover.png'
 ];
 
-// Target size for model tile covers (preserve 16:9 aspect ratio)
-const TARGET_SIZE = { width: 300, height: 169 };
+// Use the same technique as 3D artwork thumbnails
+const THUMBNAIL_SIZE = 800;
+const QUALITY = 95;
 
-// Ensure output directory exists
 if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-// Compress cover image with specific dimensions and quality
-async function compressCoverImage(sourceFileName, quality = 98) {
+// Compress cover image with high quality, similar to 3D artwork technique
+async function compressCoverImage(sourceFileName) {
   const sourcePath = path.join(SOURCE_DIR, sourceFileName);
   const baseName = path.parse(sourceFileName).name;
   const outputPath = path.join(OUTPUT_DIR, `${baseName}-compressed.webp`);
   
-  if (!fs.existsSync(sourcePath)) {
-    console.log(`⚠️ Source file not found: ${sourceFileName}`);
-    return false;
-  }
-  
   try {
+    const stats = fs.statSync(sourcePath);
+    const originalSize = stats.size;
+    
     await sharp(sourcePath)
-      .resize(TARGET_SIZE.width, TARGET_SIZE.height, {
+      .resize(THUMBNAIL_SIZE, THUMBNAIL_SIZE, {
         fit: 'inside',
-        position: 'center'
+        withoutEnlargement: true
       })
-      .webp({ 
-        quality: quality,
-        lossless: false,
-        nearLossless: false,
-        smartSubsample: true
-      })
+      .webp({ quality: QUALITY })
       .toFile(outputPath);
     
-    const originalSize = fs.statSync(sourcePath).size;
-    const compressedSize = fs.statSync(outputPath).size;
-    const compressionRatio = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
+    const compressedStats = fs.statSync(outputPath);
+    const compressedSize = compressedStats.size;
+    const reduction = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
     
     console.log(`✓ Compressed: ${sourceFileName} → ${baseName}-compressed.webp`);
-    console.log(`  Size: ${(originalSize / 1024).toFixed(1)} KB → ${(compressedSize / 1024).toFixed(1)} KB (${compressionRatio}% reduction)`);
+    console.log(`  Size: ${(originalSize / 1024).toFixed(1)} KB → ${(compressedSize / 1024).toFixed(1)} KB (${reduction}% reduction)`);
     
-    return { 
-      path: outputPath, 
-      originalSize, 
-      compressedSize, 
-      compressionRatio,
-      fileName: `${baseName}-compressed.webp`
+    return {
+      original: originalSize,
+      compressed: compressedSize,
+      reduction: reduction
     };
   } catch (error) {
-    console.error(`✗ Failed to compress ${sourceFileName}:`, error.message);
-    return false;
+    console.error(`✗ Failed to process ${sourceFileName}:`, error.message);
+    return null;
   }
 }
 
-// Main function
 async function main() {
-  console.log('🖼️ Compressing 3D Model Cover Images...\n');
+  console.log('🖼️ Compressing 3D Model Cover Images with High Quality...\n');
+  console.log(`Using technique: ${THUMBNAIL_SIZE}px, Quality ${QUALITY}, Maintain aspect ratio\n`);
   
   const results = [];
   
   for (const coverImage of COVER_IMAGES) {
-    console.log(`\n📱 Processing: ${coverImage}`);
-    const result = await compressCoverImage(coverImage, 98);
+    console.log(`📱 Processing: ${coverImage}`);
+    const result = await compressCoverImage(coverImage);
     if (result) {
       results.push(result);
     }
+    console.log('');
   }
   
-  console.log(`\n📊 Summary:`);
-  let totalOriginalSize = 0;
-  let totalCompressedSize = 0;
-  
-  results.forEach(result => {
-    totalOriginalSize += result.originalSize;
-    totalCompressedSize += result.compressedSize;
-    console.log(`   ${result.fileName}: ${(result.originalSize / 1024).toFixed(1)} KB → ${(result.compressedSize / 1024).toFixed(1)} KB (${result.compressionRatio}% reduction)`);
-  });
-  
-  const totalCompressionRatio = ((totalOriginalSize - totalCompressedSize) / totalOriginalSize * 100).toFixed(1);
-  console.log(`\n💾 Total: ${(totalOriginalSize / 1024).toFixed(1)} KB → ${(totalCompressedSize / 1024).toFixed(1)} KB (${totalCompressionRatio}% reduction)`);
-  
-  console.log(`\n✅ All 3D model covers compressed successfully!`);
-  console.log(`💡 Next steps: Update Works.jsx to use these compressed covers`);
+  if (results.length > 0) {
+    const totalOriginal = results.reduce((sum, r) => sum + r.original, 0);
+    const totalCompressed = results.reduce((sum, r) => sum + r.compressed, 0);
+    const totalReduction = ((totalOriginal - totalCompressed) / totalOriginal * 100).toFixed(1);
+    
+    console.log('📊 Summary:');
+    results.forEach(result => {
+      console.log(`   ${(result.original / 1024).toFixed(1)} KB → ${(result.compressed / 1024).toFixed(1)} KB (${result.reduction}% reduction)`);
+    });
+    console.log(`\n💾 Total: ${(totalOriginal / 1024).toFixed(1)} KB → ${(totalCompressed / 1024).toFixed(1)} KB (${totalReduction}% reduction)`);
+    console.log('\n✅ All 3D model covers compressed successfully!');
+    console.log('💡 Next steps: Copy to public directory and test quality');
+  }
 }
 
-// Run the script
 main().catch(console.error); 

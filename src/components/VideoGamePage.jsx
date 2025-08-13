@@ -8,7 +8,7 @@ const gameData = {
   'busy-girl': {
     title: 'Busy Girl',
     description: 'An engaging escape game where players navigate through challenging puzzles and obstacles.',
-    coverImage: '/VideoGameAssets/BusyGirlCover-page-cover.webp',
+    coverImage: '/VideoGameAssets/BusyGirlCover-compressed.webp',
     year: '2023',
     genre: 'Puzzle/Adventure',
     technologies: ['Unity', 'C#', 'Blender'],
@@ -22,7 +22,7 @@ const gameData = {
   'maestro': {
     title: 'Maestro!',
     description: 'A musical rhythm game that challenges players to master various instruments and compositions.',
-    coverImage: '/VideoGameAssets/MaestroCover-page-cover.webp',
+    coverImage: '/VideoGameAssets/MaestroCover-compressed.webp',
     year: '2023',
     genre: 'Rhythm/Music',
     technologies: ['Unity', 'C#', 'FMOD'],
@@ -36,7 +36,7 @@ const gameData = {
   'paparazzi-escape': {
     title: 'Paparazzi Escape',
     description: 'A thrilling stealth game where players must escape from relentless paparazzi while maintaining their privacy.',
-    coverImage: '/VideoGameAssets/PaparazziEscapeCover-page-cover.webp',
+    coverImage: '/VideoGameAssets/PaparazziEscapeCover-compressed.webp',
     year: '2023',
     genre: 'Stealth/Action',
     technologies: ['Unity', 'C#', 'NavMesh AI'],
