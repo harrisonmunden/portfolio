@@ -38,7 +38,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         const m = new THREE.Matrix3();
         let angle = Math.PI / 2; // 90 degrees default
         // Rotate an additional 90 degrees for purse scene to reduce back lighting
-        if (modelPath && modelPath.includes('purse1.glb')) {
+        if (modelPath && modelPath.includes('Purse1.glb')) {
           angle = -Math.PI * 2; // 180 degrees total (90 + 90)
         }
         m.set(
@@ -72,7 +72,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     if (modelPath && modelPath.includes('Motorcycle.glb')) {
       initialDistance = 15; // Much closer for motorcycle
     }
-    if (modelPath && modelPath.includes('purse1.glb')) {
+    if (modelPath && modelPath.includes('Purse1.glb')) {
       initialDistance = 25; // Medium distance for purse
     }
     let cameraTheta = Math.PI / 2; // horizontal angle
@@ -120,7 +120,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         radius: 15,
         target: new THREE.Vector3(0, 2, 0)
       };
-    } else if (modelPath && modelPath.includes('purse1.glb')) {
+    } else if (modelPath && modelPath.includes('Purse1.glb')) {
       // Purse scene landing position
       landingConfig = {
         theta: 3.3,
@@ -192,7 +192,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       bloomStrength = 0.45;
       bloomRadius = 0.08;
       bloomThreshold = 0.28;
-    } else if (modelPath && modelPath.includes('purse1.glb')) {
+    } else if (modelPath && modelPath.includes('Purse1.glb')) {
       // Reduce bloom for purse scene
       bloomStrength = 0.1;
       bloomRadius = 0.05;
@@ -373,7 +373,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         modelLoaded = true;
         
         // For purse model, ensure spin-in starts
-        if (modelPath && modelPath.includes('purse1.glb')) {
+        if (modelPath && modelPath.includes('Purse1.glb')) {
           console.log('Purse model detected');
           console.log('Texture path:', texturePath);
           console.log('Model loaded:', modelLoaded);
@@ -385,7 +385,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
           console.log('Purse center:', center);
           
           // Update camera target to purse center
-          if (modelPath && modelPath.includes('purse1.glb')) {
+          if (modelPath && modelPath.includes('Purse1.glb')) {
             target = center;
             landingConfig.target = center; // Update landing config target
           }
@@ -635,7 +635,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         }
         
         // For purse model, ensure spin-in starts even without texture
-        if (modelPath && modelPath.includes('purse1.glb') && !texturePath) {
+        if (modelPath && modelPath.includes('Purse1.glb') && !texturePath) {
           startSpinIn();
         }
         if (texturePath) {
@@ -658,7 +658,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                     metalness = 0.45;
                     roughness = 0.45;
                     envMapIntensity = 0.7;
-                  } else if (modelPath && modelPath.includes('purse1.glb')) {
+                  } else if (modelPath && modelPath.includes('Purse1.glb')) {
                     // Make purse less shiny
                     metalness = 0.3;
                     roughness = 0.8;
@@ -706,7 +706,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               metalness = 0.45;
               roughness = 0.45;
               envMapIntensity = 0.7;
-            } else if (modelPath && modelPath.includes('purse1.glb')) {
+            } else if (modelPath && modelPath.includes('Purse1.glb')) {
               // Make purse less shiny
               metalness = 0.6;
               roughness = 0.1;
