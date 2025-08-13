@@ -1,16 +1,12 @@
-// ---- SHARED HEADER ANIMATION CONFIG ----
-// To control the shared header (work/about) transition:
-// - stiffness: higher = snappier, lower = longer/more bounce
-// - damping: lower = more bounce, higher = less bounce
-// - bounce: higher = more bounce
-export const HEADER_ANIMATION = {
-  type: 'spring',
-  stiffness: 230,
-  damping: 20,
-  bounce: 0.2,
-};
-// ----------------------------------------
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import PersonFigure from './components/PersonFigure';
+import Home from './components/Home';
+import Works from './components/Works';
+import About from './components/About';
 
+// Animation constants
 const PAGE_BOUNCE = {
   type: 'spring',
   stiffness: 230,
@@ -18,17 +14,20 @@ const PAGE_BOUNCE = {
   bounce: 0.2,
 };
 
-import React, { useState, useEffect } from 'react';
-import { About, Works, Home } from './components';
-import { AnimatePresence, motion } from 'framer-motion';
-import PersonFigure from './components/PersonFigure';
+const HEADER_ANIMATION = {
+  type: 'spring',
+  stiffness: 230,
+  damping: 20,
+  bounce: 0.2,
+};
 
-const SHARED_CHEVRON_SRC = '/GlassyObjects/About/Chevron.png';
-
+// Shared header components
 const SharedWorkHeader = ({ page, goTo }) => {
   const isHome = page === 'home';
-  const isMobile = window.innerWidth <= 600;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+  
   if (!(page === 'home' || page === 'work')) return null;
+  
   return (
     <motion.div
       layout
@@ -56,17 +55,17 @@ const SharedWorkHeader = ({ page, goTo }) => {
     >
       <span>work</span>
       <motion.img
-        src={SHARED_CHEVRON_SRC}
+        src="/GlassyObjects/About/Chevron.png"
         alt="chevron"
         className="chevron-img"
         layoutId="work-chevron"
         style={{
-          width: isHome ? 55 : (isMobile ? 29 : 55),
+          width: isHome ? 55 : (isMobile ? 29 : 55), 
           marginLeft: 8,
           marginTop: 0,
         }}
         initial={false}
-        animate={{ width: isHome ? 55 : (isMobile ? 29 : 55), rotate: isHome ? 0 : 90}}
+        animate={{ width: isHome ? 55 : (isMobile ? 29 : 55), rotate: isHome ? 0 : 90 }}
         transition={HEADER_ANIMATION}
       />
     </motion.div>
@@ -75,8 +74,10 @@ const SharedWorkHeader = ({ page, goTo }) => {
 
 const SharedAboutHeader = ({ page, goTo }) => {
   const isHome = page === 'home';
-  const isMobile = window.innerWidth <= 600;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+  
   if (!(page === 'home' || page === 'about')) return null;
+  
   return (
     <motion.div
       layout
@@ -104,7 +105,7 @@ const SharedAboutHeader = ({ page, goTo }) => {
     >
       <span>about</span>
       <motion.img
-        src={SHARED_CHEVRON_SRC}
+        src="/GlassyObjects/About/Chevron.png"
         alt="chevron"
         className="chevron-img"
         layoutId="about-chevron"
@@ -121,20 +122,36 @@ const SharedAboutHeader = ({ page, goTo }) => {
   );
 };
 
-const App = () => {
-  const [page, setPage] = useState('home');
+// Main App component with routing
+const AppContent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
+  
+  // Get current page from URL path
+  const getCurrentPage = () => {
+    const path = location.pathname;
+    if (path === '/work') return 'work';
+    if (path === '/about') return 'about';
+    return 'home';
+  };
+  
+  const currentPage = getCurrentPage();
 
   const goTo = (target) => {
     if (target === 'about') return; // Prevent navigation to about page
-    setPage(target);
+    if (target === 'home') {
+      navigate('/');
+    } else if (target === 'work') {
+      navigate('/work');
+    }
   };
 
   // Expose goToHome globally for PersonFigure click-to-home
   useEffect(() => {
     window.goToHome = () => goTo('home');
     return () => { window.goToHome = undefined; };
-  }, []);
+  }, [navigate]);
 
   // Fade style for header and PersonFigure
   const fadeStyle = modelViewerOpen ? { opacity: 0, pointerEvents: 'none', transition: 'opacity 0.4s cubic-bezier(.4,2,.6,1)' } : {};
@@ -143,57 +160,68 @@ const App = () => {
     <div className="relative z-0 bg-primary" style={{ minHeight: '100vh', position: 'relative' }}>
       <AnimatePresence mode="wait">
         <div style={fadeStyle}>
-          <SharedWorkHeader key="work-header" page={page} goTo={goTo} />
+          <SharedWorkHeader key="work-header" page={currentPage} goTo={goTo} />
         </div>
       </AnimatePresence>
-      {/* <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait">
         <div style={fadeStyle}>
-          <SharedAboutHeader key="about-header" page={page} goTo={goTo} />
+          <SharedAboutHeader key="about-header" page={currentPage} goTo={goTo} />
         </div>
-      </AnimatePresence> */}
+      </AnimatePresence>
       {/* Person Figure Animation */}
       <div style={fadeStyle}>
-        <PersonFigure page={page} />
+        <PersonFigure page={currentPage} />
       </div>
+      
       <AnimatePresence mode="wait">
-        {page === 'home' && (
-          <motion.div
-            key="home"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -40 }}
-            transition={PAGE_BOUNCE}
-            style={{ position: 'relative', zIndex: 1 }}
-          >
-            <Home goTo={goTo} hideWorkNav hideAboutNav={true} />
-          </motion.div>
-        )}
-        {page === 'work' && (
-          <motion.div
-            key="work"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -40 }}
-            transition={PAGE_BOUNCE}
-            style={{ position: 'relative', zIndex: 1 }}
-          >
-            <Works goTo={goTo} hideWorkNav onModelViewerOpenChange={setModelViewerOpen} />
-          </motion.div>
-        )}
-        {/* {page === 'about' && (
-          <motion.div
-            key="about"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -40 }}
-            transition={PAGE_BOUNCE}
-            style={{ position: 'relative', zIndex: 1 }}
-          >
-            <About goTo={goTo} hideAboutNav={true} />
-          </motion.div>
-        )} */}
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={
+            <motion.div
+              key="home"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={PAGE_BOUNCE}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <Home goTo={goTo} hideWorkNav hideAboutNav={true} />
+            </motion.div>
+          } />
+          <Route path="/work" element={
+            <motion.div
+              key="work"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={PAGE_BOUNCE}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <Works goTo={goTo} hideWorkNav onModelViewerOpenChange={setModelViewerOpen} />
+            </motion.div>
+          } />
+          {/* {page === 'about' && (
+            <motion.div
+              key="about"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={PAGE_BOUNCE}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <About goTo={goTo} hideAboutNav={true} />
+            </motion.div>
+          )} */}
+        </Routes>
       </AnimatePresence>
     </div>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 };
 
