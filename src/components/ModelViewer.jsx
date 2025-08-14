@@ -86,7 +86,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         initialDistance = 10.5; // Closer for motorcycle on mobile
       }
       if (modelPath && modelPath.includes('Purse1.glb')) {
-        initialDistance = 17.5; // Closer for purse on mobile
+        initialDistance = 25; // Zoom out more for purse on mobile (was 17.5)
       }
     }
     let cameraTheta = Math.PI / 2; // horizontal angle
@@ -139,7 +139,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       landingConfig = {
         theta: 3.3,
         phi: 2.34,
-        radius: isMobile ? 23 : 30, // Closer on mobile
+        radius: isMobile ? 25 : 30, // Updated mobile distance to match new zoom
         target: new THREE.Vector3(0, 0, 0) // Will be updated when model loads
       };
     }

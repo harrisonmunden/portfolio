@@ -153,11 +153,12 @@ const AppContent = () => {
   const isGamePage = currentPage === 'game';
 
   const goTo = (target) => {
-    if (target === 'about') return; // Prevent navigation to about page
     if (target === 'home') {
       navigate('/');
     } else if (target === 'work') {
       navigate('/work');
+    } else if (target === 'about') {
+      navigate('/about');
     }
   };
 

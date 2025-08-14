@@ -3,13 +3,12 @@ import "./styles/about.css";
 import { motion } from 'framer-motion';
 
 const aboutHeaders = {
-  Tesla: '/AboutAssets/About/TeslaAboutHeader.png',
-  Ford: '/AboutAssets/About/FordAboutHeader.png',
-  DFR: '/AboutAssets/About/DFRAboutHeader.png',
+  Tesla: '/AboutAssets/About/TeslaAboutHeader-compressed.webp',
+  Ford: '/AboutAssets/About/FordAboutHeader-compressed.webp',
+  DFR: '/AboutAssets/About/DFRAboutHeader-compressed.webp',
 };
-const bulletImg = '/AboutAssets/About/Bullet.png';
+const bulletImg = '/AboutAssets/About/Bullet.webp';
 const chevronImg = '/GlassyObjects/About/Chevron.png';
-const computerSelfieImg = '/AboutAssets/ComputerSelfe-600x800-q90.webp';
 
 const BATCH_SIZE = 1;
 let globalVisibleCount = BATCH_SIZE;
@@ -22,9 +21,10 @@ const About = ({ goTo, hideAboutNav }) => {
       company: "Tesla",
       headerImg: aboutHeaders.Tesla,
       description: [
-        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
-        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
-        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like"
+        "Leading 3D design and engineering for Tesla Energy. Seen in experiences like Tesla Recharged, a feature that garnered hundreds of thousands of views and shares. ",
+        "Managed the 3D engine for the Tesla Mobile App, squashing bugs and delivering new features such as Tesla Powershare and the Tesla Energy Home visualization.",
+        "3D modeling, texturing, and animation for both baked and real time applications.",
+        "Game engine & shader scripting, mobile app implementation."
       ]
     },
     {
@@ -33,10 +33,8 @@ const About = ({ goTo, hideAboutNav }) => {
       company: "Ford",
       headerImg: aboutHeaders.Ford,
       description: [
-        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
-        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
-        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like"
-      ]
+        "Created renderings and animations that showcased the defining features of Lincoln’s 100-year anniversary concept car, the L100.",
+        "Developed the design language of the public unveil of the L100 at Pebble Beach’s Concours D’Elegance.",      ]
     },
     {
       id: 3,
@@ -44,9 +42,8 @@ const About = ({ goTo, hideAboutNav }) => {
       company: "Dartmouth Formula Racing",
       headerImg: aboutHeaders.DFR,
       description: [
-        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
-        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like",
-        "Lead 3D design and engineering for all Tesla charging, energy, and mobile app. Frequently was doing like 3D modeling and shader scripting as well as like"
+        "Designed and fabricated multiple Formula Hybrid race car components, including an impact attenuator, nose cone, side paneling, and side view mirrors.",
+        "Implemented a new steering system into the car."
       ]
     }
   ];
@@ -96,25 +93,11 @@ const About = ({ goTo, hideAboutNav }) => {
         <div className="about-intro-section">
           <h2 className="about-intro-title">Hi, I'm Harrison</h2>
           <p className="about-intro-text">
-            I'm a 3D UI Developer and designer passionate about creating immersive digital experiences. 
-            With expertise in 3D modeling, shader scripting, and interactive design, I bridge the gap 
-            between technology and creativity. Currently working at Tesla, where I  work on3D design 
-            and engineering for charging, energy, and mobile applications.
+            I'm a technical 3D artist and developer passionate about creating immersive digital experiences. 
+            With expertise in 3D modeling, shader scripting, and art direction, I live in the gap 
+            between technology and creativity. Currently working at Tesla, where I  work on 3D design 
+            and Engineering for the Tesla Mobile App and Tesla Energy. Currently based in the Bay Area. 
           </p>
-        </div>
-        <div className="about-photo-container">
-          <div className="photo-container">
-            <img 
-              src={computerSelfieImg} 
-              alt="Computer selfie" 
-              className="about-photo"
-              loading="lazy"
-              srcSet={`/AboutAssets/ComputerSelfe-250x330-q90.webp 250w,
-                /AboutAssets/ComputerSelfe-450x600-q90.webp 450w,
-                /AboutAssets/ComputerSelfe-600x800-q90.webp 600w`}
-              sizes="(max-width: 600px) 200px, (max-width: 900px) 350px, 450px"
-            />
-          </div>
         </div>
       </div>
 
