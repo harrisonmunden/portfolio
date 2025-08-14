@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
 const videoGames = [
-  { id: 1, src: '/VideoGameAssets/BusyGirlCover.png', thumbnailSrc: '/VideoGameAssets/BusyGirlCover-compressed.webp', alt: 'Busy Girl', title: 'Busy Girl', year: '2023', route: '/game/busy-girl' },
-  { id: 2, src: '/VideoGameAssets/MaestroCover.png', thumbnailSrc: '/VideoGameAssets/MaestroCover-compressed.webp', alt: 'Maestro', title: 'Maestro', year: '2023', route: '/game/maestro' },
-  { id: 3, src: '/VideoGameAssets/PaparazziEscapeCover.png', thumbnailSrc: '/VideoGameAssets/PaparazziEscapeCover-compressed.webp', alt: 'Paparazzi Escape', title: 'Paparazzi Escape', year: '2023', route: '/game/paparazzi-escape' },
+  { id: 1, src: '/VideoGameAssets/PaparazziEscapeCover.png', thumbnailSrc: '/VideoGameAssets/PaparazziEscapeCover-compressed.webp', alt: 'Paparazzi Escape', title: 'Paparazzi Escape', year: '2023', route: '/game/paparazzi-escape' },
+  { id: 2, src: '/VideoGameAssets/BusyGirlCover.png', thumbnailSrc: '/VideoGameAssets/BusyGirlCover-compressed.webp', alt: 'Busy Girl', title: 'Busy Girl', year: '2023', route: '/game/busy-girl' },
+  { id: 3, src: '/VideoGameAssets/MaestroCover.png', thumbnailSrc: '/VideoGameAssets/MaestroCover-compressed.webp', alt: 'Maestro', title: 'Maestro', year: '2023', route: '/game/maestro' },
 ];
 
 const artwork = [

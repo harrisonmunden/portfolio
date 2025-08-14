@@ -20,7 +20,7 @@ const gameData = {
     ],
     assets: {
       showcase: [
-        { type: 'video', src: '/VideoGameAssets/BusyGirlPage/ShowCaseVideo.mp4', alt: 'Busy Girl Showcase Video' }
+        { type: 'video', src: '/VideoGameAssets/BusyGirlPage/ShowCaseVideo-compressed.mp4', alt: 'Busy Girl Showcase Video' }
       ],
       cityShots: [
         { src: '/VideoGameAssets/BusyGirlPage/CityShot1-compressed.jpg', alt: 'City Shot 1' },
@@ -52,10 +52,10 @@ const gameData = {
     ],
     assets: {
       showcase: [
-        { type: 'video', src: '/VideoGameAssets/MaestroPage/ShowcaseVideo.mp4', alt: 'Maestro Showcase Video' }
+        { type: 'video', src: '/VideoGameAssets/MaestroPage/ShowcaseVideo-compressed.mp4', alt: 'Maestro Showcase Video' }
       ],
       techDemo: [
-        { type: 'video', src: '/VideoGameAssets/MaestroPage/TechDemo1.mp4', alt: 'Maestro Tech Demo' }
+        { type: 'video', src: '/VideoGameAssets/MaestroPage/TechDemo1-compressed.mp4', alt: 'Maestro Tech Demo' }
       ],
       posters: [
         { src: '/VideoGameAssets/MaestroPage/MaestroPoster-compressed.jpg', alt: 'Maestro Poster' },
@@ -86,15 +86,19 @@ const gameData = {
     ],
     assets: {
       showcase: [
-        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/Showcase1.mp4', alt: 'Paparazzi Escape Showcase 1' },
-        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/Showcase2.mp4', alt: 'Paparazzi Escape Showcase 2' },
-        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/Showcase3.mp4', alt: 'Paparazzi Escape Showcase 3' }
+        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/Showcase1-compressed.mp4', alt: 'Paparazzi Escape Showcase 1' },
+        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/Showcase2-compressed.mp4', alt: 'Paparazzi Escape Showcase 2' },
+        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/Showcase3-compressed.mp4', alt: 'Paparazzi Escape Showcase 3' }
       ],
       intro: [
-        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/CelebrityIntro.mp4', alt: 'Celebrity Introduction' }
+        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/CelebrityIntro-compressed.mp4', alt: 'Celebrity Introduction' }
       ],
       carVideos: [
-        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/PapCarVid.mov', alt: 'Paparazzi Car Video', videoType: 'video/quicktime' }
+        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/PapCarVid-compressed.mp4', alt: 'Paparazzi Car Video', videoType: 'video/mp4' }
+      ],
+      videos: [
+        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/CelebrityIntro-compressed.mp4', alt: 'Celebrity Introduction' },
+        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/PapCarVid-compressed.mp4', alt: 'Paparazzi Car Video', videoType: 'video/mp4' }
       ],
       environmentAndCharacters: [
         { src: '/VideoGameAssets/PaparazziEscapePage/PaparazziEscapePoster-compressed.jpg', alt: 'Paparazzi Escape Poster' },
@@ -154,6 +158,9 @@ const VideoGamePage = () => {
             className="asset-video"
             controls
             preload="metadata"
+            onError={(e) => console.error('Video failed to load:', asset.src, e)}
+            onLoadStart={() => console.log('Video loading started:', asset.src)}
+            onCanPlay={() => console.log('Video can play:', asset.src)}
           >
             <source src={asset.src} type={videoType} />
             Your browser does not support the video tag.
@@ -211,10 +218,9 @@ const VideoGamePage = () => {
 
       {/* Asset Showcase Sections */}
       <div className="assets-showcase">
-        {renderAssetSection('Showcase Videos', game.assets.showcase, 'showcase-videos')}
+        {renderAssetSection('Showcase Video', game.assets.showcase, 'showcase-videos')}
         {renderAssetSection('Tech Demo', game.assets.techDemo, 'tech-demo')}
-        {renderAssetSection('Intro Videos', game.assets.intro, 'intro-videos')}
-        {renderAssetSection('Car Videos', game.assets.carVideos, 'car-videos')}
+        {renderAssetSection('Misc. Videos', game.assets.videos, 'videos')}
         {renderAssetSection('Environment & Characters', game.assets.environmentAndCharacters, 'environment-characters')}
         {renderAssetSection('Vehicles & Accessories', game.assets.vehiclesAndAccessories, 'vehicles-accessories')}
         {renderAssetSection('City Shots', game.assets.cityShots, 'city-shots')}
