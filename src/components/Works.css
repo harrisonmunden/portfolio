@@ -10,7 +10,7 @@
 /* Decorative Circles and Title */
 .works-header {
   position: relative;
-  margin-bottom: 60px;
+  margin-bottom: 75px;
   transition: opacity 0.4s cubic-bezier(.4,2,.6,1);
 }
 
@@ -55,7 +55,7 @@
   font-size: 52px;
   font-weight: 700;
   color: #1a1a1a;
-  margin: 40px 0 16px 0;
+  margin: 24px 0 12px 0;
   letter-spacing: 0.04em;
 }
 
@@ -65,7 +65,7 @@
 .artwork-grid {
   column-count: 3;
   column-gap: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 /* Mobile responsive grid */
@@ -258,7 +258,7 @@
   display: flex;
   gap: 20px;
   justify-content: space-between;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   width: 100%;
   max-width: 100%;
 }
@@ -387,7 +387,7 @@
     padding: 65px 8px 8px 8px;
   }
   .works-header {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
   .works-main-title {
     font-size: 20px;
@@ -395,7 +395,7 @@
   }
   .section-title {
     font-size: 18px;
-    margin: 24px 0 12px 0;
+    margin: 16px 0 8px 0;
   }
   .models-row {
     gap: 12px;
@@ -407,6 +407,7 @@
 
   .video-games-row {
     gap: 12px;
+    margin-bottom: 24px;
   }
   .video-game-tile {
     width: 220px;

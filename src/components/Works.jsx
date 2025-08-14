@@ -163,7 +163,7 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
       </div>
 
       {/* 3D Models Section (now first) */}
-      <h2 className="section-title models-title">Load 3D Models</h2>
+              <h2 className="section-title models-title">Interactive 3D Models</h2>
       <div className="models-row">
         {modelTiles.map((tile) => (
           <div

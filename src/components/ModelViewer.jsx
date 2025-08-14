@@ -75,6 +75,20 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     if (modelPath && modelPath.includes('Purse1.glb')) {
       initialDistance = 25; // Medium distance for purse
     }
+    
+    // Mobile adjustments - bring camera closer for better mobile experience
+    if (isMobile) {
+      initialDistance *= 0.7; // 30% closer on mobile
+      if (modelPath && modelPath.includes('Flowers.glb')) {
+        initialDistance = 42; // Closer for flowers on mobile
+      }
+      if (modelPath && modelPath.includes('Motorcycle.glb')) {
+        initialDistance = 10.5; // Closer for motorcycle on mobile
+      }
+      if (modelPath && modelPath.includes('Purse1.glb')) {
+        initialDistance = 17.5; // Closer for purse on mobile
+      }
+    }
     let cameraTheta = Math.PI / 2; // horizontal angle
     let cameraPhi = Math.PI / 2.2; // vertical angle
     let cameraRadius = initialDistance;
@@ -101,7 +115,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       landingConfig = {
         theta: Math.PI / 2, // 90 degrees
         phi: Math.PI / 2.2, // Slightly above horizontal
-        radius: 47,
+        radius: isMobile ? 49 : 47, // Closer on mobile
         target: new THREE.Vector3(0, 0.7, 0)
       };
     } else if (modelPath && modelPath.includes('Flowers.glb')) {
@@ -109,7 +123,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       landingConfig = {
         theta: Math.PI / 2,
         phi: Math.PI / 2.2,
-        radius: 60,
+        radius: isMobile ? 42 : 60, // Closer on mobile
         target: new THREE.Vector3(0, 5, 0)
       };
     } else if (modelPath && modelPath.includes('Motorcycle.glb')) {
@@ -117,7 +131,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       landingConfig = {
         theta: Math.PI / 2,
         phi: Math.PI / 2.2,
-        radius: 15,
+        radius: isMobile ? 12.5 : 15, // Closer on mobile
         target: new THREE.Vector3(0, 2, 0)
       };
     } else if (modelPath && modelPath.includes('Purse1.glb')) {
@@ -125,7 +139,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       landingConfig = {
         theta: 3.3,
         phi: 2.34,
-        radius: 30,
+        radius: isMobile ? 23 : 30, // Closer on mobile
         target: new THREE.Vector3(0, 0, 0) // Will be updated when model loads
       };
     }
@@ -1169,24 +1183,48 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         fontFamily: "'Martian Mono', 'Courier New', Courier, monospace",
         fontSize: isMobile ? '24px' : '52px',
         fontWeight: 700,
-        color: '#1a1a1a',
-        letterSpacing: '0.04em',
-        background: 'rgba(255,255,255,0.95)',
-        padding: isMobile ? '8px 16px' : '12px 24px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        color: '#ffffff',
+        letterSpacing: '0.04em'
       }}>
         {title}
       </div>
-      <div ref={mountRef} style={{
-        width: isMobile ? '100vw' : '96vw',
-        height: isMobile ? '60vh' : '80vh',
-        aspectRatio: isMobile ? '4/3' : '16/9',
-        borderRadius: isMobile ? 12 : 24,
-        overflow: 'hidden',
-        background: '#111',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
-      }} />
+      <div style={{ position: 'relative' }}>
+        <div ref={mountRef} style={{
+          width: isMobile ? '100vw' : '96vw',
+          height: isMobile ? '80vh' : '80vh',
+          aspectRatio: isMobile ? '5/4' : '16/9',
+          borderRadius: isMobile ? 12 : 24,
+          overflow: 'hidden',
+          background: '#111',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
+        }} />
+        {/* Smooth black fade gradient at the top */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '12%',
+          background: 'linear-gradient(to top, transparent 0%, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%)',
+          pointerEvents: 'none',
+          borderRadius: isMobile ? '12px 12px 0 0' : '24px 24px 0 0',
+          backdropFilter: 'blur(0.5px)',
+          WebkitBackdropFilter: 'blur(0.5px)'
+        }} />
+        {/* Smooth black fade gradient at the bottom */}
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '12%',
+          background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%)',
+          pointerEvents: 'none',
+          borderRadius: isMobile ? '0 0 12px 12px' : '0 0 24px 24px',
+          backdropFilter: 'blur(0.5px)',
+          WebkitBackdropFilter: 'blur(0.5px)'
+        }} />
+      </div>
       {/* Fade-in overlay */}
       <div style={{
         position: 'absolute',
