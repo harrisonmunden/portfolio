@@ -1,12 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './Works.css';
 import { motion } from 'framer-motion';
-import { useFadeInOnVisible } from './hooks/useFadeInOnVisible';
 import ModelViewer from './ModelViewer';
 import { useNavigate } from 'react-router-dom';
 import { useScrollToTop } from '../hooks/useScrollToTop';
-
-let globalVisibleCount = 8; // or your BATCH_SIZE
 
 const videoGames = [
   { id: 1, src: '/VideoGameAssets/BusyGirlCover.png', thumbnailSrc: '/VideoGameAssets/BusyGirlCover-compressed.webp', alt: 'Busy Girl', title: 'Busy Girl', year: '2023', route: '/game/busy-girl' },
@@ -80,21 +77,29 @@ const modelTiles = [
   },
 ];
 
-const BATCH_SIZE = 12;
+
 
 const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const [lightboxActive, setLightboxActive] = useState(false);
   const [hoveredImageId, setHoveredImageId] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(globalVisibleCount);
+  const [visibleCount, setVisibleCount] = useState(12); // Start with 12 images for fast load
   const [lightboxImageLoaded, setLightboxImageLoaded] = useState(false);
-  const sentinelRef = useRef();
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
   const [modelViewerProps, setModelViewerProps] = useState({});
   
   // Use custom scroll restoration hook
   useScrollToTop();
+
+  // Progressive loading: load more images after page is interactive
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisibleCount(artwork.length); // Load all images after a short delay
+    }, 1000); // 1 second delay for fast initial load
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const openImage = (image) => {
     setSelectedImage(image);
@@ -132,33 +137,6 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
   const handleImageLeave = () => {
     setHoveredImageId(null);
   };
-
-  // Infinite scroll: load more images when sentinel is visible
-  const loadMore = useCallback(() => {
-    setVisibleCount((prev) => {
-      const next = Math.min(prev + BATCH_SIZE, artwork.length);
-      globalVisibleCount = next;
-      return next;
-    });
-  }, []);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-    if (visibleCount >= artwork.length) return;
-    const observer = new window.IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && visibleCount < artwork.length) {
-          loadMore();
-        }
-      },
-      { rootMargin: '200px' }
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [loadMore, visibleCount]);
-
-  // Never reset visibleCount to a lower value
 
   // No test button or debug logic
 
@@ -233,13 +211,9 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
       <h2 className="section-title artwork-title">3D Artwork</h2>
       <div className="artwork-grid">
         {artwork.map((img, i) => {
-          const [ref, visible] = useFadeInOnVisible();
           const isHovered = hoveredImageId === img.id;
           const isDimmed = hoveredImageId && hoveredImageId !== img.id;
-
-          if (i >= visibleCount) {
-            return <div key={img.id} ref={ref} style={{ height: 0 }} />;
-          }
+          const isVisible = i < visibleCount;
 
           return (
             <div
@@ -247,20 +221,22 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
               className={`artwork-card${isHovered ? ' hovered' : ''}${isDimmed ? ' dimmed' : ''}`}
               onMouseMove={(e) => handleImageMouseMove(e, img.id)}
               onMouseLeave={handleImageLeave}
+              style={{
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'scale(1)' : 'scale(0.95)',
+                transition: 'opacity 0.6s cubic-bezier(.33,1.02,.57,.99), transform 0.6s cubic-bezier(.33,1.02,.57,.99)'
+              }}
             >
               <img
-                ref={ref}
                 src={img.thumbnailSrc}
                 alt={img.alt}
-                className={`artwork-img${visible ? ' fade-in-visible' : ''}`}
+                className="artwork-img fade-in-visible"
                 onClick={() => openImage(img)}
                 loading="lazy"
               />
             </div>
           );
         })}
-        {/* Sentinel for infinite scroll */}
-        <div ref={sentinelRef} style={{ height: 1 }} />
       </div>
 
       {/* Enhanced Lightbox */}
