@@ -95,6 +95,7 @@
   gap: 12px;
   justify-content: flex-start;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .game-year {
@@ -288,36 +289,6 @@
   column-gap: 25px;
 }
 
-/* Mobile responsive grid */
-@media (max-width: 1200px) {
-  .asset-grid {
-    column-count: 3;
-    column-gap: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .asset-grid {
-    column-count: 2;
-    column-gap: 20px;
-  }
-  
-  .showcase-videos .asset-grid,
-  .tech-demo .asset-grid,
-  .intro-videos .asset-grid,
-  .car-videos .asset-grid {
-    column-count: 1;
-    column-gap: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .asset-grid {
-    column-count: 1;
-    column-gap: 20px;
-  }
-}
-
 /* Game Not Found */
 .game-not-found {
   text-align: center;
@@ -330,106 +301,300 @@
   margin-bottom: 40px;
 }
 
-.back-button {
-  background: none;
-  border: 2px solid #4ebd8b;
-  color: #4ebd8b;
-  padding: 12px 24px;
-  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.back-button:hover {
-  background: #4ebd8b;
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(78, 189, 139, 0.3);
-}
-
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .game-info-grid {
-    gap: 30px;
+  .asset-grid {
+    column-count: 3;
+    column-gap: 20px;
   }
   
-  .asset-grid {
-    gap: 14px;
+  .showcase-videos .asset-grid,
+  .tech-demo .asset-grid,
+  .videos .asset-grid,
+  .intro-videos .asset-grid,
+  .car-videos .asset-grid {
+    column-count: 2;
+    column-gap: 25px;
+  }
+  
+  .environment-characters .asset-grid,
+  .vehicles-accessories .asset-grid,
+  .accessories .asset-grid,
+  .flower-designs .asset-grid {
+    column-count: 3;
+    column-gap: 20px;
+  }
+  
+  .posters .asset-grid,
+  .scene-shots .asset-grid {
+    column-count: 2;
+    column-gap: 25px;
   }
 }
 
 @media (max-width: 900px) {
   .video-game-page {
-    padding: 100px 40px 40px 40px;
-  }
-  
-  .game-info-grid {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-  
-  .game-cover {
-    position: static;
+    padding: 80px 30px 40px 30px;
   }
   
   .game-title {
     font-size: 64px;
   }
   
+  .section-title {
+    font-size: 42px;
+  }
+  
   .asset-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 12px;
+    column-count: 2;
+    column-gap: 20px;
   }
   
   .showcase-videos .asset-grid,
   .tech-demo .asset-grid,
+  .videos .asset-grid,
   .intro-videos .asset-grid,
   .car-videos .asset-grid {
-    grid-template-columns: 1fr;
+    column-count: 1;
+    column-gap: 20px;
+  }
+  
+  .environment-characters .asset-grid,
+  .vehicles-accessories .asset-grid,
+  .accessories .asset-grid,
+  .flower-designs .asset-grid {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  
+  .posters .asset-grid,
+  .scene-shots .asset-grid {
+    column-count: 2;
+    column-gap: 20px;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .video-game-page {
-    padding: 80px 20px 40px 20px;
+    padding: 70px 20px 40px 20px;
+  }
+  
+  .game-header {
+    padding: 0 10px;
+  }
+  
+  .title-row {
+    gap: 15px;
+    margin-bottom: 16px;
+  }
+  
+  .back-button img {
+    width: 45px !important;
+    height: 45px !important;
   }
   
   .game-title {
     font-size: 48px;
   }
   
-  .game-info-grid {
-    gap: 24px;
+  .game-meta {
+    gap: 8px;
+    margin-bottom: 16px;
   }
   
-  .technologies-section,
-  .features-section {
-    padding: 20px 16px;
+  .game-year,
+  .game-tag {
+    padding: 5px 10px;
+    font-size: 11px;
   }
   
-  .asset-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .game-description {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  
+  .assets-showcase {
+    padding: 0 10px;
   }
   
   .section-title {
     font-size: 36px;
-    margin-bottom: 16px;
+    margin: 20px 0 10px 0;
   }
   
   .asset-section {
     margin-bottom: 32px;
   }
   
+  .asset-grid {
+    column-count: 1;
+    column-gap: 16px;
+  }
+  
+  .showcase-videos .asset-grid,
+  .tech-demo .asset-grid,
+  .videos .asset-grid,
+  .intro-videos .asset-grid,
+  .car-videos .asset-grid {
+    column-count: 1;
+    column-gap: 16px;
+  }
+  
+  .environment-characters .asset-grid,
+  .vehicles-accessories .asset-grid,
+  .accessories .asset-grid,
+  .flower-designs .asset-grid {
+    column-count: 2;
+    column-gap: 16px;
+  }
+  
+  .posters .asset-grid,
+  .scene-shots .asset-grid {
+    column-count: 1;
+    column-gap: 16px;
+  }
+  
+  .asset-item {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .video-game-page {
+    padding: 60px 16px 40px 16px;
+  }
+  
+  .game-header {
+    padding: 0 8px;
+  }
+  
+  .title-row {
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  
+  .back-button img {
+    width: 38px !important;
+    height: 38px !important;
+  }
+  
+  .game-title {
+    font-size: 36px;
+  }
+  
+  .game-meta {
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  
+  .game-year,
+  .game-tag {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  
+  .game-description {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  
   .assets-showcase {
-    margin-top: 40px;
+    padding: 0 8px;
+  }
+  
+  .section-title {
+    font-size: 28px;
+    margin: 18px 0 8px 0;
+  }
+  
+  .asset-section {
+    margin-bottom: 28px;
+  }
+  
+  .asset-grid {
+    column-count: 1;
+    column-gap: 12px;
+  }
+  
+  .environment-characters .asset-grid,
+  .vehicles-accessories .asset-grid,
+  .accessories .asset-grid,
+  .flower-designs .asset-grid {
+    column-count: 1;
+    column-gap: 12px;
+  }
+  
+  .asset-item {
+    margin-bottom: 12px;
+  }
+  
+  .asset-item:hover {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 480px) {
+  .video-game-page {
+    padding: 50px 12px 40px 12px;
+  }
+  
+  .game-header {
+    padding: 0 6px;
+  }
+  
+  .title-row {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  
+  .back-button img {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .game-title {
+    font-size: 32px;
+  }
+  
+  .game-meta {
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+  
+  .game-year,
+  .game-tag {
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+  
+  .game-description {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  
+  .assets-showcase {
+    padding: 0 6px;
+  }
+  
+  .section-title {
+    font-size: 24px;
+    margin: 16px 0 6px 0;
+  }
+  
+  .asset-section {
+    margin-bottom: 24px;
+  }
+  
+  .asset-grid {
+    column-count: 1;
+    column-gap: 10px;
+  }
+  
+  .asset-item {
+    margin-bottom: 10px;
+  }
+  
+  .asset-item:hover {
+    transform: translateY(-2px);
   }
 } 
