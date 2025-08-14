@@ -314,52 +314,52 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       });
     }
 
-    // Create dynamic light bands for motorcycle scene
-    const lightBands = [];
-    if (modelPath && modelPath.includes('Motorcycle.glb')) {
-      const bandConfigs = [
-        { radius: 0.7, color: 0xffffff, height: 0 },    // Inner band - smaller and white
-        { radius: 1.352, color: 0xffffff, height: 0 },   // Middle band - smaller and white
-        { radius: 2.1, color: 0xffffff, height: 0 }    // Outer band - smaller and white
-      ];
-      
-      bandConfigs.forEach((config, index) => {
-        // Create ring geometry for the band
-        const ringGeometry = new THREE.TorusGeometry(config.radius, 0.02, 16, 64);
-        const bandMaterial = new THREE.MeshBasicMaterial({
-          color: config.color,
-          transparent: true,
-          opacity: 0.1, // Much less opaque by default
-          side: THREE.DoubleSide,
-          depthWrite: false, // Disable depth writing
-          depthTest: false, // Disable depth testing - render as overlay
-          blending: THREE.AdditiveBlending // Additive blending for light effect
-        });
-        const band = new THREE.Mesh(ringGeometry, bandMaterial);
-        
-        // Position the band horizontally at camera target, behind the motorcycle
-        band.position.set(target.x, target.y + config.height, target.z - 20); // Much further back to ensure behind geometry
-        
-        // Store band data for animation
-        band.userData.bandIndex = index;
-        band.userData.baseRadius = config.radius;
-        band.userData.targetRadius = config.radius;
-        band.userData.currentRadius = config.radius;
-        band.userData.opacity = 0.1; // Base opacity
-        band.userData.targetOpacity = 0.1; // Base opacity
-        band.userData.lastCameraTheta = cameraTheta;
-        band.userData.lastCameraPhi = cameraPhi;
-        band.userData.movementThreshold = 0.001; // Minimum movement to trigger bands
-        band.userData.scaleInProgress = true; // Track scale-in animation
-        
-        // Set render order to ensure bands render behind everything
-        band.renderOrder = -1; // Simple negative render order
-        band.scale.setScalar(0); // Start at scale 0 for scale-in animation
-        band.userData.initialScaleComplete = false; // Track if initial scale is done
-        scene.add(band);
-        lightBands.push(band);
-      });
-    }
+            // Create dynamic light bands for motorcycle scene
+        const lightBands = [];
+        if (modelPath && modelPath.includes('Motorcycle.glb')) {
+          const bandConfigs = [
+            { radius: 1.5, color: 0xffffff, height: 0 },    // Inner band - slightly smaller
+            { radius: 2.8, color: 0xffffff, height: 0 },   // Middle band - slightly smaller
+            { radius: 4.0, color: 0xffffff, height: 0 }    // Outer band - slightly smaller
+          ];
+          
+          bandConfigs.forEach((config, index) => {
+            // Create ring geometry for the band - thinner tube
+            const ringGeometry = new THREE.TorusGeometry(config.radius, 0.008, 16, 64);
+            const bandMaterial = new THREE.MeshBasicMaterial({
+              color: config.color,
+              transparent: true,
+              opacity: 0.1, // Much less opaque by default
+              side: THREE.DoubleSide,
+              depthWrite: false, // Disable depth writing
+              depthTest: false, // Disable depth testing - render as overlay
+              blending: THREE.AdditiveBlending // Additive blending for light effect
+            });
+            const band = new THREE.Mesh(ringGeometry, bandMaterial);
+            
+            // Position the band horizontally at camera target, behind the motorcycle
+            band.position.set(target.x, target.y + config.height, target.z - 20); // Much further back to ensure behind geometry
+            
+            // Store band data for animation
+            band.userData.bandIndex = index;
+            band.userData.baseRadius = config.radius;
+            band.userData.targetRadius = config.radius;
+            band.userData.currentRadius = config.radius;
+            band.userData.opacity = 0.1; // Base opacity
+            band.userData.targetOpacity = 0.1; // Base opacity
+            band.userData.lastCameraTheta = cameraTheta;
+            band.userData.lastCameraPhi = cameraPhi;
+            band.userData.movementThreshold = 0.001; // Minimum movement to trigger bands
+            band.userData.scaleInProgress = true; // Track scale-in animation
+            
+            // Set render order to ensure bands render behind everything
+            band.renderOrder = -100; // Much lower render order to ensure behind everything
+            band.scale.setScalar(0); // Start at scale 0 for scale-in animation
+            band.userData.initialScaleComplete = false; // Track if initial scale is done
+            scene.add(band);
+            lightBands.push(band);
+          });
+        }
 
     // Load Model
     const loader = new GLTFLoader();
@@ -380,7 +380,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         
         // Ensure motorcycle model renders on top of everything
         if (modelPath && modelPath.includes('Motorcycle.glb')) {
-          model.renderOrder = 1; // Simple positive render order
+          model.renderOrder = 100; // Much higher render order to ensure in front of bands
         }
         
         scene.add(model);
@@ -731,7 +731,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             
             // Ensure motorcycle renders in front of bands
             if (modelPath && modelPath.includes('Motorcycle.glb')) {
-              child.renderOrder = 1; // Simple positive render order
+              child.renderOrder = 100; // Much higher render order to ensure in front of bands
               child.material.depthWrite = true;
               child.material.depthTest = true;
             }
@@ -1246,9 +1246,97 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
           opacity: loading ? 1 : 0,
           transition: 'opacity 0.4s cubic-bezier(.4,2,.6,1)'
         }}>
-          <div className="loading-spinner" style={{
-            width: 60, height: 60, border: '6px solid rgba(255,255,255,0.18)', borderTop: '6px solid #00fff7', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: 20
-          }} />
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '20px'
+          }}>
+            {/* Main fancy spinner */}
+            <div style={{
+              position: 'relative',
+              width: 80,
+              height: 80
+            }}>
+              {/* Outer ring */}
+              <div style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                border: '4px solid rgba(85, 230, 158, 0.1)',
+                borderTop: '4px solid #55E69E',
+                borderRadius: '50%',
+                animation: 'spin 1.5s linear infinite'
+              }} />
+              {/* Middle ring */}
+              <div style={{
+                position: 'absolute',
+                top: '10px',
+                left: '10px',
+                width: '60px',
+                height: '60px',
+                border: '3px solid rgba(85, 230, 158, 0.15)',
+                borderRight: '3px solid #4DD4A3',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite reverse'
+              }} />
+              {/* Inner ring */}
+              <div style={{
+                position: 'absolute',
+                top: '20px',
+                left: '20px',
+                width: '40px',
+                height: '40px',
+                border: '2px solid rgba(85, 230, 158, 0.2)',
+                borderBottom: '2px solid #66F0B0',
+                borderRadius: '50%',
+                animation: 'spin 0.8s linear infinite'
+              }} />
+              {/* Center dot */}
+              <div style={{
+                position: 'absolute',
+                top: '35px',
+                left: '35px',
+                width: '10px',
+                height: '10px',
+                background: '#55E69E',
+                borderRadius: '50%',
+                animation: 'pulse 1.2s ease-in-out infinite alternate'
+              }} />
+            </div>
+            
+            {/* Loading text */}
+            <div style={{
+              color: '#55E69E',
+              fontSize: '18px',
+              fontWeight: '500',
+              fontFamily: "'Martian Mono', 'Courier New', Courier, monospace",
+              letterSpacing: '0.1em',
+              textShadow: '0 0 10px rgba(85, 230, 158, 0.5)'
+            }}>
+              LOADING
+            </div>
+            
+            {/* Animated dots */}
+            <div style={{
+              display: 'flex',
+              gap: '8px'
+            }}>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    background: '#55E69E',
+                    borderRadius: '50%',
+                    animation: `bounce 1.4s ease-in-out infinite both`,
+                    animationDelay: `${i * 0.16}s`
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -1259,7 +1347,20 @@ export default ModelViewer;
 
 // Spinner keyframes (inject into global style if not present)
 const style = document.createElement('style');
-style.innerHTML = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+style.innerHTML = `
+  @keyframes spin { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+  }
+  @keyframes pulse { 
+    0% { transform: scale(1); opacity: 1; } 
+    100% { transform: scale(1.3); opacity: 0.7; } 
+  }
+  @keyframes bounce { 
+    0%, 80%, 100% { transform: scale(0); } 
+    40% { transform: scale(1); } 
+  }
+`;
 if (!document.head.querySelector('style[data-spinner]')) {
   style.setAttribute('data-spinner', 'true');
   document.head.appendChild(style);
