@@ -303,7 +303,7 @@
   border-radius: 20px;
   overflow: hidden;
   background: #f0f0f0;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 2.46 / 1; /* Original image aspect ratio (4979x2021) */
 }
 
 .video-game-tile:hover {
