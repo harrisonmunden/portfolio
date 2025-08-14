@@ -809,6 +809,10 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     let isDragging = false;
     let lastX = 0, lastY = 0;
     let isRightButton = false;
+    let touchStartX = 0, touchStartY = 0;
+    let touchStartTheta = 0, touchStartPhi = 0;
+    let touchStartRadius = 0;
+    
     // Prevent going underneath for Flowers model
     const minPhi = (modelPath && modelPath.includes('Flowers.glb')) ? 0.08 : 0.08;
     const maxPhi = (modelPath && modelPath.includes('Flowers.glb')) ? Math.PI - 0.02 : Math.PI - 0.2;
@@ -817,26 +821,59 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       minRadius = 1; // Allow closer zoom for motorcycle
       maxRadius = 30; // Limit max zoom for motorcycle
     }
+    
     function onPointerDown(e) {
       isDragging = true;
-      lastX = e.clientX;
-      lastY = e.clientY;
+      lastX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+      lastY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
       isRightButton = e.button === 2;
+      
+      // Store initial touch positions for smooth panning
+      if (e.touches) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchStartTheta = targetTheta;
+        touchStartPhi = targetPhi;
+        touchStartRadius = targetRadius;
+      }
+      
       resetIdleTimer();
     }
+    
     function onPointerUp() {
       isDragging = false;
       resetIdleTimer();
     }
+    
     function onPointerMove(e) {
       if (!isDragging) return;
-      const dx = e.clientX - lastX;
-      const dy = e.clientY - lastY;
-      if (!isRightButton && e.buttons === 1) {
-        // Left button: orbit
-        let nextTheta = targetTheta + dx * 0.008;
-        let nextPhi = targetPhi - dy * 0.008;
+      
+      const currentX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+      const currentY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+      
+      if (!isRightButton && (e.buttons === 1 || e.touches)) {
+        // Left button or touch: orbit
+        let nextTheta, nextPhi;
+        
+        if (e.touches) {
+          // Touch-based panning - use relative movement from touch start
+          const deltaX = currentX - touchStartX;
+          const deltaY = currentY - touchStartY;
+          
+          // Adjust sensitivity for mobile
+          const touchSensitivity = 0.01;
+          nextTheta = touchStartTheta + deltaX * touchSensitivity;
+          nextPhi = touchStartPhi - deltaY * touchSensitivity;
+        } else {
+          // Mouse-based panning
+          const dx = currentX - lastX;
+          const dy = currentY - lastY;
+          nextTheta = targetTheta + dx * 0.008;
+          nextPhi = targetPhi - dy * 0.008;
+        }
+        
         nextPhi = Math.max(minPhi, Math.min(maxPhi, nextPhi));
+        
         // For Flowers, prevent phi that would go below the floor
         if (modelPath && modelPath.includes('Flowers.glb')) {
           const nextY = cameraRadius * Math.cos(nextPhi) + target.y;
@@ -852,23 +889,49 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         }
       } else if (isRightButton || e.buttons === 2) {
         // Right button: zoom
+        const dy = currentY - lastY;
         targetRadius += dy * 0.03;
         targetRadius = Math.max(minRadius, Math.min(maxRadius, targetRadius));
       }
-      lastX = e.clientX;
-      lastY = e.clientY;
+      
+      lastX = currentX;
+      lastY = currentY;
       resetIdleTimer();
     }
+    
     function onWheel(e) {
       targetRadius += e.deltaY * 0.002;
       targetRadius = Math.max(minRadius, Math.min(maxRadius, targetRadius));
       resetIdleTimer();
     }
+    
+    // Add touch event listeners for better mobile support
+    function onTouchStart(e) {
+      e.preventDefault();
+      onPointerDown(e);
+    }
+    
+    function onTouchMove(e) {
+      e.preventDefault();
+      onPointerMove(e);
+    }
+    
+    function onTouchEnd(e) {
+      e.preventDefault();
+      onPointerUp();
+    }
+
     renderer.domElement.addEventListener('pointerdown', onPointerDown);
     renderer.domElement.addEventListener('pointerup', onPointerUp);
     renderer.domElement.addEventListener('pointerleave', onPointerUp);
     renderer.domElement.addEventListener('pointermove', onPointerMove);
     renderer.domElement.addEventListener('wheel', onWheel);
+    
+    // Add touch event listeners for better mobile support
+    renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+    renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+    renderer.domElement.addEventListener('touchend', onTouchEnd, { passive: false });
+    
     renderer.domElement.oncontextmenu = (e) => e.preventDefault();
 
     // Animation loop
@@ -1074,6 +1137,9 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         renderer.domElement.removeEventListener('pointerleave', onPointerUp);
         renderer.domElement.removeEventListener('pointermove', onPointerMove);
         renderer.domElement.removeEventListener('wheel', onWheel);
+        renderer.domElement.removeEventListener('touchstart', onTouchStart);
+        renderer.domElement.removeEventListener('touchmove', onTouchMove);
+        renderer.domElement.removeEventListener('touchend', onTouchEnd);
         renderer.domElement.oncontextmenu = null;
         if (mountRef.current && mountRef.current.contains(renderer.domElement)) {
           mountRef.current.removeChild(renderer.domElement);

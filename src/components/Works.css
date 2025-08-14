@@ -253,6 +253,7 @@
   opacity: 1;
 }
 
+/* 3D Models Section */
 .models-row {
   display: flex;
   gap: 20px;
@@ -285,16 +286,64 @@
   object-fit: cover;
 }
 
+/* Video Games Section */
+.video-games-row {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.video-game-tile {
+  flex: 1;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #f0f0f0;
+  aspect-ratio: 16 / 9;
+}
+
+.video-game-tile:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
 @media (max-width: 700px) {
   .models-row {
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
     gap: 16px;
-    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
   }
   .model-tile {
-    width: 80vw;
-    max-width: 300px;
+    flex-shrink: 0;
+    width: 250px;
     min-width: 250px;
+    scroll-snap-align: start;
+  }
+  
+  .video-games-row {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+  .video-game-tile {
+    flex-shrink: 0;
+    width: 250px;
+    min-width: 250px;
+    scroll-snap-align: start;
   }
 }
 
@@ -352,8 +401,15 @@
     gap: 12px;
   }
   .model-tile {
-    width: 75vw;
-    max-width: 280px;
+    width: 220px;
+    min-width: 220px;
+  }
+
+  .video-games-row {
+    gap: 12px;
+  }
+  .video-game-tile {
+    width: 220px;
     min-width: 220px;
   }
 
@@ -374,5 +430,23 @@
   }
   .lightbox-title {
     font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .models-row {
+    gap: 8px;
+  }
+  .model-tile {
+    width: 200px;
+    min-width: 200px;
+  }
+  
+  .video-games-row {
+    gap: 8px;
+  }
+  .video-game-tile {
+    width: 200px;
+    min-width: 200px;
   }
 }

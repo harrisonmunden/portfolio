@@ -53,19 +53,19 @@ const modelTiles = [
   },
   {
     id: 2,
-    label: 'Flowers Model',
-    title: 'Flowers Model',
-    img: '/3DModels/FlowersCover-compressed.webp',
-    modelPath: '/3DModels/Flowers.glb',
-    texturePath: '/3DModels/FlowersTexture.png'
-  },
-  {
-    id: 3,
     label: 'Motorcycle Model',
     title: 'Motorcycle Model',
     img: '/3DModels/MotorcycleCover-compressed.webp',
     modelPath: '/3DModels/Motorcycle.glb',
     texturePath: '/3DModels/MotorcycleAlbedo.png'
+  },
+  {
+    id: 3,
+    label: 'Flowers Model',
+    title: 'Flowers Model',
+    img: '/3DModels/FlowersCover-compressed.webp',
+    modelPath: '/3DModels/Flowers.glb',
+    texturePath: '/3DModels/FlowersTexture.png'
   },
   {
     id: 4,
@@ -76,7 +76,6 @@ const modelTiles = [
     texturePath: '/3DModels/Purse1Texture.png'
   },
 ];
-
 
 
 const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
@@ -194,11 +193,11 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
 
       {/* Video Games Section */}
       <h2 className="section-title video-games-title">Video Games</h2>
-      <div className="models-row">
+      <div className="video-games-row">
         {videoGames.map((game) => (
           <div
             key={game.id}
-            className="model-tile"
+            className="video-game-tile"
             onClick={() => navigate(game.route)}
             style={{ cursor: 'pointer' }}
           >
