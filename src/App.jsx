@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import PersonFigure from './components/PersonFigure';
 import Home from './components/Home';
@@ -216,6 +216,18 @@ const AppContent = () => {
               style={{ position: 'relative', zIndex: 1 }}
             >
               <Works goTo={goTo} hideWorkNav onModelViewerOpenChange={setModelViewerOpen} />
+            </motion.div>
+          } />
+          <Route path="/about" element={
+            <motion.div
+              key="about"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={PAGE_BOUNCE}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <About goTo={goTo} hideAboutNav={true} />
             </motion.div>
           } />
           <Route path="/game/:gameId" element={
