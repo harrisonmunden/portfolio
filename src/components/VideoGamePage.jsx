@@ -7,11 +7,10 @@ import './VideoGamePage.css';
 const gameData = {
   'busy-girl': {
     title: 'Busy Girl',
-    description: 'An engaging escape game where players navigate through challenging puzzles and obstacles.',
+    description: 'Play as a BUSY GIRL in search of a very sought after Wig! The wig is protected by a pretentious Sales Associate, so make sure you have the MOST CHIC accessories to impress her. Shop through a monochromatic town to prepare for your appointment with the sales associate. Avoid the crazy drivers!',
     coverImage: '/VideoGameAssets/BusyGirlCover-compressed.webp',
     year: '2023',
-    genre: 'Puzzle/Adventure',
-    technologies: ['Unity', 'C#', 'Blender'],
+    tags: ['2 People', '2.5 Weeks', 'Unity', 'Blender', 'Photoshop'],
     features: [
       'Multiple puzzle mechanics',
       'Immersive 3D environments',
@@ -39,11 +38,10 @@ const gameData = {
   },
   'maestro': {
     title: 'Maestro!',
-    description: 'A musical rhythm game that challenges players to master various instruments and compositions.',
+    description: 'Conduct an orchestra of flowers in virtual reality! Move your hands around and listen to the beatiful music from the flowers. The flowers dance and sing dependent on your hand movements.',
     coverImage: '/VideoGameAssets/MaestroCover-compressed.webp',
     year: '2023',
-    genre: 'Rhythm/Music',
-    technologies: ['Unity', 'C#', 'FMOD'],
+    tags: ['2 People', '3 Weeks', 'Maya', 'Unity', 'C#', 'Photoshop'],
     features: [
       'Multiple instrument modes',
       'Dynamic difficulty adjustment',
@@ -73,11 +71,10 @@ const gameData = {
   },
   'paparazzi-escape': {
     title: 'Paparazzi Escape',
-    description: 'A thrilling stealth game where players must escape from relentless paparazzi while maintaining their privacy.',
+    description: 'PAPARAZZI ARE OBSESSED WITH U! Escape them in your glamorized vehicle equipped with anti-paparazzi weaponry. In \'PAPARAZZI ESCAPE\' players exist as an A-list celebrity in virtual reality on a high speed chase through a monochromatic cityscape. Try to fight off the paparazzi as they swarm.',
     coverImage: '/VideoGameAssets/PaparazziEscapeCover-compressed.webp',
     year: '2023',
-    genre: 'Stealth/Action',
-    technologies: ['Unity', 'C#', 'NavMesh AI'],
+    tags: ['2 People', '7 Weeks', 'Maya', 'Photoshop', 'Unity', 'C#'],
     features: [
       'Advanced AI behavior',
       'Multiple escape routes',
@@ -211,7 +208,9 @@ const VideoGamePage = () => {
         </div>
         <div className="game-meta">
           <span className="game-year">{game.year}</span>
-          <span className="game-genre">{game.genre}</span>
+          {game.tags && game.tags.map((tag, index) => (
+            <span key={index} className="game-tag">{tag}</span>
+          ))}
         </div>
         <p className="game-description">{game.description}</p>
       </div>
