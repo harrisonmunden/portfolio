@@ -149,12 +149,18 @@ const VideoGamePage = () => {
   const renderAsset = (asset, index) => {
     if (asset.type === 'video') {
       const videoType = asset.videoType || 'video/mp4';
+      
       return (
         <div key={index} className="asset-item video-item">
           <video
             className="asset-video"
             controls
             preload="metadata"
+            autoPlay
+            muted
+            loop
+            playsInline
+            webkit-playsinline="true"
             onError={(e) => console.error('Video failed to load:', asset.src, e)}
             onLoadStart={() => console.log('Video loading started:', asset.src)}
             onCanPlay={() => console.log('Video can play:', asset.src)}
