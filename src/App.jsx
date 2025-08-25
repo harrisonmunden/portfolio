@@ -172,7 +172,10 @@ const AppContent = () => {
   const fadeStyle = modelViewerOpen ? { opacity: 0, pointerEvents: 'none', transition: 'opacity 0.4s cubic-bezier(.4,2,.6,1)' } : {};
 
   return (
-    <div className="relative z-0 bg-primary" style={{ minHeight: '100vh', position: 'relative' }}>
+    <div className="relative z-0 bg-primary" style={{ 
+      minHeight: '100vh', 
+      position: 'relative'
+    }}>
       {/* Only show navigation headers and PersonFigure on home/work pages, not on game pages */}
       {!isGamePage && (
         <>

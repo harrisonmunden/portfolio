@@ -207,6 +207,21 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.asset-video::-webkit-media-controls {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.asset-video::-webkit-media-controls-panel {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.asset-item:hover .asset-video::-webkit-media-controls,
+.asset-item:hover .asset-video::-webkit-media-controls-panel {
+  opacity: 1;
+}
+
 .asset-item:hover .asset-video {
   transform: scale(1.01);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -297,7 +312,7 @@
 
 .game-not-found h1 {
   font-size: 48px;
-  color: #1a1a1a;
+  color: #e0e0e0;
   margin-bottom: 40px;
 }
 
