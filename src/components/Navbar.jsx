@@ -21,7 +21,7 @@ const Navbar = () => {
           }}
         >
           {/* <img src={logo} alt="logo" className='w-14 h-14 object-contain' /> */}
-          <p className="text-white text-[18px] font-normal cursor-pointer">Harrison Munden</p>
+          <p className="text-white text-[18px] font-normal cursor-pointer">Joe Shmoe</p>
         </Link>
         <ul className="list-none hidden sm:flex flex-10 gap-10">
           {navLinks.map((Link) => (

@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './Works.css';
 import { motion } from 'framer-motion';
 import ModelViewer from './ModelViewer';
+import ImageCarousel from './ImageCarousel';
+import AddToCartModal from './AddToCartModal';
 import { useNavigate } from 'react-router-dom';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
@@ -107,10 +109,10 @@ const modelTiles = [
 const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
-  const [lightboxActive, setLightboxActive] = useState(false);
+  const [carouselOpen, setCarouselOpen] = useState(false);
+  const [addToCartOpen, setAddToCartOpen] = useState(false);
   const [hoveredImageId, setHoveredImageId] = useState(null);
   const [visibleCount, setVisibleCount] = useState(12); // Start with 12 images for fast load
-  const [lightboxImageLoaded, setLightboxImageLoaded] = useState(false);
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
   const [modelViewerProps, setModelViewerProps] = useState({});
   
@@ -197,17 +199,15 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const openImage = (image) => {
+  const openImageCarousel = (image) => {
     setSelectedImage(image);
-    setLightboxActive(true);
-    setLightboxImageLoaded(false);
+    setCarouselOpen(true);
   };
 
-  const closeImage = () => {
-    setLightboxActive(false);
+  const closeImageCarousel = () => {
+    setCarouselOpen(false);
     setTimeout(() => {
       setSelectedImage(null);
-      setLightboxImageLoaded(false);
     }, 300);
   };
 
@@ -233,8 +233,6 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
   const handleImageLeave = () => {
     setHoveredImageId(null);
   };
-
-  // No test button or debug logic
 
   useEffect(() => {
     if (onModelViewerOpenChange) {
@@ -267,11 +265,10 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
             />
           </motion.h1>
         )}
-
       </div>
 
       {/* 3D Models Section (now first) */}
-              <h2 className="section-title models-title">Interactive 3D Models</h2>
+      <h2 className="section-title models-title">Interactive 3D Models</h2>
       <div className="models-row">
         {modelTiles.map((tile) => (
           <div
@@ -314,7 +311,7 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
         ))}
       </div>
 
-      {/* 3D Artwork Section */}
+      {/* 3D Artwork Section - Back to original clean grid */}
       <h2 className="section-title artwork-title">3D Artwork</h2>
       <div className="artwork-grid">
         {sortedArtwork.map((img, i) => {
@@ -338,7 +335,7 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
                 src={img.thumbnailSrc}
                 alt={img.alt}
                 className="artwork-img fade-in-visible"
-                onClick={() => openImage(img)}
+                onClick={() => openImageCarousel(img)}
                 loading="lazy"
               />
             </div>
@@ -346,34 +343,19 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
         })}
       </div>
 
-      {/* Enhanced Lightbox */}
-      {selectedImage && (
-        <div className={`lightbox ${lightboxActive ? 'active' : ''}`} onClick={closeImage}>
-          <span className="close" onClick={closeImage}>&times;</span>
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            {!lightboxImageLoaded && (
-              <div className="lightbox-loading">
-                <div className="loading-spinner"></div>
-                <p>Loading full resolution...</p>
-              </div>
-            )}
-            <img
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              className={`lightbox-image ${lightboxImageLoaded ? 'loaded' : ''}`}
-              onLoad={() => setLightboxImageLoaded(true)}
-              style={{ opacity: lightboxImageLoaded ? 1 : 0 }}
-            />
-            <div className="lightbox-text">
-              <h2 className="lightbox-title">{selectedImage.title}</h2>
-              <p className="lightbox-year">{selectedImage.year}</p>
-              <p className="lightbox-description">
-                This piece showcases the artist's unique perspective on digital art and 3D modeling techniques.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Image Carousel with Add to Cart functionality */}
+      <ImageCarousel
+        artwork={selectedImage}
+        isOpen={carouselOpen}
+        onClose={closeImageCarousel}
+      />
+
+      {/* Add to Cart Modal */}
+      <AddToCartModal
+        artwork={selectedImage}
+        isOpen={addToCartOpen}
+        onClose={() => setAddToCartOpen(false)}
+      />
     </div>
   );
 };

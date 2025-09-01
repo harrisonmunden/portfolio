@@ -49,6 +49,8 @@
   letter-spacing: 0.05em;
 }
 
+
+
 /* Section Titles */
 .section-title {
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
@@ -74,6 +76,8 @@
     column-count: 2;
     column-gap: 20px;
   }
+  
+
 }
 
 @media (max-width: 480px) {
