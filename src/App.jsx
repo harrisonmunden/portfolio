@@ -6,6 +6,9 @@ import Home from './components/Home';
 import Works from './components/Works';
 import About from './components/About';
 import VideoGamePage from './components/VideoGamePage';
+import CartPage from './components/CartPage';
+import CartIcon from './components/CartIcon';
+import { CartProvider } from './contexts/CartContext';
 import { useScrollToTop } from './hooks/useScrollToTop';
 
 // Animation constants
@@ -131,6 +134,31 @@ const SharedAboutHeader = ({ page, goTo }) => {
   );
 };
 
+// Cart Icon Component for navigation
+const CartIconNav = ({ page, goTo }) => {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+  
+  if (!(page === 'home' || page === 'work' || page === 'cart')) return null;
+  
+  return (
+    <motion.div
+      className="cart-icon-nav"
+      style={{
+        position: 'absolute',
+        right: isMobile ? 20 : 60,
+        top: isMobile ? 20 : 50,
+        zIndex: 10,
+      }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={HEADER_ANIMATION}
+    >
+      <CartIcon onClick={() => goTo('cart')} />
+    </motion.div>
+  );
+};
+
 // Main App component with routing
 const AppContent = () => {
   const navigate = useNavigate();
@@ -145,6 +173,7 @@ const AppContent = () => {
     const path = location.pathname;
     if (path === '/work') return 'work';
     if (path === '/about') return 'about';
+    if (path === '/cart') return 'cart';
     if (path.startsWith('/game/')) return 'game';
     return 'home';
   };
@@ -159,6 +188,8 @@ const AppContent = () => {
       navigate('/work');
     } else if (target === 'about') {
       navigate('/about');
+    } else if (target === 'cart') {
+      navigate('/cart');
     }
   };
 
@@ -176,7 +207,7 @@ const AppContent = () => {
       minHeight: '100vh', 
       position: 'relative'
     }}>
-      {/* Only show navigation headers and PersonFigure on home/work pages, not on game pages */}
+      {/* Only show navigation headers and PersonFigure on home/work/cart pages, not on game pages */}
       {!isGamePage && (
         <>
           <AnimatePresence mode="wait">
@@ -187,6 +218,11 @@ const AppContent = () => {
           <AnimatePresence mode="wait">
             <div style={fadeStyle}>
               <SharedAboutHeader key="about-header" page={currentPage} goTo={goTo} />
+            </div>
+          </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <div style={fadeStyle}>
+              <CartIconNav key="cart-icon" page={currentPage} goTo={goTo} />
             </div>
           </AnimatePresence>
           {/* Person Figure Animation */}
@@ -234,6 +270,18 @@ const AppContent = () => {
               <About goTo={goTo} hideAboutNav={true} />
             </motion.div>
           } />
+          <Route path="/cart" element={
+            <motion.div
+              key="cart"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={PAGE_BOUNCE}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <CartPage goTo={goTo} />
+            </motion.div>
+          } />
           <Route path="/game/:gameId" element={
             <motion.div
               key={`game-${location.pathname}`}
@@ -246,18 +294,6 @@ const AppContent = () => {
               <VideoGamePage />
             </motion.div>
           } />
-          {/* {page === 'about' && (
-            <motion.div
-              key="about"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={PAGE_BOUNCE}
-              style={{ position: 'relative', zIndex: 1 }}
-            >
-              <About goTo={goTo} hideAboutNav={true} />
-            </motion.div>
-          )} */}
         </Routes>
       </AnimatePresence>
     </div>
@@ -266,9 +302,11 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <CartProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </CartProvider>
   );
 };
 
