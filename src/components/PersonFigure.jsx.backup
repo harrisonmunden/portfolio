@@ -153,12 +153,14 @@ const PersonFigure = ({ page }) => {
       const x = CONFIG.startX + (i * spacing);
       let waveY;
       if (isCart) {
+        // Cart wave: different pattern
         waveY = Math.sin((i + CONFIG.waveOffset) * 0.8) * amplitude * 0.8 +
                 Math.sin((i + CONFIG.waveOffset) * 1.6) * amplitude * 0.2;
       } else {
+        // Work/About wave: original pattern
         waveY = Math.sin((i + CONFIG.waveOffset) * CONFIG.waveFrequency) * amplitude;
       }
-      const y = CONFIG.waveHeight + waveY;
+      const y = (isCart ? CONFIG.waveHeight + 10 : CONFIG.waveHeight) + waveY;
       const startY = Math.random() * (CONFIG.startYRange.max - CONFIG.startYRange.min) + CONFIG.startYRange.min;
       const delay = i * CONFIG.delayIncrement;
       
@@ -391,7 +393,7 @@ const PersonFigure = ({ page }) => {
         )}
 
         {/* Work/About Pages: Additional Wave Heads */}
-        {(isWork || isAbout || isCart) && (
+        {(isWork || isAbout || isCart) {(isWork || isAbout) && ({(isWork || isAbout) && ( (
           <motion.div
             key="wave-heads"
             initial={{ opacity: 0 }}

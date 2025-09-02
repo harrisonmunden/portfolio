@@ -153,9 +153,11 @@ const PersonFigure = ({ page }) => {
       const x = CONFIG.startX + (i * spacing);
       let waveY;
       if (isCart) {
+        // Cart wave: different pattern
         waveY = Math.sin((i + CONFIG.waveOffset) * 0.8) * amplitude * 0.8 +
                 Math.sin((i + CONFIG.waveOffset) * 1.6) * amplitude * 0.2;
       } else {
+        // Work/About wave: original pattern
         waveY = Math.sin((i + CONFIG.waveOffset) * CONFIG.waveFrequency) * amplitude;
       }
       const y = CONFIG.waveHeight + waveY;
@@ -243,7 +245,7 @@ const PersonFigure = ({ page }) => {
     const headRect = headImg.getBoundingClientRect();
     // Get nav target rects
     const navRects = [];
-    document.querySelectorAll('.about-title, .works-main-title, .chevron-img, .cart-title').forEach(el => {
+    document.querySelectorAll('.about-title, .works-main-title, .chevron-img').forEach(el => {
       navRects.push(el.getBoundingClientRect());
     });
     // Check if any nav rect overlaps the head rect
@@ -275,7 +277,7 @@ const PersonFigure = ({ page }) => {
     const headImg = e.currentTarget;
     const headRect = headImg.getBoundingClientRect();
     const navRects = [];
-    document.querySelectorAll('.about-title, .works-main-title, .chevron-img, .cart-title').forEach(el => {
+    document.querySelectorAll('.about-title, .works-main-title, .chevron-img').forEach(el => {
       navRects.push(el.getBoundingClientRect());
     });
     const overlapsNav = navRects.some(navRect => rectsOverlap(headRect, navRect));
@@ -391,7 +393,7 @@ const PersonFigure = ({ page }) => {
         )}
 
         {/* Work/About Pages: Additional Wave Heads */}
-        {(isWork || isAbout || isCart) && (
+        {(isWork || isAbout || isCart)         {(isWork || isAbout || isCart) {(isWork || isAbout) && ({(isWork || isAbout) && ( (        {(isWork || isAbout || isCart) {(isWork || isAbout) && ({(isWork || isAbout) && ( ( (
           <motion.div
             key="wave-heads"
             initial={{ opacity: 0 }}

@@ -391,7 +391,7 @@ const PersonFigure = ({ page }) => {
         )}
 
         {/* Work/About Pages: Additional Wave Heads */}
-        {(isWork || isAbout || isCart) && (
+        {(isWork || isAbout || isCart)         {(isWork || isAbout || isCart) {(isWork || isAbout) && ({(isWork || isAbout) && ( (        {(isWork || isAbout || isCart) {(isWork || isAbout) && ({(isWork || isAbout) && ( ( (
           <motion.div
             key="wave-heads"
             initial={{ opacity: 0 }}
