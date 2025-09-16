@@ -3,9 +3,13 @@ import { HashRouter as Router, Routes, Route, useNavigate, useLocation } from 'r
 import { AnimatePresence, motion } from 'framer-motion';
 import PersonFigure from './components/PersonFigure';
 import Home from './components/Home';
-import Works from './components/Works';
-import About from './components/About';
+import PrintsForSale from './components/PrintsForSale';
+import RealtimeArtwork from './components/RealtimeArtwork';
+import ProfessionalWork from './components/ProfessionalWork';
 import VideoGamePage from './components/VideoGamePage';
+import CartPage from './components/CartPage';
+import CartIcon from './components/CartIcon';
+import { CartProvider } from './contexts/CartContext';
 import { useScrollToTop } from './hooks/useScrollToTop';
 
 // Animation constants
@@ -31,22 +35,22 @@ const GAME_PAGE_ANIMATION = {
 };
 
 // Shared header components
-const SharedWorkHeader = ({ page, goTo }) => {
+const SharedPrintsHeader = ({ page, goTo }) => {
   const isHome = page === 'home';
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
   
-  if (!(page === 'home' || page === 'work')) return null;
+  if (!(page === 'home' || page === 'prints-for-sale')) return null;
   
   return (
     <motion.div
       layout
-      layoutId="work-nav"
-      className="shared-work-header"
+      layoutId="prints-nav"
+      className="shared-prints-header"
       style={{
         position: 'absolute',
         left: isHome ? (isMobile ? 25 : 100) : (isMobile ? 20 : 60),
-        top: isHome ? (isMobile ? 320 : 420) : (isMobile ? 20 : 50),
-        zIndex: 10,
+        top: isHome ? (isMobile ? 320 : 460) : (isMobile ? 20 : 50),
+        zIndex: 9999,
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
@@ -56,18 +60,18 @@ const SharedWorkHeader = ({ page, goTo }) => {
         letterSpacing: '0.085em',
         fontFamily: 'Martian Mono, Courier New, Courier, monospace',
       }}
-      onClick={() => goTo(isHome ? 'work' : 'home')}
+      onClick={() => goTo(isHome ? 'prints-for-sale' : 'home')}
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={HEADER_ANIMATION}
     >
-      <span>work</span>
+      <span>prints</span>
       <motion.img
         src="/GlassyObjects/About/Chevron.png"
         alt="chevron"
         className="chevron-img"
-        layoutId="work-chevron"
+        layoutId="prints-chevron"
         style={{
           width: isHome ? 55 : (isMobile ? 29 : 55), 
           marginLeft: 8,
@@ -81,22 +85,22 @@ const SharedWorkHeader = ({ page, goTo }) => {
   );
 };
 
-const SharedAboutHeader = ({ page, goTo }) => {
+const SharedRealtimeHeader = ({ page, goTo }) => {
   const isHome = page === 'home';
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
   
-  if (!(page === 'home' || page === 'about')) return null;
+  if (!(page === 'home' || page === 'realtime-artwork')) return null;
   
   return (
     <motion.div
       layout
-      layoutId="about-nav"
-      className="shared-about-header"
+      layoutId="realtime-nav"
+      className="shared-realtime-header"
       style={{
         position: 'absolute',
         left: isHome ? (isMobile ? 25 : 100) : (isMobile ? 20 : 60),
-        top: isHome ? (isMobile ? 390 : 500) : (isMobile ? 20 : 50),
-        zIndex: 10,
+        top: isHome ? (isMobile ? 360 : 540) : (isMobile ? 20 : 50),
+        zIndex: 9999,
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
@@ -106,18 +110,18 @@ const SharedAboutHeader = ({ page, goTo }) => {
         letterSpacing: '0.085em',
         fontFamily: 'Martian Mono, Courier New, Courier, monospace',
       }}
-      onClick={() => goTo(isHome ? 'about' : 'home')}
+      onClick={() => goTo(isHome ? 'realtime-artwork' : 'home')}
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={HEADER_ANIMATION}
     >
-      <span>about</span>
+      <span>realtime</span>
       <motion.img
         src="/GlassyObjects/About/Chevron.png"
         alt="chevron"
         className="chevron-img"
-        layoutId="about-chevron"
+        layoutId="realtime-chevron"
         style={{
           width: isHome ? 55 : (isMobile ? 29 : 55), 
           marginLeft: 8,
@@ -127,6 +131,81 @@ const SharedAboutHeader = ({ page, goTo }) => {
         animate={{ width: isHome ? 55 : (isMobile ? 29 : 55), rotate: isHome ? 0 : 90 }}
         transition={HEADER_ANIMATION}
       />
+    </motion.div>
+  );
+};
+
+const SharedProfessionalHeader = ({ page, goTo }) => {
+  const isHome = page === 'home';
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+  
+  if (!(page === 'home' || page === 'professional-work')) return null;
+  
+  return (
+    <motion.div
+      layout
+      layoutId="professional-nav"
+      className="shared-professional-header"
+      style={{
+        position: 'absolute',
+        left: isHome ? (isMobile ? 25 : 100) : (isMobile ? 20 : 60),
+        top: isHome ? (isMobile ? 400 : 620) : (isMobile ? 20 : 50),
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
+        fontSize: isHome ? (isMobile ? 46 : 66) : (isMobile ? 40 : 88),
+        fontWeight: 900,
+        color: '#1a1a1a',
+        letterSpacing: '0.085em',
+        fontFamily: 'Martian Mono, Courier New, Courier, monospace',
+      }}
+      onClick={() => goTo(isHome ? 'professional-work' : 'home')}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={HEADER_ANIMATION}
+    >
+      <span>professional</span>
+      <motion.img
+        src="/GlassyObjects/About/Chevron.png"
+        alt="chevron"
+        className="chevron-img"
+        layoutId="professional-chevron"
+        style={{
+          width: isHome ? 55 : (isMobile ? 29 : 55), 
+          marginLeft: 8,
+          marginTop: 0,
+        }}
+        initial={false}
+        animate={{ width: isHome ? 55 : (isMobile ? 29 : 55), rotate: isHome ? 0 : 90 }}
+        transition={HEADER_ANIMATION}
+      />
+    </motion.div>
+  );
+};
+
+// Cart Icon Component for navigation
+const CartIconNav = ({ page, goTo }) => {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+  
+  if (!(page === 'home' || page === 'prints-for-sale' || page === 'realtime-artwork' || page === 'professional-work' || page === 'cart')) return null;
+  
+  return (
+    <motion.div
+      className="cart-icon-nav"
+      style={{
+        position: 'absolute',
+        right: isMobile ? 20 : 60,
+        top: isMobile ? 20 : 50,
+        zIndex: 9999,
+      }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={HEADER_ANIMATION}
+    >
+      <CartIcon onClick={() => goTo('cart')} />
     </motion.div>
   );
 };
@@ -143,8 +222,10 @@ const AppContent = () => {
   // Get current page from URL path
   const getCurrentPage = () => {
     const path = location.pathname;
-    if (path === '/work') return 'work';
-    if (path === '/about') return 'about';
+    if (path === '/prints-for-sale') return 'prints-for-sale';
+    if (path === '/realtime-artwork') return 'realtime-artwork';
+    if (path === '/professional-work') return 'professional-work';
+    if (path === '/cart') return 'cart';
     if (path.startsWith('/game/')) return 'game';
     return 'home';
   };
@@ -155,10 +236,14 @@ const AppContent = () => {
   const goTo = (target) => {
     if (target === 'home') {
       navigate('/');
-    } else if (target === 'work') {
-      navigate('/work');
-    } else if (target === 'about') {
-      navigate('/about');
+    } else if (target === 'prints-for-sale') {
+      navigate('/prints-for-sale');
+    } else if (target === 'realtime-artwork') {
+      navigate('/realtime-artwork');
+    } else if (target === 'professional-work') {
+      navigate('/professional-work');
+    } else if (target === 'cart') {
+      navigate('/cart');
     }
   };
 
@@ -176,17 +261,27 @@ const AppContent = () => {
       minHeight: '100vh', 
       position: 'relative'
     }}>
-      {/* Only show navigation headers and PersonFigure on home/work pages, not on game pages */}
+      {/* Only show navigation headers and PersonFigure on home/work/cart pages, not on game pages */}
       {!isGamePage && (
         <>
           <AnimatePresence mode="wait">
             <div style={fadeStyle}>
-              <SharedWorkHeader key="work-header" page={currentPage} goTo={goTo} />
+              <SharedPrintsHeader key="prints-header" page={currentPage} goTo={goTo} />
             </div>
           </AnimatePresence>
           <AnimatePresence mode="wait">
             <div style={fadeStyle}>
-              <SharedAboutHeader key="about-header" page={currentPage} goTo={goTo} />
+              <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} />
+            </div>
+          </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <div style={fadeStyle}>
+              <SharedProfessionalHeader key="professional-header" page={currentPage} goTo={goTo} />
+            </div>
+          </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <div style={fadeStyle}>
+              <CartIconNav key="cart-icon" page={currentPage} goTo={goTo} />
             </div>
           </AnimatePresence>
           {/* Person Figure Animation */}
@@ -207,31 +302,55 @@ const AppContent = () => {
               transition={PAGE_BOUNCE}
               style={{ position: 'relative', zIndex: 1 }}
             >
-              <Home goTo={goTo} hideWorkNav hideAboutNav={true} />
+              <Home goTo={goTo} hidePrintsNav hideRealtimeNav hideProfessionalNav />
             </motion.div>
           } />
-          <Route path="/work" element={
+          <Route path="/prints-for-sale" element={
             <motion.div
-              key="work"
+              key="prints-for-sale"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -40 }}
               transition={PAGE_BOUNCE}
               style={{ position: 'relative', zIndex: 1 }}
             >
-              <Works goTo={goTo} hideWorkNav onModelViewerOpenChange={setModelViewerOpen} />
+              <PrintsForSale goTo={goTo} hideNav onModelViewerOpenChange={setModelViewerOpen} />
             </motion.div>
           } />
-          <Route path="/about" element={
+          <Route path="/realtime-artwork" element={
             <motion.div
-              key="about"
+              key="realtime-artwork"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -40 }}
               transition={PAGE_BOUNCE}
               style={{ position: 'relative', zIndex: 1 }}
             >
-              <About goTo={goTo} hideAboutNav={true} />
+              <RealtimeArtwork goTo={goTo} hideNav onModelViewerOpenChange={setModelViewerOpen} />
+            </motion.div>
+          } />
+          <Route path="/professional-work" element={
+            <motion.div
+              key="professional-work"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={PAGE_BOUNCE}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <ProfessionalWork goTo={goTo} hideNav />
+            </motion.div>
+          } />
+          <Route path="/cart" element={
+            <motion.div
+              key="cart"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={PAGE_BOUNCE}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <CartPage goTo={goTo} />
             </motion.div>
           } />
           <Route path="/game/:gameId" element={
@@ -246,18 +365,6 @@ const AppContent = () => {
               <VideoGamePage />
             </motion.div>
           } />
-          {/* {page === 'about' && (
-            <motion.div
-              key="about"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={PAGE_BOUNCE}
-              style={{ position: 'relative', zIndex: 1 }}
-            >
-              <About goTo={goTo} hideAboutNav={true} />
-            </motion.div>
-          )} */}
         </Routes>
       </AnimatePresence>
     </div>
@@ -266,9 +373,11 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <CartProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </CartProvider>
   );
 };
 

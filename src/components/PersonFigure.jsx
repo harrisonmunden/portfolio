@@ -4,8 +4,9 @@ import { motion, AnimatePresence, useMotionValue, useAnimation, animate } from '
 const PersonFigure = ({ page }) => {
   const [isMobile, setIsMobile] = useState(false);
   const isHome = page === 'home';
-  const isWork = page === 'work';
-  const isAbout = page === 'about';
+  const isWork = page === 'work' || page === 'prints-for-sale' || page === 'realtime-artwork';
+  const isAbout = page === 'about' || page === 'professional-work';
+  const isCart = page === 'cart';
 
   useEffect(() => {
     const checkMobile = () => {
@@ -150,7 +151,13 @@ const PersonFigure = ({ page }) => {
     
     for (let i = 0; i < CONFIG.numHeads; i++) {
       const x = CONFIG.startX + (i * spacing);
-      const waveY = Math.sin((i + CONFIG.waveOffset) * CONFIG.waveFrequency) * amplitude;
+      let waveY;
+      if (isCart) {
+        waveY = Math.sin((i + CONFIG.waveOffset) * 0.8) * amplitude * 0.8 +
+                Math.sin((i + CONFIG.waveOffset) * 1.6) * amplitude * 0.2;
+      } else {
+        waveY = Math.sin((i + CONFIG.waveOffset) * CONFIG.waveFrequency) * amplitude;
+      }
       const y = CONFIG.waveHeight + waveY;
       const startY = Math.random() * (CONFIG.startYRange.max - CONFIG.startYRange.min) + CONFIG.startYRange.min;
       const delay = i * CONFIG.delayIncrement;
@@ -236,7 +243,7 @@ const PersonFigure = ({ page }) => {
     const headRect = headImg.getBoundingClientRect();
     // Get nav target rects
     const navRects = [];
-    document.querySelectorAll('.about-title, .works-main-title, .chevron-img').forEach(el => {
+    document.querySelectorAll('.about-title, .works-main-title, .chevron-img, .cart-title').forEach(el => {
       navRects.push(el.getBoundingClientRect());
     });
     // Check if any nav rect overlaps the head rect
@@ -268,7 +275,7 @@ const PersonFigure = ({ page }) => {
     const headImg = e.currentTarget;
     const headRect = headImg.getBoundingClientRect();
     const navRects = [];
-    document.querySelectorAll('.about-title, .works-main-title, .chevron-img').forEach(el => {
+    document.querySelectorAll('.about-title, .works-main-title, .chevron-img, .cart-title').forEach(el => {
       navRects.push(el.getBoundingClientRect());
     });
     const overlapsNav = navRects.some(navRect => rectsOverlap(headRect, navRect));
@@ -285,7 +292,7 @@ const PersonFigure = ({ page }) => {
   };
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 15 }}>
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 99999 }}>
       {/* Shared Head - Always Visible (like shared headers) */}
       {/* Always render the persistent head with layoutId */}
       <motion.img
@@ -312,7 +319,7 @@ const PersonFigure = ({ page }) => {
           left: isHome ? `${homeHeadX}px` : `${sharedHeadPosition.x}px`,
           top: isHome ? `${homeHeadY}px` : `${waveHeadY}px`,
           opacity: isHome ? 1 : CONFIG.opacity,
-          zIndex: 5,
+          zIndex: 99998,
           cursor: 'grab',
           userSelect: 'none',
           touchAction: 'none',
@@ -384,7 +391,7 @@ const PersonFigure = ({ page }) => {
         )}
 
         {/* Work/About Pages: Additional Wave Heads */}
-        {(isWork || isAbout) && (
+        {(isWork || isAbout || isCart) && (
           <motion.div
             key="wave-heads"
             initial={{ opacity: 0 }}
@@ -414,7 +421,7 @@ const PersonFigure = ({ page }) => {
                     left: `${pos.x}px`,
                     top: `${pos.y}px`,
                     opacity: CONFIG.opacity,
-                    zIndex: isDragged ? 20 : 5,
+                    zIndex: isDragged ? 99999 : 99997,
                     cursor: 'grab',
                     userSelect: 'none',
                     touchAction: 'none',
