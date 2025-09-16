@@ -42,7 +42,7 @@ const CartPage = ({ goTo }) => {
         <div className="cart-header">
           <motion.h1
             className="cart-title"
-            onClick={() => goTo && goTo('work')}
+            onClick={() => goTo && goTo('prints-for-sale')}
             style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             <span>Cart</span>
@@ -61,7 +61,7 @@ const CartPage = ({ goTo }) => {
             <p>Discover beautiful artwork to add to your collection</p>
             <button 
               className="browse-artwork-btn"
-              onClick={() => goTo && goTo('work')}
+              onClick={() => goTo && goTo('prints-for-sale')}
             >
               Browse Artwork
             </button>
@@ -76,7 +76,7 @@ const CartPage = ({ goTo }) => {
       <div className="cart-header">
         <motion.h1
           className="cart-title"
-          onClick={() => goTo && goTo('work')}
+          onClick={() => goTo && goTo('prints-for-sale')}
           style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
           <span>Cart</span>

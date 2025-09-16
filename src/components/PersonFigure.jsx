@@ -4,8 +4,8 @@ import { motion, AnimatePresence, useMotionValue, useAnimation, animate } from '
 const PersonFigure = ({ page }) => {
   const [isMobile, setIsMobile] = useState(false);
   const isHome = page === 'home';
-  const isWork = page === 'work';
-  const isAbout = page === 'about';
+  const isWork = page === 'work' || page === 'prints-for-sale' || page === 'realtime-artwork';
+  const isAbout = page === 'about' || page === 'professional-work';
   const isCart = page === 'cart';
 
   useEffect(() => {
@@ -292,7 +292,7 @@ const PersonFigure = ({ page }) => {
   };
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 15 }}>
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 99999 }}>
       {/* Shared Head - Always Visible (like shared headers) */}
       {/* Always render the persistent head with layoutId */}
       <motion.img
@@ -319,7 +319,7 @@ const PersonFigure = ({ page }) => {
           left: isHome ? `${homeHeadX}px` : `${sharedHeadPosition.x}px`,
           top: isHome ? `${homeHeadY}px` : `${waveHeadY}px`,
           opacity: isHome ? 1 : CONFIG.opacity,
-          zIndex: 5,
+          zIndex: 99998,
           cursor: 'grab',
           userSelect: 'none',
           touchAction: 'none',
@@ -421,7 +421,7 @@ const PersonFigure = ({ page }) => {
                     left: `${pos.x}px`,
                     top: `${pos.y}px`,
                     opacity: CONFIG.opacity,
-                    zIndex: isDragged ? 20 : 5,
+                    zIndex: isDragged ? 99999 : 99997,
                     cursor: 'grab',
                     userSelect: 'none',
                     touchAction: 'none',
