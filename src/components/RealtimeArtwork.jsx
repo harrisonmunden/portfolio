@@ -53,42 +53,68 @@ const RealtimeArtwork = ({ goTo, hideNav, onModelViewerOpenChange }) => {
   
   // Refs for scroll-to-home functionality
   const hasScrolledUp = useRef(false);
+  const scrollUpCount = useRef(0);
+  const lastScrollY = useRef(0);
   
   // Use custom scroll restoration hook
   useScrollToTop();
 
-  // Add sticky scroll-to-home functionality
+  // Moderately controlled scroll-to-home: Only when AT TOP + two aggressive scroll ups
   useEffect(() => {
-    if (!goTo) return;
-
     let scrollUpCount = 0;
-    const threshold = 30; // Pixels above the page to trigger transition
-
+    let resetTimeout = null;
+    
     const handleWheel = (e) => {
-      if (hasScrolledUp.current) return;
+      // Only when already at the very top of the page
+      if (window.scrollY > 0) {
+        scrollUpCount = 0;
+        return;
+      }
       
-      // Track scroll up beyond the top of the page
-      if (e.deltaY < 0 && window.scrollY === 0) {
-        const scrollAbovePage = Math.abs(e.deltaY);
+      // Detect aggressive scroll up (moderate threshold)
+      if (e.deltaY < -80) { // Moderate threshold (between -50 and -120)
+        scrollUpCount++;
         
-        if (scrollAbovePage >= threshold) {
-          scrollUpCount++;
-          
-          if (scrollUpCount >= 3) {
-            hasScrolledUp.current = true;
+        // Clear any existing timeout
+        if (resetTimeout) {
+          clearTimeout(resetTimeout);
+        }
+        
+        // Require TWO aggressive scroll ups
+        if (scrollUpCount >= 2) {
+          if (goTo) {
             goTo('home');
           }
+          scrollUpCount = 0; // Reset after successful trigger
+        } else {
+          // Moderate timeout - reasonable timing
+          resetTimeout = setTimeout(() => {
+            scrollUpCount = 0;
+          }, 1200); // Moderate timing between 800ms and 2000ms
         }
-      } else if (e.deltaY > 0 || window.scrollY > 0) {
-        // Reset count if scrolling down or not at top
-        scrollUpCount = 0;
       }
     };
 
-    document.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+    const handleScroll = () => {
+      // Reset immediately if user scrolls down from top
+      if (window.scrollY > 0) {
+        scrollUpCount = 0;
+        if (resetTimeout) {
+          clearTimeout(resetTimeout);
+          resetTimeout = null;
+        }
+      }
+    };
+
+    document.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => {
-      document.removeEventListener('wheel', handleWheel, { passive: false, capture: true });
+      document.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('scroll', handleScroll);
+      if (resetTimeout) {
+        clearTimeout(resetTimeout);
+      }
     };
   }, [goTo]);
 
@@ -171,3 +197,4 @@ const RealtimeArtwork = ({ goTo, hideNav, onModelViewerOpenChange }) => {
 };
 
 export default RealtimeArtwork;
+

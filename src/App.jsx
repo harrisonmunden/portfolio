@@ -12,7 +12,7 @@ import CartIcon from './components/CartIcon';
 import { CartProvider } from './contexts/CartContext';
 import { useScrollToTop } from './hooks/useScrollToTop';
 
-// Animation constants
+// Animation constants - Original spring physics for character
 const PAGE_BOUNCE = {
   type: 'spring',
   stiffness: 230,
@@ -54,7 +54,7 @@ const SharedPrintsHeader = ({ page, goTo }) => {
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
-        fontSize: isHome ? (isMobile ? 46 : 66) : (isMobile ? 40 : 88),
+        fontSize: isHome ? (isMobile ? 32 : 66) : (isMobile ? 28 : 88),
         fontWeight: 900,
         color: '#1a1a1a',
         letterSpacing: '0.085em',
@@ -104,7 +104,7 @@ const SharedRealtimeHeader = ({ page, goTo }) => {
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
-        fontSize: isHome ? (isMobile ? 46 : 66) : (isMobile ? 40 : 88),
+        fontSize: isHome ? (isMobile ? 32 : 66) : (isMobile ? 28 : 88),
         fontWeight: 900,
         color: '#1a1a1a',
         letterSpacing: '0.085em',
@@ -154,7 +154,7 @@ const SharedProfessionalHeader = ({ page, goTo }) => {
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
-        fontSize: isHome ? (isMobile ? 46 : 66) : (isMobile ? 40 : 88),
+        fontSize: isHome ? (isMobile ? 32 : 66) : (isMobile ? 28 : 88),
         fontWeight: 900,
         color: '#1a1a1a',
         letterSpacing: '0.085em',
@@ -196,8 +196,8 @@ const CartIconNav = ({ page, goTo }) => {
       className="cart-icon-nav"
       style={{
         position: 'absolute',
-        right: isMobile ? 20 : 60,
-        top: isMobile ? 20 : 50,
+        ...(isMobile ? { left: 20 } : { right: 60 }),  // Left on mobile, right on desktop
+        bottom: isMobile ? 20 : 50,
         zIndex: 9999,
       }}
       initial={{ opacity: 0, scale: 0.8 }}
@@ -205,7 +205,7 @@ const CartIconNav = ({ page, goTo }) => {
       exit={{ opacity: 0, scale: 0.8 }}
       transition={HEADER_ANIMATION}
     >
-      <CartIcon onClick={() => goTo('cart')} />
+      <CartIcon onClick={() => goTo('cart')} isMobile={isMobile} />
     </motion.div>
   );
 };
@@ -263,32 +263,13 @@ const AppContent = () => {
     }}>
       {/* Only show navigation headers and PersonFigure on home/work/cart pages, not on game pages */}
       {!isGamePage && (
-        <>
-          <AnimatePresence mode="wait">
-            <div style={fadeStyle}>
-              <SharedPrintsHeader key="prints-header" page={currentPage} goTo={goTo} />
-            </div>
-          </AnimatePresence>
-          <AnimatePresence mode="wait">
-            <div style={fadeStyle}>
-              <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} />
-            </div>
-          </AnimatePresence>
-          <AnimatePresence mode="wait">
-            <div style={fadeStyle}>
-              <SharedProfessionalHeader key="professional-header" page={currentPage} goTo={goTo} />
-            </div>
-          </AnimatePresence>
-          <AnimatePresence mode="wait">
-            <div style={fadeStyle}>
-              <CartIconNav key="cart-icon" page={currentPage} goTo={goTo} />
-            </div>
-          </AnimatePresence>
-          {/* Person Figure Animation */}
-          <div style={fadeStyle}>
-            <PersonFigure page={currentPage} />
-          </div>
-        </>
+        <div style={fadeStyle}>
+          <SharedPrintsHeader key="prints-header" page={currentPage} goTo={goTo} />
+          <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} />
+          <SharedProfessionalHeader key="professional-header" page={currentPage} goTo={goTo} />
+          <CartIconNav key="cart-icon" page={currentPage} goTo={goTo} />
+          <PersonFigure page={currentPage} />
+        </div>
       )}
       
       <AnimatePresence mode="wait">

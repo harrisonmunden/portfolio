@@ -32,7 +32,6 @@ const Home = ({ goTo, hidePrintsNav, hideRealtimeNav, hideProfessionalNav }) => 
       
       // Only transition on scroll DOWN
       if (e.deltaY > 0) {
-        console.log('Scroll DOWN detected - transitioning to work immediately');
         hasTransitioned.current = true;
         
         // Force scroll to top multiple times

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useAnimation, animate } from 'framer-motion';
 
 const PersonFigure = ({ page }) => {
@@ -78,6 +78,13 @@ const PersonFigure = ({ page }) => {
   const sharedHeadMotion = useMotionValue(0);
   const sharedHeadYMotion = useMotionValue(0);
 
+  // Refs for performance optimization
+  const lastDragUpdate = useRef(0); // For throttling drag updates
+  const dragStartPos = useRef({});
+  const dragActive = useRef({});
+  const navTargetRef = useRef({});
+  const NAV_CLICK_THRESHOLD = 8; // px
+
   // Influence factors for neighbors
   const influence = [1, 0.6, 0.3, 0.1]; // 0 = self, 1 = closest, etc.
 
@@ -87,10 +94,12 @@ const PersonFigure = ({ page }) => {
   const LIMIT = 120; // max pixels of drag
   const scale = (v) => LIMIT * Math.tanh(v / LIMIT);
 
-  // Handler for drag
-  const handleDrag = (index, event, info) => {
-    // Debug: log drag event
-    // console.log('Dragging head', index, 'offset:', info.offset);
+  // Handler for drag - throttled for performance
+  const handleDrag = useCallback((index, event, info) => {
+    // Throttle drag updates for performance
+    if (Date.now() - lastDragUpdate.current < 16) return; // ~60fps max
+    lastDragUpdate.current = Date.now();
+    
     // Framer Motion handles the dragged head's x/y
     // We update neighbors here
     const scaledX = scale(info.offset.x);
@@ -110,24 +119,18 @@ const PersonFigure = ({ page }) => {
         }
       });
     });
+  }, []);
+
+  const handleDragStart = (index, e) => {
+    e.stopPropagation();
+    const point = e.touches ? e.touches[0] : e;
+    dragStartPos.current[index] = { x: point.clientX, y: point.clientY };
+    dragActive.current[index] = true;
   };
 
-  const handleDragStart = (index) => {
-    console.log('Drag start on head', index);
-    setDraggedIndex(index);
-    setDragOffset({ x: 0, y: 0 });
-  };
-
-  const SPRING_CONFIG = { type: 'spring', stiffness: 350, damping: 18 };
-
-  const handleDragEnd = (index) => {
-    console.log('Drag end on head', index);
-    setDraggedIndex(null);
-    // Spring all heads back to 0
-    headMotionValues.forEach((ref) => {
-      animate(ref.x, 0, SPRING_CONFIG);
-      animate(ref.y, 0, SPRING_CONFIG);
-    });
+  const handleDragEnd = (index, e) => {
+    dragActive.current[index] = false;
+    dragStartPos.current[index] = null;
   };
 
   // Helper to get offset for a head based on drag state
@@ -213,12 +216,6 @@ const PersonFigure = ({ page }) => {
     }
   }, [isHome]);
 
-  const DRAG_THRESHOLD = 8;
-  const [dragActive, setDragActive] = useState({}); // { index: true/false }
-  const dragStartPos = useRef({});
-  const navTargetRef = useRef({});
-  const NAV_CLICK_THRESHOLD = 8; // px
-
   // Utility: check if a point is inside a DOMRect
   function pointInRect(x, y, rect) {
     return (
@@ -250,25 +247,25 @@ const PersonFigure = ({ page }) => {
     const overlapsNav = navRects.some(navRect => rectsOverlap(headRect, navRect));
     navTargetRef.current[index] = overlapsNav;
     dragStartPos.current[index] = { x: point.clientX, y: point.clientY };
-    setDragActive((prev) => ({ ...prev, [index]: false }));
+    dragActive.current[index] = false;
   };
 
   const handlePointerMove = (index, e) => {
-    if (dragActive[index]) return; // already active
+    if (dragActive.current[index]) return; // already active
     const point = e.touches ? e.touches[0] : e;
     const start = dragStartPos.current[index];
     if (!start) return;
     const dx = point.clientX - start.x;
     const dy = point.clientY - start.y;
     if (Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD) {
-      setDragActive((prev) => ({ ...prev, [index]: true }));
+      dragActive.current[index] = true;
     }
   };
 
   const handlePointerUp = (index, e) => {
     const point = e.touches ? e.touches[0] : e;
     const start = dragStartPos.current[index];
-    setDragActive((prev) => ({ ...prev, [index]: false }));
+    dragActive.current[index] = false;
     dragStartPos.current[index] = null;
     // --- NAV CLICK LOGIC ---
     // Recompute overlap in case of scroll/move
@@ -323,7 +320,7 @@ const PersonFigure = ({ page }) => {
           cursor: 'grab',
           userSelect: 'none',
           touchAction: 'none',
-          pointerEvents: 'auto',
+          pointerEvents: isWork ? 'none' : 'auto',
           x: isHome ? sharedHeadMotion : headMotionValues[sharedHeadWaveIndex].x,
           y: isHome ? sharedHeadYMotion : headMotionValues[sharedHeadWaveIndex].y,
         }}
@@ -425,7 +422,7 @@ const PersonFigure = ({ page }) => {
                     cursor: 'grab',
                     userSelect: 'none',
                     touchAction: 'none',
-                    pointerEvents: 'auto',
+                    pointerEvents: isWork ? 'none' : 'auto',
                     x: headMotionValues[index].x,
                     y: headMotionValues[index].y,
                   }}

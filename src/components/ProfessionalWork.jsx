@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import "./styles/about.css";
 import { motion } from 'framer-motion';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 
 const aboutHeaders = {
   Tesla: '/AboutAssets/About/TeslaAboutHeader-compressed.webp',
@@ -50,6 +51,65 @@ const ProfessionalWork = ({ goTo, hideNav }) => {
 
   const [visibleCount, setVisibleCount] = useState(globalVisibleCount);
   const sentinelRef = useRef();
+  
+  // Moderately controlled scroll-to-home: Only when AT TOP + two aggressive scroll ups
+  useEffect(() => {
+    let scrollUpCount = 0;
+    let resetTimeout = null;
+    
+    const handleWheel = (e) => {
+      // Only when already at the very top of the page
+      if (window.scrollY > 0) {
+        scrollUpCount = 0;
+        return;
+      }
+      
+      // Detect aggressive scroll up (moderate threshold)
+      if (e.deltaY < -80) { // Moderate threshold (between -50 and -120)
+        scrollUpCount++;
+        
+        // Clear any existing timeout
+        if (resetTimeout) {
+          clearTimeout(resetTimeout);
+        }
+        
+        // Require TWO aggressive scroll ups
+        if (scrollUpCount >= 2) {
+          if (goTo) {
+            goTo('home');
+          }
+          scrollUpCount = 0; // Reset after successful trigger
+        } else {
+          // Moderate timeout - reasonable timing
+          resetTimeout = setTimeout(() => {
+            scrollUpCount = 0;
+          }, 1200); // Moderate timing between 800ms and 2000ms
+        }
+      }
+    };
+
+    const handleScroll = () => {
+      // Reset immediately if user scrolls down from top
+      if (window.scrollY > 0) {
+        scrollUpCount = 0;
+        if (resetTimeout) {
+          clearTimeout(resetTimeout);
+          resetTimeout = null;
+        }
+      }
+    };
+
+    document.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      document.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('scroll', handleScroll);
+      if (resetTimeout) {
+        clearTimeout(resetTimeout);
+      }
+    };
+  }, [goTo]);
 
   // Infinite scroll: load more sections when sentinel is visible
   const loadMore = useCallback(() => {

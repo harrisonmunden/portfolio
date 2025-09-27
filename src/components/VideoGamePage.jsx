@@ -152,22 +152,17 @@ const VideoGamePage = () => {
       
       return (
         <div key={index} className="asset-item video-item">
-          <video
-            className="asset-video"
-            controls
-            preload="metadata"
-            autoPlay
-            muted
-            loop
-            playsInline
-            webkit-playsinline="true"
-            onError={(e) => console.error('Video failed to load:', asset.src, e)}
-            onLoadStart={() => console.log('Video loading started:', asset.src)}
-            onCanPlay={() => console.log('Video can play:', asset.src)}
-          >
-            <source src={asset.src} type={videoType} />
-            Your browser does not support the video tag.
-          </video>
+                  <video 
+                    key={asset.src}
+                    controls
+                    preload="metadata"
+                    style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+                    onLoadStart={() => {}}
+                    onCanPlay={() => {}}
+                  >
+                    <source src={asset.src} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
         </div>
       );
     }
@@ -181,7 +176,7 @@ const VideoGamePage = () => {
           loading="lazy"
           decoding="async"
           onError={(e) => console.error('Image failed to load:', asset.src, e)}
-          onLoad={() => console.log('Image loaded successfully:', asset.src)}
+                      onLoad={() => {}}
         />
       </div>
     );

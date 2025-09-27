@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import ImageCarousel from './ImageCarousel';
 import AddToCartModal from './AddToCartModal';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import '../components/Works.css';
 
-const PrintsForSale = ({ goTo, hideNav }) => {
+const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [carouselOpen, setCarouselOpen] = useState(false);
   const [addToCartOpen, setAddToCartOpen] = useState(false);
@@ -16,9 +16,18 @@ const PrintsForSale = ({ goTo, hideNav }) => {
   
   // Refs for scroll-to-home functionality
   const hasScrolledUp = useRef(false);
+  const scrollUpCount = useRef(0);
+  const lastScrollY = useRef(0);
   
   // Use custom scroll restoration hook
   useScrollToTop();
+
+  // Notify parent when carousel opens/closes to fade navigation
+  useEffect(() => {
+    if (onModelViewerOpenChange) {
+      onModelViewerOpenChange(carouselOpen);
+    }
+  }, [carouselOpen, onModelViewerOpenChange]);
 
   // 3D Artwork data
   const artwork = [
@@ -52,32 +61,39 @@ const PrintsForSale = ({ goTo, hideNav }) => {
     { id: 21, src: "/3DArtwork/HM_Room3FinalEdited-compressed.png", thumbnailSrc: "/3DArtwork/thumbnails/HM_Room3FinalEdited.webp", alt: "HM Room 3 Final Edited", title: "HM Room 3 Final Edited", priority: 24 }
   ];
 
-  // Sort artwork by priority (lowest number = highest priority = appears first)
-  const sortedArtwork = artwork.sort((a, b) => a.priority - b.priority);
+  // Memoize sorted artwork to prevent recalculation on every render
+  const sortedArtwork = useMemo(() => {
+    return artwork.sort((a, b) => a.priority - b.priority);
+  }, []);
 
   // Calculate actual positions of images after CSS columns renders them
-  const calculateImagePositions = () => {
+  const calculateImagePositions = useCallback(() => {
     if (!gridRef.current) return;
     
     const cards = gridRef.current.querySelectorAll('.artwork-card');
-    const positions = Array.from(cards).map((card, index) => {
-      const rect = card.getBoundingClientRect();
-      const gridRect = gridRef.current.getBoundingClientRect();
-      return {
-        index,
+    if (cards.length === 0) return;
+    
+    const gridRect = gridRef.current.getBoundingClientRect();
+    const positions = [];
+    
+    // Use a more efficient loop
+    for (let i = 0; i < cards.length; i++) {
+      const rect = cards[i].getBoundingClientRect();
+      positions.push({
+        index: i,
         top: rect.top - gridRect.top,
-        id: sortedArtwork[index].id
-      };
-    });
+        id: sortedArtwork[i].id
+      });
+    }
     
     // Sort by actual vertical position (top coordinate)
     positions.sort((a, b) => a.top - b.top);
     setImagePositions(positions);
     
     // Show first 3 images by actual position immediately
-    const firstThree = positions.slice(0, 3).map(pos => pos.index);
-    setVisibleImages(new Set(firstThree));
-  };
+    const firstThree = new Set(positions.slice(0, 3).map(pos => pos.index));
+    setVisibleImages(firstThree);
+  }, [sortedArtwork]);
 
   // Measure positions after images load and layout settles
   useEffect(() => {
@@ -96,7 +112,7 @@ const PrintsForSale = ({ goTo, hideNav }) => {
       clearTimeout(timer);
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [calculateImagePositions]);
 
   // Progressive loading based on actual vertical positions
   useEffect(() => {
@@ -135,30 +151,99 @@ const PrintsForSale = ({ goTo, hideNav }) => {
     return () => timers.forEach(timer => clearTimeout(timer));
   }, [imagePositions]);
 
-  // Scroll detection for going back to home
+  // Moderately controlled scroll-to-home: Only when AT TOP + two aggressive scroll ups
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY === 0 && hasScrolledUp.current && goTo) {
-        goTo('home');
+    let scrollUpCount = 0;
+    let resetTimeout = null;
+    
+    const handleWheel = (e) => {
+      // Only when already at the very top of the page
+      if (window.scrollY > 0) {
+        scrollUpCount = 0;
+        return;
       }
       
-      if (window.scrollY > 0) {
-        hasScrolledUp.current = true;
+      // Detect aggressive scroll up (moderate threshold)
+      if (e.deltaY < -80) { // Moderate threshold (between -50 and -120)
+        scrollUpCount++;
+        
+        // Clear any existing timeout
+        if (resetTimeout) {
+          clearTimeout(resetTimeout);
+        }
+        
+        // Require TWO aggressive scroll ups
+        if (scrollUpCount >= 2) {
+          if (goTo) {
+            goTo('home');
+          }
+          scrollUpCount = 0; // Reset after successful trigger
+        } else {
+          // Moderate timeout - reasonable timing
+          resetTimeout = setTimeout(() => {
+            scrollUpCount = 0;
+          }, 1200); // Moderate timing between 800ms and 2000ms
+        }
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const handleScroll = () => {
+      // Reset immediately if user scrolls down from top
+      if (window.scrollY > 0) {
+        scrollUpCount = 0;
+        if (resetTimeout) {
+          clearTimeout(resetTimeout);
+          resetTimeout = null;
+        }
+      }
+    };
+
+    document.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      document.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('scroll', handleScroll);
+      if (resetTimeout) {
+        clearTimeout(resetTimeout);
+      }
+    };
   }, [goTo]);
+
+  // Memoize position mapping for better performance
+  const positionMap = useMemo(() => {
+    const map = new Map();
+    imagePositions.forEach((pos, index) => {
+      map.set(pos.index, Math.floor(index / 3) * 0.1);
+    });
+    return map;
+  }, [imagePositions]);
 
   const openImageCarousel = (img) => {
     setSelectedImage(img);
     setCarouselOpen(true);
   };
 
-  const handleImageMouseMove = (e, imageId) => {
-    setHoveredImageId(imageId);
-  };
+  const handleImageMouseMove = useCallback((event, imageId) => {
+    // Cache rect calculations for better performance
+    const rect = event.currentTarget.getBoundingClientRect();
+    const centerX = rect.width * 0.5;
+    const centerY = rect.height * 0.5;
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+    const boxHalf = 92.5;
+    
+    if (
+      mouseX > centerX - boxHalf &&
+      mouseX < centerX + boxHalf &&
+      mouseY > centerY - boxHalf &&
+      mouseY < centerY + boxHalf
+    ) {
+      setHoveredImageId(imageId);
+    } else {
+      setHoveredImageId(null);
+    }
+  }, []);
 
   const handleImageLeave = () => {
     setHoveredImageId(null);
@@ -178,9 +263,8 @@ const PrintsForSale = ({ goTo, hideNav }) => {
           const isDimmed = hoveredImageId && hoveredImageId !== img.id;
           const isVisible = visibleImages.has(i);
           
-          // Find this image's position in the sorted list for stagger timing
-          const positionIndex = imagePositions.findIndex(pos => pos.index === i);
-          const staggerDelay = positionIndex >= 0 ? Math.floor(positionIndex / 3) * 0.1 : 0;
+          // Use pre-calculated stagger delay for better performance
+          const staggerDelay = positionMap.get(i) || 0;
 
           return (
             <div
@@ -199,7 +283,7 @@ const PrintsForSale = ({ goTo, hideNav }) => {
                 alt={img.alt}
                 className="artwork-img fade-in-visible"
                 onClick={() => openImageCarousel(img)}
-                loading={positionIndex < 6 ? "eager" : "lazy"} // Load first 6 by position eagerly
+                loading={staggerDelay < 0.6 ? "eager" : "lazy"} // Load first 6 by position eagerly
                 onLoad={() => {
                   // Recalculate positions when images finish loading
                   if (i < 5) { // Only recalculate for first few images to avoid excessive calls
@@ -215,14 +299,12 @@ const PrintsForSale = ({ goTo, hideNav }) => {
       {/* Image Carousel */}
       {carouselOpen && (
         <ImageCarousel
-          images={sortedArtwork}
-          selectedImage={selectedImage}
+          artwork={selectedImage}
           isOpen={carouselOpen}
           onClose={() => {
             setCarouselOpen(false);
             setSelectedImage(null);
           }}
-          onAddToCart={openAddToCartModal}
         />
       )}
 

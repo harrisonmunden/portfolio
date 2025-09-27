@@ -122,71 +122,16 @@ const Works = ({ goTo, hideWorkNav, onModelViewerOpenChange }) => {
   // Use custom scroll restoration hook
   useScrollToTop();
 
-  // Basic test to see if component is working
+  // Store the goTo function reference to help with debugging
   useEffect(() => {
-    console.log('Works component mounted');
-    console.log('goTo function exists:', !!goTo);
-    console.log('goTo function:', goTo);
-  }, []);
+    // Works component mounted - setup complete
+  }, [goTo]);
 
-  // Add sticky scroll-to-home functionality
+  // SCROLL PROTECTION COMPLETELY DISABLED - No accidental home transitions
   useEffect(() => {
-    console.log('Setting up scroll listeners...');
-    console.log('goTo in scroll effect:', goTo);
-    
-    if (!goTo) {
-      console.log('No goTo function, not setting up listeners');
-      return;
-    }
-
-    let scrollUpCount = 0;
-    const threshold = 30; // Pixels above the page to trigger transition
-
-    const handleScroll = () => {
-      console.log('Scroll event fired, scrollY:', window.scrollY);
-      // Scroll event is kept for debugging but no longer needed for the logic
-    };
-
-    const handleWheel = (e) => {
-      console.log('Wheel event fired, deltaY:', e.deltaY, 'scrollY:', window.scrollY);
-      
-      if (hasScrolledUp.current) {
-        console.log('Already transitioning, ignoring wheel');
-        return;
-      }
-      
-      // Track scroll up beyond the top of the page
-      if (e.deltaY < 0 && window.scrollY === 0) {
-        // Calculate how far "above" the page we've scrolled
-        const scrollAbovePage = Math.abs(e.deltaY);
-        
-        if (scrollAbovePage >= threshold) {
-          scrollUpCount++;
-          console.log(`Scroll up above page threshold - count: ${scrollUpCount}, scrollAbovePage: ${scrollAbovePage}`);
-          
-          // Require multiple scroll up gestures (e.g., 3 times)
-          if (scrollUpCount >= 3) {
-            console.log('Multiple scroll ups above threshold detected - transitioning to home');
-            hasScrolledUp.current = true;
-            goTo('home');
-          }
-        }
-      } else if (e.deltaY > 0 || window.scrollY > 0) {
-        // Reset count if scrolling down or not at top
-        scrollUpCount = 0;
-      }
-    };
-
-    // Add listeners with capture to ensure they fire
-    document.addEventListener('wheel', handleWheel, { passive: false, capture: true });
-    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
-    
-    console.log('Scroll listeners added with capture');
-    
+    // Scroll protection disabled - user must click navigation to go back to home
     return () => {
-      document.removeEventListener('wheel', handleWheel, { passive: false, capture: true });
-      window.removeEventListener('scroll', handleScroll, { passive: true, capture: true });
-      console.log('Scroll listeners removed');
+      // No scroll listeners - completely safe from accidental transitions
     };
   }, [goTo]);
 
