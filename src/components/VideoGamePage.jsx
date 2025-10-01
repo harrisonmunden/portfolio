@@ -155,6 +155,9 @@ const VideoGamePage = () => {
                   <video 
                     key={asset.src}
                     controls
+                    autoPlay
+                    loop
+                    muted
                     preload="metadata"
                     style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
                     onLoadStart={() => {}}

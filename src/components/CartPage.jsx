@@ -4,7 +4,7 @@ import { useCart } from '../contexts/CartContext';
 import CheckoutModal from './CheckoutModal';
 import './CartPage.css';
 
-const CartPage = ({ goTo }) => {
+const CartPage = ({ goTo, onCheckoutOpenChange }) => {
   const { items, updateQuantity, removeFromCart, getTotalPrice, getTotalItems } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
 
@@ -35,6 +35,13 @@ const CartPage = ({ goTo }) => {
       document.body.style.overflow = '';
     };
   }, []);
+
+  // Notify parent when checkout opens/closes to fade navigation
+  useEffect(() => {
+    if (onCheckoutOpenChange) {
+      onCheckoutOpenChange(showCheckout);
+    }
+  }, [showCheckout, onCheckoutOpenChange]);
 
   if (items.length === 0) {
     return (

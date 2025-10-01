@@ -195,7 +195,7 @@ const CartIconNav = ({ page, goTo }) => {
     <motion.div
       className="cart-icon-nav"
       style={{
-        position: 'absolute',
+        position: 'fixed',
         ...(isMobile ? { left: 20 } : { right: 60 }),  // Left on mobile, right on desktop
         bottom: isMobile ? 20 : 50,
         zIndex: 9999,
@@ -215,6 +215,7 @@ const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   
   // Use custom scroll restoration hook
   useScrollToTop();
@@ -254,7 +255,7 @@ const AppContent = () => {
   }, [navigate]);
 
   // Fade style for header and PersonFigure
-  const fadeStyle = modelViewerOpen ? { opacity: 0, pointerEvents: 'none', transition: 'opacity 0.4s cubic-bezier(.4,2,.6,1)' } : {};
+  const fadeStyle = (modelViewerOpen || checkoutOpen) ? { opacity: 0, pointerEvents: 'none', transition: 'opacity 0.4s cubic-bezier(.4,2,.6,1)' } : {};
 
   return (
     <div className="relative z-0 bg-primary" style={{ 
@@ -331,7 +332,7 @@ const AppContent = () => {
               transition={PAGE_BOUNCE}
               style={{ position: 'relative', zIndex: 1 }}
             >
-              <CartPage goTo={goTo} />
+              <CartPage goTo={goTo} onCheckoutOpenChange={setCheckoutOpen} />
             </motion.div>
           } />
           <Route path="/game/:gameId" element={
