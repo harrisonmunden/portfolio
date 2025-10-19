@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import './styles/home.css';
 import { motion } from 'framer-motion';
 
-const Home = ({ goTo, hideWorkNav, hideAboutNav }) => {
+const Home = ({ goTo, hidePrintsNav, hideRealtimeNav, hideProfessionalNav }) => {
   const homeRef = useRef(null);
   const hasTransitioned = useRef(false);
 
@@ -32,7 +32,6 @@ const Home = ({ goTo, hideWorkNav, hideAboutNav }) => {
       
       // Only transition on scroll DOWN
       if (e.deltaY > 0) {
-        console.log('Scroll DOWN detected - transitioning to work immediately');
         hasTransitioned.current = true;
         
         // Force scroll to top multiple times
@@ -41,7 +40,7 @@ const Home = ({ goTo, hideWorkNav, hideAboutNav }) => {
         document.body.scrollTop = 0;
         
         // Transition immediately
-        goTo('work');
+        goTo('prints-for-sale');
       }
     };
 
@@ -78,50 +77,52 @@ const Home = ({ goTo, hideWorkNav, hideAboutNav }) => {
             </div>
           </div>
           
-          <div className="navigation-links">
-            {!hideWorkNav && (
+          <div className="navigation-links" style={{display: 'flex !important', flexDirection: 'column !important', gap: '60px !important'}}>
+            {!hidePrintsNav && (
               <motion.button 
                 className="nav-link" 
-                onClick={() => goTo('work')} 
-                layoutId="work-nav" 
-                style={{
-                  background: 'none', 
-                  border: 'none', 
-                  padding: 0, 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  cursor: 'pointer'
-                }}
+                onClick={() => goTo('prints-for-sale')} 
+                layoutId="prints-nav" 
+                style={{background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer', paddingTop: '120px !important'}}
               >
-                <span>work</span>
+                <span>prints</span>
                 <motion.img 
                   src="/GlassyObjects/About/Chevron.png" 
                   alt="chevron" 
                   className="chevron-img" 
-                  layoutId="work-chevron"
+                  layoutId="prints-chevron"
                 />
               </motion.button>
             )}
-            {!hideAboutNav && (
+            {!hideRealtimeNav && (
               <motion.button 
                 className="nav-link" 
-                onClick={() => goTo('about')} 
-                layoutId="about-nav" 
-                style={{
-                  background: 'none', 
-                  border: 'none', 
-                  padding: 0, 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  cursor: 'pointer'
-                }}
+                onClick={() => goTo('realtime-artwork')} 
+                layoutId="realtime-nav" 
+                style={{background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer', paddingTop: '120px !important'}}
               >
-                <span>about</span>
+                <span>realtime</span>
                 <motion.img 
                   src="/GlassyObjects/About/Chevron.png" 
                   alt="chevron" 
                   className="chevron-img" 
-                  layoutId="about-chevron"
+                  layoutId="realtime-chevron"
+                />
+              </motion.button>
+            )}
+            {!hideProfessionalNav && (
+              <motion.button 
+                className="nav-link" 
+                onClick={() => goTo('professional-work')} 
+                layoutId="professional-nav" 
+                style={{background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer'}}
+              >
+                <span>professional</span>
+                <motion.img 
+                  src="/GlassyObjects/About/Chevron.png" 
+                  alt="chevron" 
+                  className="chevron-img" 
+                  layoutId="professional-chevron"
                 />
               </motion.button>
             )}
@@ -131,5 +132,4 @@ const Home = ({ goTo, hideWorkNav, hideAboutNav }) => {
     </div>
   );
 };
-
 export default Home;
