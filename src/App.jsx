@@ -116,7 +116,7 @@ const SharedRealtimeHeader = ({ page, goTo }) => {
       exit={{ opacity: 0 }}
       transition={HEADER_ANIMATION}
     >
-      <span>realtime</span>
+      <span>realtime 3D</span>
       <motion.img
         src="/GlassyObjects/About/Chevron.png"
         alt="chevron"

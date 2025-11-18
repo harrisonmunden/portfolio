@@ -138,7 +138,7 @@ const VideoGamePage = () => {
       <div className="video-game-page">
         <div className="game-not-found">
           <h1>Game Not Found</h1>
-          <button onClick={() => navigate('/work')} className="back-button">
+          <button onClick={() => navigate('/realtime-artwork')} className="back-button">
             Back to Work
           </button>
         </div>
@@ -203,7 +203,7 @@ const VideoGamePage = () => {
       <div className="game-header">
         <div className="title-row">
           <button 
-            onClick={() => navigate('/work')} 
+            onClick={() => navigate('/realtime-artwork')} 
             className="back-button"
           >
             <img src="/GlassyObjects/About/Chevron.png" alt="back" />

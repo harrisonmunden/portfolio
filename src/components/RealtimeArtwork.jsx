@@ -139,7 +139,7 @@ const RealtimeArtwork = ({ goTo, hideNav, onModelViewerOpenChange }) => {
               gap: '8px'
             }}
           >
-            <span>Realtime Artwork</span>
+            <span>Realtime 3D Artwork</span>
             <motion.img 
               src="/GlassyObjects/About/Chevron.png" 
               alt="chevron" 
