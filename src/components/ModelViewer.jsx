@@ -95,20 +95,20 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     let targetTheta = cameraTheta;
     let targetPhi = cameraPhi;
     let targetRadius = cameraRadius;
-    
+
     // ========================================
     // CUSTOM CAMERA LANDING POSITIONS
     // ========================================
     // Configure the final landing position for each scene here
     // These values will be used after the spin-in animation completes
-    
+
     let landingConfig = {
       theta: cameraTheta,
       phi: cameraPhi,
       radius: cameraRadius,
       target: null // Will be set based on model
     };
-    
+
     // Custom landing positions for each scene
     if (modelPath && modelPath.includes('Car.glb')) {
       // Car scene landing position
@@ -143,7 +143,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         target: new THREE.Vector3(0, 0, 0) // Will be updated when model loads
       };
     }
-    
+
     // Apply landing config to current camera state
     cameraTheta = landingConfig.theta;
     cameraPhi = landingConfig.phi;
@@ -159,10 +159,10 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       camera.position.x = cameraRadius * Math.sin(cameraPhi) * Math.cos(cameraTheta) + target.x;
       camera.position.y = cameraRadius * Math.cos(cameraPhi) + target.y;
       camera.position.z = cameraRadius * Math.sin(cameraPhi) * Math.sin(cameraTheta) + target.z;
-      
+
       // Shift the entire view down by 30 points
       camera.position.y += 20;
-      
+
       // Adjust camera height for different models
       if (modelPath && modelPath.includes('Flowers.glb')) {
         const floorY = 0; // y=0 for flowers pivot point
@@ -231,7 +231,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     if (modelPath && modelPath.includes('Flowers.glb')) {
       const ringColors = [0xc3434f, 0xd6bc2a, 0x75538d]; // Yellow, Red, Purple
       const numRings = 35;
-      
+
       for (let i = 0; i < numRings; i++) {
       const ringGeometry = new THREE.TorusGeometry(0.2 + Math.random() * 0.8, 0.03 + Math.random() * 0.05, 10, 12);
       const ringMaterial = new THREE.MeshBasicMaterial({
@@ -240,18 +240,18 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         opacity: 0.3
       });
       const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-      
+
       // Random position around the scene (closer to flowers)
       ring.position.set(
         (Math.random() - 0.5) * 30,
         (Math.random() - 0.5) * 30 + 15, // Higher origin point
         (Math.random() - 0.5) * 30
       );
-      
+
       // Random scale (smaller)
       const scale = 0.3 + Math.random() * 1.2;
       ring.scale.set(scale, scale, scale);
-      
+
       // Store original position for viscous motion
       ring.userData.originalPosition = ring.position.clone();
       ring.userData.velocity = new THREE.Vector3(
@@ -259,7 +259,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         (Math.random() - 0.5) * 0.02,
         (Math.random() - 0.5) * 0.02
       );
-      
+
               scene.add(ring);
         rings.push(ring);
       }
@@ -274,7 +274,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         { radius: 25, count: 30, delay: 0.3, color: 0x9CD7BF },   // Layer 2: medium, medium delay
         { radius: 35, count: 40, delay: 2.6, color: 0x4BB793 }    // Layer 3: farthest, slowest
       ];
-      
+
       layerConfigs.forEach((layer, layerIndex) => {
         for (let i = 0; i < layer.count; i++) {
           // Create tiny dot geometry
@@ -285,7 +285,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             opacity: 0.7
           });
           const dot = new THREE.Mesh(dotGeometry, dotMaterial);
-          
+
           // Random position on the layer's radius
           const angle = Math.random() * Math.PI * 2;
           const height = (Math.random() - 0.5) * 10; // Random height variation
@@ -296,7 +296,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             height,
             Math.sin(angle) * finalRadius
           );
-          
+
           // Store layer info for animation
           dot.userData.layerIndex = layerIndex;
           dot.userData.delay = layer.delay;
@@ -307,59 +307,59 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             (Math.random() - 0.5) * 0.01,
             (Math.random() - 0.5) * 0.01
           );
-          
+
           scene.add(dot);
           dots.push(dot);
         }
       });
     }
 
-            // Create dynamic light bands for motorcycle scene
-        const lightBands = [];
-        if (modelPath && modelPath.includes('Motorcycle.glb')) {
-          const bandConfigs = [
-            { radius: 1.5, color: 0xffffff, height: 0 },    // Inner band - slightly smaller
-            { radius: 2.8, color: 0xffffff, height: 0 },   // Middle band - slightly smaller
-            { radius: 4.0, color: 0xffffff, height: 0 }    // Outer band - slightly smaller
-          ];
-          
-          bandConfigs.forEach((config, index) => {
-            // Create ring geometry for the band - thinner tube
-            const ringGeometry = new THREE.TorusGeometry(config.radius, 0.008, 16, 64);
-            const bandMaterial = new THREE.MeshBasicMaterial({
-              color: config.color,
-              transparent: true,
-              opacity: 0.1, // Much less opaque by default
-              side: THREE.DoubleSide,
-              depthWrite: false, // Disable depth writing
-              depthTest: false, // Disable depth testing - render as overlay
-              blending: THREE.AdditiveBlending // Additive blending for light effect
-            });
-            const band = new THREE.Mesh(ringGeometry, bandMaterial);
-            
-            // Position the band horizontally at camera target, behind the motorcycle
-            band.position.set(target.x, target.y + config.height, target.z - 20); // Much further back to ensure behind geometry
-            
-            // Store band data for animation
-            band.userData.bandIndex = index;
-            band.userData.baseRadius = config.radius;
-            band.userData.targetRadius = config.radius;
-            band.userData.currentRadius = config.radius;
-            band.userData.opacity = 0.1; // Base opacity
-            band.userData.targetOpacity = 0.1; // Base opacity
-            band.userData.lastCameraTheta = cameraTheta;
-            band.userData.lastCameraPhi = cameraPhi;
-            band.userData.movementThreshold = 0.001; // Minimum movement to trigger bands
-            band.userData.scaleInProgress = true; // Track scale-in animation
-            
-            // Set render order to ensure bands render behind everything
-            band.renderOrder = -100; // Much lower render order to ensure behind everything
-            band.scale.setScalar(0); // Start at scale 0 for scale-in animation
-            band.userData.initialScaleComplete = false; // Track if initial scale is done
-            scene.add(band);
-            lightBands.push(band);
-          });
-        }
+    // Create dynamic light bands for motorcycle scene
+    const lightBands = [];
+    if (modelPath && modelPath.includes('Motorcycle.glb')) {
+      const bandConfigs = [
+        { radius: 0.7, color: 0xffffff, height: 0 },    // Inner band - smaller and white
+        { radius: 1.352, color: 0xffffff, height: 0 },   // Middle band - smaller and white
+        { radius: 2.1, color: 0xffffff, height: 0 }    // Outer band - smaller and white
+      ];
+
+      bandConfigs.forEach((config, index) => {
+        // Create ring geometry for the band
+        const ringGeometry = new THREE.TorusGeometry(config.radius, 0.02, 16, 64);
+        const bandMaterial = new THREE.MeshBasicMaterial({
+          color: config.color,
+          transparent: true,
+          opacity: 0.1, // Much less opaque by default
+          side: THREE.DoubleSide,
+          depthWrite: false, // Disable depth writing
+          depthTest: false, // Disable depth testing - render as overlay
+          blending: THREE.AdditiveBlending // Additive blending for light effect
+        });
+        const band = new THREE.Mesh(ringGeometry, bandMaterial);
+
+        // Position the band horizontally at camera target, behind the motorcycle
+        band.position.set(target.x, target.y + config.height, target.z - 20); // Much further back to ensure behind geometry
+
+        // Store band data for animation
+        band.userData.bandIndex = index;
+        band.userData.baseRadius = config.radius;
+        band.userData.targetRadius = config.radius;
+        band.userData.currentRadius = config.radius;
+        band.userData.opacity = 0.1; // Base opacity
+        band.userData.targetOpacity = 0.1; // Base opacity
+        band.userData.lastCameraTheta = cameraTheta;
+        band.userData.lastCameraPhi = cameraPhi;
+        band.userData.movementThreshold = 0.001; // Minimum movement to trigger bands
+        band.userData.scaleInProgress = true; // Track scale-in animation
+
+        // Set render order to ensure bands render behind everything
+        band.renderOrder = -1; // Simple negative render order
+        band.scale.setScalar(0); // Start at scale 0 for scale-in animation
+        band.userData.initialScaleComplete = false; // Track if initial scale is done
+        scene.add(band);
+        lightBands.push(band);
+      });
+    }
 
     // Load Model
     const loader = new GLTFLoader();
@@ -369,48 +369,55 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
         if (!isMounted) return;
         model = gltf.scene;
         // Spin-in animation: start at offset, animate to target
-       
+
         var targetY = Math.PI * 1.3;
         if (modelPath && modelPath.includes('Flowers.glb')) {
+          console.log('Flowers model detected');
           targetY = Math.PI * -1.3 - (170 * Math.PI / 180); // 60 degrees less in radians
         }
         const startY = targetY + 1.5;
         model.rotation.y = startY;
-        
+
         // Ensure motorcycle model renders on top of everything
         if (modelPath && modelPath.includes('Motorcycle.glb')) {
-          model.renderOrder = 100; // Much higher render order to ensure in front of bands
+          model.renderOrder = 1; // Simple positive render order
         }
-        
+
         scene.add(model);
         modelLoaded = true;
-        
+
         // For purse model, ensure spin-in starts
         if (modelPath && modelPath.includes('Purse1.glb')) {
-          
+          console.log('Purse model detected');
+          console.log('Texture path:', texturePath);
+          console.log('Model loaded:', modelLoaded);
+
           // Calculate the center of the purse object
           const box = new THREE.Box3().setFromObject(model);
           const center = box.getCenter(new THREE.Vector3());
           target.copy(center);
-          
+          console.log('Purse center:', center);
+
           // Update camera target to purse center
           if (modelPath && modelPath.includes('Purse1.glb')) {
             target = center;
             landingConfig.target = center; // Update landing config target
           }
-          
+
           // Load purse table
+          console.log('Loading PurseTable.glb for purse scene');
           loader.load(
             '/3DModels/PurseTable.glb',
             (tableGltf) => {
               if (!isMounted) return;
+              console.log('PurseTable loaded successfully');
               const table = tableGltf.scene;
-              
+
               // Position table below the purse
               table.position.y = -0.05; // Moved up from -2
               table.rotation.y = Math.PI / 4 + 0.16 + Math.PI; // Rotate 45 degrees
               table.userData.isPurseTable = true;
-              
+
               // Load and apply table texture
               const textureLoader = new THREE.TextureLoader();
               textureLoader.load(
@@ -419,7 +426,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                   if (!isMounted) return;
                   texture.flipY = false;
                   texture.encoding = THREE.sRGBEncoding;
-                  
+
                   table.traverse((child) => {
                     if (child.isMesh) {
                       // Only apply if mesh has UVs
@@ -440,14 +447,15 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                   console.error('Error loading table texture:', error);
                 }
               );
-              
+
               // Mark table for animation
               table.userData.isTable = true;
               // Start table at same rotation as purse
               table.rotation.y = startY; // Match purse starting rotation
-              
+
               scene.add(table);
-              
+              console.log('PurseTable added to scene');
+
               // If no texture, start spin-in (table is loaded)
               if (!texturePath) {
                 startSpinIn();
@@ -458,31 +466,36 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               console.error('Error loading purse table:', error);
             }
           );
-          
+
           // If no texture, start spin-in immediately
           if (!texturePath) {
+            console.log('Starting spin-in for purse (no texture)');
             startSpinIn();
           }
         }
-        
+
         // Load floor for Car scene
         if (modelPath && modelPath.includes('Car.glb')) {
+          console.log('Loading CarFloor.glb for Car scene');
+          console.log('Model path:', modelPath);
           loader.load(
             '/3DModels/CarFloor.glb',
             (floorGltf) => {
               if (!isMounted) return;
+              console.log('CarFloor loaded successfully');
               const floor = floorGltf.scene;
-              
+
               // Position floor for car scene
               floor.position.y = -0.5; // Slightly below the car
               // Floor rotation will be updated in animation loop to match car
               floor.userData.isCarFloor = true;
-              
+
               // Create pulsing light shader for the floor
               let meshCount = 0;
               floor.traverse((child) => {
                 if (child.isMesh) {
                   meshCount++;
+                  console.log('Applying shader to CarFloor mesh', meshCount);
                   // Create custom shader material with pulsing light effect
                   const vertexShader = `
                     varying vec2 vUv;
@@ -491,7 +504,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
                     }
                   `;
-                  
+
                                     const fragmentShader = `
                     uniform float time;
                     uniform float lightTime;
@@ -522,7 +535,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                       gl_FragColor = vec4(finalColor, alpha);
                     }
                   `;
-                  
+
                   // Create shader material
                   const shaderMaterial = new THREE.ShaderMaterial({
                     vertexShader: vertexShader,
@@ -535,21 +548,24 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                     transparent: true,
                     alphaTest: 0.01
                   });
-                  
+
                   child.material = shaderMaterial;
                   child.material.needsUpdate = true;
                   // Mark this mesh as having a shader
                   child.userData.hasShader = true;
+                  console.log('Shader applied to CarFloor mesh', meshCount);
                 }
               });
-              
-              
+
+              console.log('Total meshes found in CarFloor:', meshCount);
+
               // Mark floor for animation
               floor.userData.isFloor = true;
               floor.scale.setScalar(0); // Start at scale 0
-              
+
               scene.add(floor);
-              
+              console.log('CarFloor added to scene');
+
               // If no texture, start spin-in (floor is loaded)
               if (!texturePath) {
                 startSpinIn();
@@ -561,7 +577,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             }
           );
         }
-        
+
         // Load floor only for flowers scene
         if (modelPath && modelPath.includes('Flowers.glb')) {
           loader.load(
@@ -572,7 +588,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               // Position floor for flowers scene
               floor.position.y = 0; // Floor at ground level for flowers
               floor.rotation.y = 180; // Floor at ground level for flowers
-            
+
             // Load and apply floor texture with alpha channel
             const textureLoader = new THREE.TextureLoader();
             textureLoader.load(
@@ -584,7 +600,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                 texture.generateMipmaps = false;
                 texture.minFilter = THREE.NearestFilter;
                 texture.magFilter = THREE.NearestFilter;
-                
+
                 floor.traverse((child) => {
                   if (child.isMesh) {
                     // Only apply if mesh has UVs
@@ -608,13 +624,13 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                 console.error('Error loading floor texture:', error);
               }
             );
-            
+
               // Mark floor for animation
               floor.userData.isFloor = true;
               floor.scale.setScalar(0); // Start at scale 0
-              
+
               scene.add(floor);
-              
+
               // If no texture, start spin-in (floor is loaded)
               if (!texturePath) {
                 startSpinIn();
@@ -626,17 +642,18 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             }
           );
         }
-        
+
         // If no texture, start spin-in
         if (!texturePath) {
           startSpinIn();
         }
-        
+
         // For purse model, ensure spin-in starts even without texture
         if (modelPath && modelPath.includes('Purse1.glb') && !texturePath) {
           startSpinIn();
         }
         if (texturePath) {
+          console.log('Loading texture:', texturePath);
           const textureLoader = new THREE.TextureLoader();
           textureLoader.load(texturePath, (texture) => {
             if (!isMounted) return;
@@ -676,7 +693,9 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
               }
             });
             textureLoaded = true;
+            console.log('Texture loaded, modelLoaded:', modelLoaded);
             if (modelLoaded) {
+              console.log('Starting spin-in for texture-loaded model');
               startSpinIn();
             }
           },
@@ -686,6 +705,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             // If texture fails to load, still start spin-in
             textureLoaded = true;
             if (modelLoaded) {
+              console.log('Starting spin-in after texture load error');
               startSpinIn();
             }
           });
@@ -708,14 +728,14 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             child.material.metalness = metalness;
             child.material.roughness = roughness;
             child.material.envMapIntensity = envMapIntensity;
-            
+
             // Ensure motorcycle renders in front of bands
             if (modelPath && modelPath.includes('Motorcycle.glb')) {
-              child.renderOrder = 100; // Much higher render order to ensure in front of bands
+              child.renderOrder = 1; // Simple positive render order
               child.material.depthWrite = true;
               child.material.depthTest = true;
             }
-            
+
             child.material.needsUpdate = true;
           }
         });
@@ -727,13 +747,16 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
       }
     );
     function startSpinIn() {
+      console.log('startSpinIn called, spinInStarted:', spinInStarted);
       if (spinInStarted) return;
       spinInStarted = true;
+      console.log('Setting spinInStarted to true');
       // Pre-warm GPU for first render
       if (renderer && scene && camera) {
         renderer.compile(scene, camera);
       }
       // Fade out spinner
+      console.log('Setting loading to false');
       setLoading(false);
       // Fade in scene from black, then start animation
       setTimeout(() => {
@@ -749,7 +772,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
             // Ease out cubic
             const ease = 1 - Math.pow(1 - t, 3);
             if (model) model.rotation.y = startY + (targetY - startY) * ease;
-            
+
             // Animate floor scale from 0 to 1
             scene.traverse((child) => {
               if (child.userData && child.userData.isFloor) {
@@ -760,14 +783,14 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
                 child.rotation.y = startY + (targetY - startY) * ease; // Match purse rotation exactly
               }
             });
-            
+
             // Animate light bands scale from 0 to 1 (only for motorcycle)
             if (modelPath && modelPath.includes('Motorcycle.glb')) {
               lightBands.forEach((band) => {
                 band.scale.setScalar(ease);
               });
             }
-            
+
             if (t < 1 && isMounted) {
               requestAnimationFrame(animateSpinIn);
             } else if (model) {
@@ -973,35 +996,111 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
     resetIdleTimer();
 
     const animate = () => {
-      if (!isMounted) return;
-      
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
+      // Smoothly interpolate camera values
+      const lerpFactor = isMobile ? 0.09 : 0.07;
+      cameraTheta += (targetTheta - cameraTheta) * lerpFactor;
+      cameraPhi += (targetPhi - cameraPhi) * lerpFactor;
+      cameraRadius += (targetRadius - cameraRadius) * lerpFactor;
+      updateCamera();
 
-      // Rotate the model
-      if (model && isSpinInStarted) { // Changed from modelRef.current to model
-        model.rotation.y += 0.005;
-      }
+      // Update shader time for car floor and match car rotation
+      let shaderUpdateCount = 0;
+      let totalObjects = 0;
+      scene.traverse((child) => {
+        totalObjects++;
+        if (child.userData && child.userData.hasShader && child.material) {
+          shaderUpdateCount++;
+          child.material.uniforms.time.value += 0.016; // ~60fps
+          child.material.uniforms.lightTime.value += 0.016; // ~60fps for light translation
 
-      // Update light time for all shaders
-      if (scene) {
-        let shaderUpdateCount = 0;
-        let totalObjects = 0;
-        scene.traverse((child) => {
-          totalObjects++;
-          if (child.material && child.material.uniforms && child.material.uniforms.lightTime) {
-            child.material.uniforms.lightTime.value = Date.now() * 0.001;
-            shaderUpdateCount++;
-          }
-        });
-        
-        // Reduce console logging frequency
-        if (shaderUpdateCount === 0 && Math.random() < 0.001) { // Log 0.1% of the time
-          // Only log occasionally to avoid performance impact
+          // Force material update
+          child.material.needsUpdate = true;
         }
+
+        // Match car floor rotation to car model
+        if (child.userData && child.userData.isCarFloor && model) {
+          child.rotation.y = model.rotation.y;
+        }
+      });
+
+      // Update floating rings with viscous motion (only for flowers scene)
+      if (rings.length > 0) {
+        rings.forEach((ring, index) => {
+        // Simple gentle bobbing motion
+        ring.userData.velocity.x += (Math.random() - 0.5) * 0.0005;
+        ring.userData.velocity.y += (Math.random() - 0.5) * 0.0005;
+        ring.userData.velocity.z += (Math.random() - 0.5) * 0.0005;
+
+        // Apply gentle damping
+        ring.userData.velocity.multiplyScalar(0.995);
+
+        // Update position
+        ring.position.add(ring.userData.velocity);
+
+        // Keep rings within bounds
+        const bounds = 20;
+        ring.position.x = Math.max(-bounds, Math.min(bounds, ring.position.x));
+        ring.position.y = Math.max(-bounds + 15, Math.min(bounds + 15, ring.position.y));
+        ring.position.z = Math.max(-bounds, Math.min(bounds, ring.position.z));
+
+        // Rotate rings to face the origin
+        ring.lookAt(new THREE.Vector3(0, 0, 0));
+
+          // Gentle rotation
+          ring.rotation.x += 0.001;
+          ring.rotation.z += 0.0005;
+        });
       }
 
-      controls.update();
-      renderer.render(scene, camera);
+      // Update dynamic light bands for motorcycle scene
+      if (lightBands.length > 0) {
+        const cameraMovement = Math.abs(cameraTheta - targetTheta) + Math.abs(cameraPhi - targetPhi);
+        const isMoving = cameraMovement > 0.001;
+
+        lightBands.forEach((band) => {
+          // Calculate movement intensity
+          const thetaDiff = Math.abs(cameraTheta - band.userData.lastCameraTheta);
+          const phiDiff = Math.abs(cameraPhi - band.userData.lastCameraPhi);
+          const totalMovement = thetaDiff + phiDiff;
+
+          // Update target opacity and scale based on movement
+          if (isMoving && totalMovement > band.userData.movementThreshold) {
+            band.userData.targetOpacity = Math.min(0.8, band.userData.targetOpacity + totalMovement * 2);
+            band.userData.targetRadius = band.userData.baseRadius + totalMovement * 20; // Expand radius
+          } else {
+            band.userData.targetOpacity = Math.max(0.1, band.userData.targetOpacity - 0.02); // Return to base opacity
+            band.userData.targetRadius = Math.max(band.userData.baseRadius, band.userData.targetRadius - 0.5); // Contract radius
+          }
+
+          // Smoothly interpolate opacity and radius
+          band.userData.opacity += (band.userData.targetOpacity - band.userData.opacity) * 0.1;
+          band.userData.currentRadius += (band.userData.targetRadius - band.userData.currentRadius) * 0.1;
+
+          // Update band appearance
+          band.material.opacity = band.userData.opacity;
+
+          // Apply radius scaling only after initial scale-in animation is complete
+          if (band.userData.initialScaleComplete) {
+            band.scale.setScalar(band.userData.currentRadius / band.userData.baseRadius);
+          }
+
+          // Keep bands centered relative to camera view (stationary in view)
+          const cameraDirection = new THREE.Vector3();
+          camera.getWorldDirection(cameraDirection);
+          const bandCenter = target.clone().add(cameraDirection.clone().multiplyScalar(-12)); // Move much further back
+          band.position.set(bandCenter.x, bandCenter.y, bandCenter.z);
+
+          // Make band face the camera
+          band.lookAt(camera.position);
+
+          // Store current camera position for next frame
+          band.userData.lastCameraTheta = cameraTheta;
+          band.userData.lastCameraPhi = cameraPhi;
+        });
+      }
+
+      composer.render();
     };
     animate();
 
@@ -1051,7 +1150,7 @@ const ModelViewer = ({ modelPath, texturePath, onClose, title = "3D Model Viewer
   return (
     <div className="model-viewer-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.98)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <button onClick={onClose} style={{ position: 'absolute', top: isMobile ? 12 : 32, right: isMobile ? 12 : 32, zIndex: 1001, background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', borderRadius: '50%', width: isMobile ? 48 : 40, height: isMobile ? 48 : 40, fontSize: isMobile ? 32 : 24, cursor: 'pointer' }}>&times;</button>
-      
+
       {/* Title */}
       <div style={{
         position: 'absolute',
@@ -1242,4 +1341,4 @@ style.innerHTML = `
 if (!document.head.querySelector('style[data-spinner]')) {
   style.setAttribute('data-spinner', 'true');
   document.head.appendChild(style);
-} 
+}
