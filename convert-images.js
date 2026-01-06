@@ -15,8 +15,8 @@ async function convertImage(inputPath, outputPath) {
     await sharp(inputPath)
       .webp({ 
         quality: 90,
-        lossless: false,
-        nearLossless: true,
+        lossless: true,
+        nearLossless: false,
         smartSubsample: true
       })
       .toFile(outputPath);

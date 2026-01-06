@@ -8,8 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configuration
-const SOURCE_DIR = './src/assets/3DArtwork';
-const THUMBNAIL_DIR = './src/assets/3DArtwork/thumbnails';
+const SOURCE_DIR = './public/3DArtwork';
+const THUMBNAIL_DIR = './public/3DArtwork/thumbnails';
 const THUMBNAIL_SIZE = 800; 
 const QUALITY = 95; 
 
@@ -19,19 +19,28 @@ if (!fs.existsSync(THUMBNAIL_DIR)) {
   console.log(`Created thumbnail directory: ${THUMBNAIL_DIR}`);
 }
 
-// Get all image files from source directory
+// Get all image files from source directory (excluding thumbnails folder)
 function getImageFiles(dir) {
   const files = fs.readdirSync(dir);
   return files.filter(file => {
+    // Skip thumbnails directory
+    if (file === 'thumbnails') return false;
     const ext = path.extname(file).toLowerCase();
-    return ['.png', '.jpg', '.jpeg', '.webp'].includes(ext);
+    return ['.png', '.jpg', '.jpeg'].includes(ext);
   });
 }
 
 // Generate thumbnail for a single image
 async function generateThumbnail(filename) {
   const sourcePath = path.join(SOURCE_DIR, filename);
-  const thumbnailPath = path.join(THUMBNAIL_DIR, `${path.parse(filename).name}.webp`);
+  const thumbnailName = `${path.parse(filename).name}.webp`;
+  const thumbnailPath = path.join(THUMBNAIL_DIR, thumbnailName);
+  
+  // Force regenerate all thumbnails - remove this check to regenerate everything
+  // if (fs.existsSync(thumbnailPath)) {
+  //   console.log(`⊘ Skipped (already exists): ${filename}`);
+  //   return 'skipped';
+  // }
   
   try {
     await sharp(sourcePath)
@@ -42,7 +51,7 @@ async function generateThumbnail(filename) {
       .webp({ quality: QUALITY })
       .toFile(thumbnailPath);
     
-    console.log(`✓ Generated: ${filename} → ${path.basename(thumbnailPath)}`);
+    console.log(`✓ Generated: ${filename} → ${thumbnailName}`);
     return true;
   } catch (error) {
     console.error(`✗ Failed to process ${filename}:`, error.message);
@@ -65,11 +74,14 @@ async function generateAllThumbnails() {
   
   let successCount = 0;
   let failCount = 0;
+  let skippedCount = 0;
   
   for (const filename of imageFiles) {
-    const success = await generateThumbnail(filename);
-    if (success) {
+    const result = await generateThumbnail(filename);
+    if (result === true) {
       successCount++;
+    } else if (result === 'skipped') {
+      skippedCount++;
     } else {
       failCount++;
     }
@@ -77,6 +89,7 @@ async function generateAllThumbnails() {
   
   console.log(`\n📊 Summary:`);
   console.log(`✓ Successfully generated: ${successCount} thumbnails`);
+  console.log(`⊘ Skipped (already exist): ${skippedCount} thumbnails`);
   if (failCount > 0) {
     console.log(`✗ Failed to generate: ${failCount} thumbnails`);
   }
