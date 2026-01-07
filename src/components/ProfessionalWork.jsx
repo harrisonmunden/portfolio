@@ -22,8 +22,8 @@ const ProfessionalWork = ({ goTo, hideNav }) => {
       company: "Tesla",
       headerImg: aboutHeaders.Tesla,
       description: [
-        "Leading 3D design and engineering for Tesla Energy. Seen in experiences like Tesla Recharged, a feature that garnered hundreds of thousands of views and shares. ",
-        "Managed the 3D engine for the Tesla Mobile App, squashing bugs and delivering new features such as Tesla Powershare and the Tesla Energy Home visualization.",
+        "Leading 3D design and engineering for Tesla Energy and Charging. ",
+        "Managing the 3D engine for the Tesla Mobile App.",
         "3D modeling, texturing, and animation for both baked and real time applications.",
         "Game engine & shader scripting, mobile app implementation."
       ]
@@ -34,8 +34,8 @@ const ProfessionalWork = ({ goTo, hideNav }) => {
       company: "Ford",
       headerImg: aboutHeaders.Ford,
       description: [
-        "Created renderings and animations that showcased the defining features of Lincoln’s 100-year anniversary concept car, the L100.",
-        "Developed the design language of the public unveil of the L100 at Pebble Beach’s Concours D’Elegance.",      ]
+        "3D asset creation for concept cars.",
+        "Ergonomics analysis and design.",      ]
     },
     {
       id: 3,
@@ -43,8 +43,8 @@ const ProfessionalWork = ({ goTo, hideNav }) => {
       company: "Dartmouth Formula Racing",
       headerImg: aboutHeaders.DFR,
       description: [
-        "Designed and fabricated multiple Formula Hybrid race car components, including an impact attenuator, nose cone, side paneling, and side view mirrors.",
-        "Implemented a new steering system into the car."
+        "Designed and fabricated race car components.",
+        "Designed and installed a new steering system into the car."
       ]
     }
   ];
@@ -153,10 +153,11 @@ const ProfessionalWork = ({ goTo, hideNav }) => {
         <div className="about-intro-section">
           <h2 className="about-intro-title">Hi, I'm Harrison</h2>
           <p className="about-intro-text">
-            I'm a technical 3D artist and developer passionate about creating immersive digital experiences. 
-            With expertise in 3D modeling, shader scripting, and art direction, I live in the gap 
-            between technology and creativity. Currently working at Tesla, where I  work on 3D design 
-            and Engineering for the Tesla Mobile App and Tesla Energy. Currently based in the Bay Area. 
+            I'm a technical 3D artist and app developer passionate about creating immersive digital experiences. 
+            With expertise in 3D modeling, shader scripting, and art direction, I make technology more human.
+            Currently based in the Bay Area working at Tesla Motors.
+
+            Project details available upon request. 
           </p>
         </div>
       </div>

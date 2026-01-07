@@ -7,7 +7,7 @@ const aboutHeaders = {
   Ford: '/AboutAssets/About/FordAboutHeader-compressed.webp',
   DFR: '/AboutAssets/About/DFRAboutHeader-compressed.webp',
 };
-const bulletImg = '/AboutAssets/About/Bullet.webp';
+const bulletImg = '/AboutAssets/About/Bullet-compressed.webp';
 const chevronImg = '/GlassyObjects/About/Chevron.png';
 
 const BATCH_SIZE = 1;
@@ -17,11 +17,11 @@ const About = ({ goTo, hideAboutNav }) => {
   const experiences = [
     {
       id: 1,
-      title: "3D UI Developer",
+      title: "Sr. Creative Technologist",
       company: "Tesla",
       headerImg: aboutHeaders.Tesla,
       description: [
-        "Leading 3D design and engineering for Tesla Energy. Seen in experiences like Tesla Recharged, a feature that garnered hundreds of thousands of views and shares. ",
+        "Meep Leading 3D design and engineering for Tesla Energy. Seen in experiences like Tesla Recharged, a feature that garnered hundreds of thousands of views and shares. ",
         "Managed the 3D engine for the Tesla Mobile App, squashing bugs and delivering new features such as Tesla Powershare and the Tesla Energy Home visualization.",
         "3D modeling, texturing, and animation for both baked and real time applications.",
         "Game engine & shader scripting, mobile app implementation."
@@ -93,10 +93,9 @@ const About = ({ goTo, hideAboutNav }) => {
         <div className="about-intro-section">
           <h2 className="about-intro-title">Hi, I'm Harrison</h2>
           <p className="about-intro-text">
-            I'm a technical 3D artist and developer passionate about creating immersive digital experiences. 
-            With expertise in 3D modeling, shader scripting, and art direction, I live in the gap 
-            between technology and creativity. Currently working at Tesla, where I  work on 3D design 
-            and Engineering for the Tesla Mobile App and Tesla Energy. Currently based in the Bay Area. 
+            I'm a technical 3D artist and app developer passionate about creating immersive digital experiences. 
+            With expertise in 3D modeling, shader scripting, and art direction, I make technology more human.
+            Currently based in the Bay Area working at Tesla Motors. 
           </p>
         </div>
       </div>
