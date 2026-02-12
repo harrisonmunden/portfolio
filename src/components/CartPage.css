@@ -253,11 +253,19 @@
 }
 
 @media (max-width: 1024px) {
+  .cart-page {
+    padding: 110px 40px 40px 40px;
+  }
+
+  .cart-title {
+    font-size: 72px;
+  }
+
   .cart-content {
     grid-template-columns: 1fr;
     gap: 30px;
   }
-  
+
   .cart-summary {
     position: static;
   }
@@ -267,9 +275,9 @@
   .cart-page {
     padding: 100px 30px 40px 30px;
   }
-  
+
   .cart-title {
-    font-size: 60px;
+    font-size: 56px;
   }
   
   .cart-item {

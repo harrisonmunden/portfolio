@@ -34,13 +34,51 @@ const GAME_PAGE_ANIMATION = {
   ease: 'easeOut',
 };
 
+// Hook for responsive window width tracking
+const useWindowWidth = () => {
+  const [width, setWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    let rafId;
+    const handleResize = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => setWidth(window.innerWidth));
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  return width;
+};
+
+// Responsive value helper: returns mobile/tablet/desktop value based on width
+const responsive = (width, mobile, tablet, desktop) => {
+  if (width <= 600) return mobile;
+  if (width <= 1024) return tablet;
+  return desktop;
+};
+
 // Shared header components
-const SharedPrintsHeader = ({ page, goTo }) => {
+const SharedPrintsHeader = ({ page, goTo, windowWidth }) => {
   const isHome = page === 'home';
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
-  
+  const w = windowWidth;
+
   if (!(page === 'home' || page === 'prints-for-sale')) return null;
-  
+
+  const fontSize = isHome
+    ? responsive(w, 32, Math.round(32 + (66 - 32) * ((w - 600) / (1024 - 600))), 66)
+    : responsive(w, 28, Math.round(28 + (88 - 28) * ((w - 600) / (1024 - 600))), 88);
+  const left = isHome
+    ? responsive(w, 25, Math.round(25 + (100 - 25) * ((w - 600) / (1024 - 600))), 100)
+    : responsive(w, 20, Math.round(20 + (60 - 20) * ((w - 600) / (1024 - 600))), 60);
+  const top = isHome
+    ? responsive(w, 320, Math.round(320 + (460 - 320) * ((w - 600) / (1024 - 600))), 460)
+    : responsive(w, 20, Math.round(20 + (50 - 20) * ((w - 600) / (1024 - 600))), 50);
+  const chevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
+
   return (
     <motion.div
       layout
@@ -48,13 +86,13 @@ const SharedPrintsHeader = ({ page, goTo }) => {
       className="shared-prints-header"
       style={{
         position: 'absolute',
-        left: isHome ? (isMobile ? 25 : 100) : (isMobile ? 20 : 60),
-        top: isHome ? (isMobile ? 320 : 460) : (isMobile ? 20 : 50),
+        left,
+        top,
         zIndex: 9999,
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
-        fontSize: isHome ? (isMobile ? 32 : 66) : (isMobile ? 28 : 88),
+        fontSize,
         fontWeight: 900,
         color: '#1a1a1a',
         letterSpacing: '0.085em',
@@ -73,24 +111,35 @@ const SharedPrintsHeader = ({ page, goTo }) => {
         className="chevron-img"
         layoutId="prints-chevron"
         style={{
-          width: isHome ? 55 : (isMobile ? 29 : 55), 
+          width: chevronWidth,
           marginLeft: 8,
           marginTop: 0,
         }}
         initial={false}
-        animate={{ width: isHome ? 55 : (isMobile ? 29 : 55), rotate: isHome ? 0 : 90 }}
+        animate={{ width: chevronWidth, rotate: isHome ? 0 : 90 }}
         transition={HEADER_ANIMATION}
       />
     </motion.div>
   );
 };
 
-const SharedRealtimeHeader = ({ page, goTo }) => {
+const SharedRealtimeHeader = ({ page, goTo, windowWidth }) => {
   const isHome = page === 'home';
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
-  
+  const w = windowWidth;
+
   if (!(page === 'home' || page === 'realtime-artwork')) return null;
-  
+
+  const fontSize = isHome
+    ? responsive(w, 32, Math.round(32 + (66 - 32) * ((w - 600) / (1024 - 600))), 66)
+    : responsive(w, 28, Math.round(28 + (88 - 28) * ((w - 600) / (1024 - 600))), 88);
+  const left = isHome
+    ? responsive(w, 25, Math.round(25 + (100 - 25) * ((w - 600) / (1024 - 600))), 100)
+    : responsive(w, 20, Math.round(20 + (60 - 20) * ((w - 600) / (1024 - 600))), 60);
+  const top = isHome
+    ? responsive(w, 360, Math.round(360 + (540 - 360) * ((w - 600) / (1024 - 600))), 540)
+    : responsive(w, 20, Math.round(20 + (50 - 20) * ((w - 600) / (1024 - 600))), 50);
+  const chevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
+
   return (
     <motion.div
       layout
@@ -98,13 +147,13 @@ const SharedRealtimeHeader = ({ page, goTo }) => {
       className="shared-realtime-header"
       style={{
         position: 'absolute',
-        left: isHome ? (isMobile ? 25 : 100) : (isMobile ? 20 : 60),
-        top: isHome ? (isMobile ? 360 : 540) : (isMobile ? 20 : 50),
+        left,
+        top,
         zIndex: 9999,
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
-        fontSize: isHome ? (isMobile ? 32 : 66) : (isMobile ? 28 : 88),
+        fontSize,
         fontWeight: 900,
         color: '#1a1a1a',
         letterSpacing: '0.085em',
@@ -123,24 +172,35 @@ const SharedRealtimeHeader = ({ page, goTo }) => {
         className="chevron-img"
         layoutId="realtime-chevron"
         style={{
-          width: isHome ? 55 : (isMobile ? 29 : 55), 
+          width: chevronWidth,
           marginLeft: 8,
           marginTop: 0,
         }}
         initial={false}
-        animate={{ width: isHome ? 55 : (isMobile ? 29 : 55), rotate: isHome ? 0 : 90 }}
+        animate={{ width: chevronWidth, rotate: isHome ? 0 : 90 }}
         transition={HEADER_ANIMATION}
       />
     </motion.div>
   );
 };
 
-const SharedProfessionalHeader = ({ page, goTo }) => {
+const SharedProfessionalHeader = ({ page, goTo, windowWidth }) => {
   const isHome = page === 'home';
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
-  
+  const w = windowWidth;
+
   if (!(page === 'home' || page === 'professional-work')) return null;
-  
+
+  const fontSize = isHome
+    ? responsive(w, 32, Math.round(32 + (66 - 32) * ((w - 600) / (1024 - 600))), 66)
+    : responsive(w, 28, Math.round(28 + (88 - 28) * ((w - 600) / (1024 - 600))), 88);
+  const left = isHome
+    ? responsive(w, 25, Math.round(25 + (100 - 25) * ((w - 600) / (1024 - 600))), 100)
+    : responsive(w, 20, Math.round(20 + (60 - 20) * ((w - 600) / (1024 - 600))), 60);
+  const top = isHome
+    ? responsive(w, 400, Math.round(400 + (620 - 400) * ((w - 600) / (1024 - 600))), 620)
+    : responsive(w, 20, Math.round(20 + (50 - 20) * ((w - 600) / (1024 - 600))), 50);
+  const chevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
+
   return (
     <motion.div
       layout
@@ -148,13 +208,13 @@ const SharedProfessionalHeader = ({ page, goTo }) => {
       className="shared-professional-header"
       style={{
         position: 'absolute',
-        left: isHome ? (isMobile ? 25 : 100) : (isMobile ? 20 : 60),
-        top: isHome ? (isMobile ? 400 : 620) : (isMobile ? 20 : 50),
+        left,
+        top,
         zIndex: 9999,
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
-        fontSize: isHome ? (isMobile ? 32 : 66) : (isMobile ? 28 : 88),
+        fontSize,
         fontWeight: 900,
         color: '#1a1a1a',
         letterSpacing: '0.085em',
@@ -173,12 +233,12 @@ const SharedProfessionalHeader = ({ page, goTo }) => {
         className="chevron-img"
         layoutId="professional-chevron"
         style={{
-          width: isHome ? 55 : (isMobile ? 29 : 55), 
+          width: chevronWidth,
           marginLeft: 8,
           marginTop: 0,
         }}
         initial={false}
-        animate={{ width: isHome ? 55 : (isMobile ? 29 : 55), rotate: isHome ? 0 : 90 }}
+        animate={{ width: chevronWidth, rotate: isHome ? 0 : 90 }}
         transition={HEADER_ANIMATION}
       />
     </motion.div>
@@ -186,17 +246,17 @@ const SharedProfessionalHeader = ({ page, goTo }) => {
 };
 
 // Cart Icon Component for navigation
-const CartIconNav = ({ page, goTo }) => {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
-  
+const CartIconNav = ({ page, goTo, windowWidth }) => {
+  const isMobile = windowWidth <= 600;
+
   if (!(page === 'home' || page === 'prints-for-sale' || page === 'realtime-artwork' || page === 'professional-work' || page === 'cart')) return null;
-  
+
   return (
     <motion.div
       className="cart-icon-nav"
       style={{
         position: 'fixed',
-        ...(isMobile ? { left: 20 } : { right: 60 }),  // Left on mobile, right on desktop
+        ...(isMobile ? { left: 20 } : { right: 60 }),
         bottom: isMobile ? 20 : 50,
         zIndex: 9999,
       }}
@@ -216,7 +276,8 @@ const AppContent = () => {
   const location = useLocation();
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
-  
+  const windowWidth = useWindowWidth();
+
   // Use custom scroll restoration hook
   useScrollToTop();
   
@@ -265,10 +326,10 @@ const AppContent = () => {
       {/* Only show navigation headers and PersonFigure on home/work/cart pages, not on game pages */}
       {!isGamePage && (
         <div style={fadeStyle}>
-          <SharedPrintsHeader key="prints-header" page={currentPage} goTo={goTo} />
-          <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} />
-          <SharedProfessionalHeader key="professional-header" page={currentPage} goTo={goTo} />
-          <CartIconNav key="cart-icon" page={currentPage} goTo={goTo} />
+          <SharedPrintsHeader key="prints-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
+          <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
+          <SharedProfessionalHeader key="professional-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
+          <CartIconNav key="cart-icon" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
           <PersonFigure page={currentPage} />
         </div>
       )}

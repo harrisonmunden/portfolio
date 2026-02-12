@@ -129,52 +129,113 @@
 @media (max-width: 1200px) {
   .name-first,
   .name-last {
-    font-size: 72px;
+    font-size: 80px;
+    padding-left: 100px;
   }
-  
+
   .greeting-text {
-    font-size: 28px;
+    font-size: 40px;
   }
-  
+
   .nav-link {
-    font-size: 32px;
+    font-size: 40px;
   }
-  
-  .chevron {
-    font-size: 24px;
+
+  .chevron-img {
+    width: 40px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .home-page {
+    padding: 140px 30px 0px 30px;
+  }
+
+  .name-first,
+  .name-last {
+    font-size: 68px;
+    padding-left: 80px;
+  }
+
+  .greeting-text {
+    font-size: 34px;
+  }
+
+  .nav-link {
+    font-size: 34px;
+  }
+
+  .chevron-img {
+    width: 34px;
   }
 }
 
 @media (max-width: 900px) {
   .home-page {
-    padding: 40px 20px 20px 20px;
+    padding: 100px 20px 20px 20px;
   }
-  
+
   .name-greeting-row {
     flex-direction: column;
     gap: 20px;
   }
-  
+
   .name-first,
   .name-last {
-    font-size: 60px;
+    font-size: 56px;
+    padding-left: 50px;
   }
-  
+
   .greeting-text {
-    font-size: 24px;
-  }
-  
-  .nav-link {
     font-size: 28px;
   }
-  
-  .chevron {
-    font-size: 20px;
+
+  .greeting {
+    margin-left: 30px;
   }
-  
+
+  .nav-link {
+    font-size: 28px;
+    margin-left: 30px;
+  }
+
+  .chevron-img {
+    width: 28px;
+  }
+
   .home-figure-section {
     width: 60%;
     height: 50%;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    padding: 60px 16px 16px 16px;
+  }
+
+  .name-first,
+  .name-last {
+    font-size: 46px;
+    padding-left: 30px;
+  }
+
+  .greeting-text {
+    font-size: 22px;
+  }
+
+  .greeting {
+    margin-left: 25px;
+    padding-top: 15px;
+  }
+
+  .nav-link {
+    font-size: 24px;
+    margin-left: 25px;
+  }
+
+  .chevron-img {
+    width: 24px;
   }
 }
 
@@ -182,35 +243,35 @@
   .home-page {
     padding: 20px 8px 8px 8px;
   }
-  
+
   .name-first,
   .name-last {
     font-size: 32px;
     padding-left: 20px;
   }
-  
+
   .greeting-text {
     font-size: 16px;
   }
-  
+
   .nav-link {
     font-size: 18px;
     margin-left: 20px;
   }
-  
+
   .chevron-img {
     width: 20px;
   }
-  
+
   .home-figure-section {
     width: 70%;
     height: 40%;
   }
-  
+
   .name-greeting-row {
     gap: 10px;
   }
-  
+
   .greeting {
     margin-left: 20px;
     padding-top: 10px;
