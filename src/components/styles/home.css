@@ -64,6 +64,7 @@
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
   line-height: 0.9;
   letter-spacing: 0.085em;
+  white-space: nowrap;
 }
 
 .name-last {
@@ -77,6 +78,7 @@
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
   line-height: 0.9;
   letter-spacing: 0.085em;
+  white-space: nowrap;
 }
 
 /* Greeting */
@@ -92,6 +94,7 @@
   font-weight: 700;
   color: #1a1a1a;
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  white-space: nowrap;
 }
 
 /* Navigation Links */
@@ -113,6 +116,7 @@
   align-items: center;
   gap: 1px;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .nav-link:hover {

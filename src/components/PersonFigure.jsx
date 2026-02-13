@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useAnimation, animate } from '
 
 const PersonFigure = ({ page }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const prevPageRef = useRef(page);
   const isHome = page === 'home';
   const isWork = page === 'work' || page === 'prints-for-sale' || page === 'realtime-artwork';
   const isAbout = page === 'about' || page === 'professional-work';
@@ -92,6 +93,7 @@ const PersonFigure = ({ page }) => {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   const LIMIT = 120; // max pixels of drag
+  const DRAG_THRESHOLD = 5; // px before pointer move counts as drag
   const scale = (v) => LIMIT * Math.tanh(v / LIMIT);
 
   // Handler for drag - throttled for performance
@@ -121,14 +123,11 @@ const PersonFigure = ({ page }) => {
     });
   }, []);
 
-  const handleDragStart = (index, e) => {
-    e.stopPropagation();
-    const point = e.touches ? e.touches[0] : e;
-    dragStartPos.current[index] = { x: point.clientX, y: point.clientY };
+  const handleDragStart = (index) => {
     dragActive.current[index] = true;
   };
 
-  const handleDragEnd = (index, e) => {
+  const handleDragEnd = (index) => {
     dragActive.current[index] = false;
     dragStartPos.current[index] = null;
   };
@@ -208,13 +207,14 @@ const PersonFigure = ({ page }) => {
     setDraggedIndex(null);
   };
 
-  // Always reset shared head x/y on work/about
-  useEffect(() => {
-    if (!isHome) {
-      sharedHeadMotion.set(0);
-      sharedHeadYMotion.set(0);
-    }
-  }, [isHome]);
+  // Synchronously reset all drag offsets on page change (before render/layout measurement)
+  if (prevPageRef.current !== page) {
+    prevPageRef.current = page;
+    sharedHeadMotion.set(0);
+    sharedHeadYMotion.set(0);
+    headMotionValues[sharedHeadWaveIndex].x.set(0);
+    headMotionValues[sharedHeadWaveIndex].y.set(0);
+  }
 
   // Utility: check if a point is inside a DOMRect
   function pointInRect(x, y, rect) {
@@ -289,7 +289,7 @@ const PersonFigure = ({ page }) => {
   };
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 99999 }}>
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: isHome ? 5 : 99999 }}>
       {/* Shared Head - Always Visible (like shared headers) */}
       {/* Always render the persistent head with layoutId */}
       <motion.img
@@ -316,7 +316,7 @@ const PersonFigure = ({ page }) => {
           left: isHome ? `${homeHeadX}px` : `${sharedHeadPosition.x}px`,
           top: isHome ? `${homeHeadY}px` : `${waveHeadY}px`,
           opacity: isHome ? 1 : CONFIG.opacity,
-          zIndex: 99998,
+          zIndex: isHome ? 5 : 99998,
           cursor: 'grab',
           userSelect: 'none',
           touchAction: 'none',
@@ -355,12 +355,12 @@ const PersonFigure = ({ page }) => {
             style={{
               position: 'absolute',
               left: isMobile
-                ? `calc(43vw)` // Center the body under the head (60vw/2)
-                : `${homeHeadX - 10}px`,
+                ? `${homeHeadX + (CONFIG.headSize.home.mobile / 2) - (CONFIG.bodySize.mobile / 2)}px`
+                : `${homeHeadX + (CONFIG.headSize.home.desktop / 2) - (CONFIG.bodySize.desktop / 2)}px`,
               top: isMobile
-                ? `${homeHeadY + (CONFIG.headSize.home.mobile * 0.94)}px` // Slightly more spacing for mobile
+                ? `${homeHeadY + (CONFIG.headSize.home.mobile * 0.94)}px`
                 : `${homeHeadY + (CONFIG.headSize.home.desktop * 0.85)}px`,
-              width: isMobile ? '60vw' : 'auto',
+              width: isMobile ? CONFIG.bodySize.mobile : CONFIG.bodySize.desktop,
               height: 'auto',
               display: 'flex',
               flexDirection: 'column',
@@ -373,12 +373,9 @@ const PersonFigure = ({ page }) => {
               src="/GlassyObjects/About/Body.webp"
               alt="Body"
               style={{
-                width: '100%',
+                width: isMobile ? CONFIG.bodySize.mobile : CONFIG.bodySize.desktop,
                 height: 'auto',
-                maxWidth: isMobile ? '60vw' : CONFIG.bodySize.desktop,
-                maxHeight: isMobile ? '50vh' : CONFIG.bodySize.desktop * 1.33,
                 zIndex: 1,
-                filter: 'blur(0px)', // No blur for home page person
               }}
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
