@@ -1,0 +1,461 @@
+/* ========================================
+   Print Detail View - Inline Expand
+   ======================================== */
+
+.print-detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  background: #f5f5f5;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+}
+
+/* Animate overlay background */
+.print-detail-overlay.entering {
+  background: transparent;
+}
+
+.print-detail-overlay.open {
+  background: #f5f5f5;
+  transition: background 0.4s ease 0.1s;
+}
+
+.print-detail-overlay.closing {
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+/* ---- Image wrapper for FLIP animation ---- */
+.print-detail-image-wrapper {
+  position: absolute;
+  will-change: transform, width, height, top, left;
+  z-index: 2;
+}
+
+.print-detail-image-wrapper.animating {
+  transition: top 0.5s cubic-bezier(.4, 0, .2, 1),
+              left 0.5s cubic-bezier(.4, 0, .2, 1),
+              width 0.5s cubic-bezier(.4, 0, .2, 1),
+              height 0.5s cubic-bezier(.4, 0, .2, 1),
+              box-shadow 0.5s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Drop shadow when full-res loaded */
+.print-detail-image-wrapper.full-res-loaded {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ---- Thumbnail image (greyed out during loading) ---- */
+.detail-img-thumbnail {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: #f0f0f0;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+/* Grey out thumbnail while full-res is loading */
+.print-detail-overlay.open .detail-img-thumbnail:not(.hidden) {
+  filter: grayscale(0.6) brightness(0.7);
+}
+
+/* During enter/close animation, show thumbnail normally */
+.print-detail-overlay.entering .detail-img-thumbnail,
+.print-detail-overlay.closing .detail-img-thumbnail {
+  filter: none;
+}
+
+.detail-img-thumbnail.hidden {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* ---- Full resolution image ---- */
+.detail-img-fullres {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.detail-img-fullres.loaded {
+  opacity: 1;
+}
+
+/* ---- Loading spinner overlay ---- */
+.detail-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.detail-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  animation: detail-spin 0.8s linear infinite;
+}
+
+@keyframes detail-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.detail-loading-text {
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.3px;
+}
+
+/* ---- Close button ---- */
+.print-detail-close {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 10001;
+  background: rgba(0, 0, 0, 0.08);
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 24px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.print-detail-close.visible {
+  opacity: 1;
+  transform: scale(1);
+  transition: all 0.3s ease 0.35s;
+}
+
+.print-detail-close.closing {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.15s ease;
+}
+
+.print-detail-close:hover {
+  background: rgba(0, 0, 0, 0.15);
+  transform: scale(1.1);
+}
+
+/* ---- Detail info panel ---- */
+.print-detail-info {
+  position: relative;
+  z-index: 1;
+  padding: 30px 60px 60px 60px;
+  opacity: 0;
+  transform: translateY(20px);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.print-detail-info.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease 0.3s, transform 0.4s ease 0.3s;
+}
+
+.print-detail-info.closing {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Side-by-side variant: positioned to the right of the image */
+.print-detail-info.side-by-side {
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  overflow-y: auto;
+}
+
+.print-detail-info.side-by-side.visible {
+  transform: translateX(0);
+  transition: opacity 0.4s ease 0.3s, transform 0.4s ease 0.3s;
+}
+
+.print-detail-info.side-by-side.closing {
+  transform: translateX(10px);
+}
+
+.print-detail-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: #1a1a1a;
+  margin: 0 0 30px 0;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Print options ---- */
+.print-detail-options {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.print-option-group h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 12px 0;
+}
+
+.print-size-options,
+.print-quality-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.print-size-btn,
+.print-quality-btn {
+  background: white;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.print-size-btn:hover,
+.print-quality-btn:hover {
+  border-color: #4ebd8b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(78, 189, 139, 0.12);
+}
+
+.print-size-btn.selected,
+.print-quality-btn.selected {
+  border-color: #4ebd8b;
+  background: #f0fdf7;
+}
+
+.print-size-btn .btn-label,
+.print-quality-btn .btn-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+}
+
+.print-size-btn .btn-sub,
+.print-quality-btn .btn-sub {
+  font-size: 11px;
+  color: #888;
+}
+
+.print-size-btn .btn-price {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4ebd8b;
+  margin-top: 2px;
+}
+
+/* ---- Quantity ---- */
+.print-quantity-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.print-quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+.print-quantity-controls button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #4ebd8b;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.print-quantity-controls button:hover:not(:disabled) {
+  background: #4ebd8b;
+  color: white;
+}
+
+.print-quantity-controls button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.print-quantity-controls span {
+  font-size: 16px;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: center;
+  color: #333;
+}
+
+/* ---- Price + Add to cart ---- */
+.print-detail-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+  margin-top: 8px;
+}
+
+.print-total-price {
+  font-size: 26px;
+  font-weight: 900;
+  color: #1a1a1a;
+}
+
+.print-add-to-cart-btn {
+  background: #4ebd8b;
+  color: white;
+  border: none;
+  padding: 16px 36px;
+  border-radius: 8px;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.print-add-to-cart-btn:hover {
+  background: #45a378;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(78, 189, 139, 0.3);
+}
+
+.print-add-to-cart-btn:active {
+  transform: translateY(0);
+}
+
+/* ---- Added to cart confirmation ---- */
+.print-added-confirmation {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4ebd8b;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.print-added-confirmation.show {
+  opacity: 1;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .print-detail-info {
+    padding: 24px 24px 40px 24px;
+  }
+
+  .print-detail-title {
+    font-size: 22px;
+    margin-bottom: 24px;
+  }
+
+  .print-detail-close {
+    top: 16px;
+    right: 16px;
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+  }
+
+  .print-size-options,
+  .print-quality-options {
+    gap: 8px;
+  }
+
+  .print-size-btn,
+  .print-quality-btn {
+    padding: 10px 14px;
+  }
+
+  .print-detail-footer {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .print-total-price {
+    text-align: center;
+  }
+
+  .print-add-to-cart-btn {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .print-detail-info {
+    padding: 16px 16px 32px 16px;
+  }
+
+  .print-detail-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .print-size-btn .btn-label,
+  .print-quality-btn .btn-label {
+    font-size: 12px;
+  }
+
+  .print-size-btn .btn-sub,
+  .print-quality-btn .btn-sub {
+    font-size: 10px;
+  }
+}

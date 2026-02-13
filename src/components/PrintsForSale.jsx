@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import ImageCarousel from './ImageCarousel';
-import AddToCartModal from './AddToCartModal';
+import { useCart } from '../contexts/CartContext';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 import '../components/Works.css';
+import './PrintDetailView.css';
 
 // Responsive column count helper
 const getColumnCount = (width) => {
@@ -22,16 +22,32 @@ const getGap = (width) => {
   return 40;
 };
 
+// Desktop breakpoint for side-by-side layout
+const DESKTOP_SIDE_BY_SIDE = 900;
+
 const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [carouselOpen, setCarouselOpen] = useState(false);
-  const [addToCartOpen, setAddToCartOpen] = useState(false);
+  const { addToCart, PRINT_SIZES, PRINT_QUALITIES } = useCart();
+
+  // Grid state
   const [hoveredImageId, setHoveredImageId] = useState(null);
   const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
   const gridRef = useRef(null);
   const cardRefs = useRef(new Map());
 
-  // Use custom scroll restoration hook
+  // Detail view state
+  const [detailImage, setDetailImage] = useState(null);
+  const [detailPhase, setDetailPhase] = useState('closed');
+  const [originRect, setOriginRect] = useState(null);
+  const [targetRect, setTargetRect] = useState(null);
+  const [fullResLoaded, setFullResLoaded] = useState(false);
+  const savedScrollY = useRef(0);
+
+  // Cart options state
+  const [selectedSize, setSelectedSize] = useState('medium');
+  const [selectedQuality, setSelectedQuality] = useState('standard');
+  const [quantity, setQuantity] = useState(1);
+  const [addedConfirm, setAddedConfirm] = useState(false);
+
   useScrollToTop();
 
   // Track window width with RAF throttling
@@ -48,14 +64,14 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
     };
   }, []);
 
-  // Notify parent when carousel opens/closes to fade navigation
+  // Notify parent when detail view opens/closes to fade navigation
   useEffect(() => {
     if (onModelViewerOpenChange) {
-      onModelViewerOpenChange(carouselOpen);
+      onModelViewerOpenChange(detailPhase === 'entering' || detailPhase === 'open');
     }
-  }, [carouselOpen, onModelViewerOpenChange]);
+  }, [detailPhase, onModelViewerOpenChange]);
 
-  // 3D Artwork data with pre-computed dimensions (width, height from thumbnails)
+  // 3D Artwork data with pre-computed dimensions
   const artwork = [
     { id: 1, src: '/3DArtwork/AppleTree-compressed.png', thumbnailSrc: '/3DArtwork/thumbnails/AppleTree-compressed.webp', alt: 'Apple Tree', title: 'Apple Tree', priority: 8, w: 800, h: 800 },
     { id: 3, src: '/3DArtwork/Chess4 copy.png', thumbnailSrc: '/3DArtwork/thumbnails/Chess4 copy.webp', alt: 'Chess 4', title: 'Chess 4', priority: 3, w: 800, h: 800 },
@@ -120,22 +136,17 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
     { id: 65, src: '/3DArtwork/aeroplane.png', thumbnailSrc: '/3DArtwork/thumbnails/aeroplane.webp', alt: 'Aeroplane', title: 'Aeroplane', priority: 28, w: 800, h: 609 }
   ];
 
-  // Sort by priority once
   const sortedArtwork = useMemo(() => {
     return [...artwork].sort((a, b) => a.priority - b.priority);
   }, []);
 
-  // Compute masonry column assignments using shortest-column-first algorithm
-  // This produces the same visual result as CSS column-count but we control placement order
+  // Compute masonry columns
   const columns = useMemo(() => {
     const numCols = getColumnCount(windowWidth);
     const gap = getGap(windowWidth);
-
-    // Initialize columns with their accumulated heights
     const cols = Array.from({ length: numCols }, () => ({ items: [], height: 0 }));
 
     for (const item of sortedArtwork) {
-      // Find shortest column
       let shortestIdx = 0;
       let shortestHeight = cols[0].height;
       for (let c = 1; c < numCols; c++) {
@@ -144,13 +155,10 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
           shortestHeight = cols[c].height;
         }
       }
-
-      // Place item in shortest column - use normalized height (height per unit width = aspect ratio inverted)
       const normalizedHeight = item.h / item.w;
       cols[shortestIdx].items.push(item);
-      cols[shortestIdx].height += normalizedHeight + (gap / 100); // gap is approximate, just for balancing
+      cols[shortestIdx].height += normalizedHeight + (gap / 100);
     }
-
     return cols;
   }, [sortedArtwork, windowWidth]);
 
@@ -169,78 +177,207 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
           }
         });
       },
-      {
-        rootMargin: '200px 0px', // Start loading 200px before entering viewport
-        threshold: 0
-      }
+      { rootMargin: '200px 0px', threshold: 0 }
     );
-
-    // Observe all cards
     cardRefs.current.forEach((el) => {
       if (el) observer.observe(el);
     });
-
     return () => observer.disconnect();
-  }, [columns]); // Re-observe when columns change (resize)
+  }, [columns]);
 
-  // Moderately controlled scroll-to-home: Only when AT TOP + two aggressive scroll ups
+  // Scroll-to-home gesture
   useEffect(() => {
     let scrollUpCount = 0;
     let resetTimeout = null;
-
     const handleWheel = (e) => {
-      if (window.scrollY > 0) {
-        scrollUpCount = 0;
-        return;
-      }
-
+      if (detailPhase !== 'closed') return;
+      if (window.scrollY > 0) { scrollUpCount = 0; return; }
       if (e.deltaY < -80) {
         scrollUpCount++;
-
-        if (resetTimeout) {
-          clearTimeout(resetTimeout);
-        }
-
+        if (resetTimeout) clearTimeout(resetTimeout);
         if (scrollUpCount >= 2) {
-          if (goTo) {
-            goTo('home');
-          }
+          if (goTo) goTo('home');
           scrollUpCount = 0;
         } else {
-          resetTimeout = setTimeout(() => {
-            scrollUpCount = 0;
-          }, 1200);
+          resetTimeout = setTimeout(() => { scrollUpCount = 0; }, 1200);
         }
       }
     };
-
     const handleScroll = () => {
       if (window.scrollY > 0) {
         scrollUpCount = 0;
-        if (resetTimeout) {
-          clearTimeout(resetTimeout);
-          resetTimeout = null;
-        }
+        if (resetTimeout) { clearTimeout(resetTimeout); resetTimeout = null; }
       }
     };
-
     document.addEventListener('wheel', handleWheel, { passive: true });
     window.addEventListener('scroll', handleScroll, { passive: true });
-
     return () => {
       document.removeEventListener('wheel', handleWheel);
       window.removeEventListener('scroll', handleScroll);
-      if (resetTimeout) {
-        clearTimeout(resetTimeout);
-      }
+      if (resetTimeout) clearTimeout(resetTimeout);
     };
-  }, [goTo]);
+  }, [goTo, detailPhase]);
 
-  const openImageCarousel = (img) => {
-    setSelectedImage(img);
-    setCarouselOpen(true);
-  };
+  // ---- Determine layout mode for an image ----
+  // On desktop, tall/square images go side-by-side (image left, options right)
+  // Wide images go stacked (image top, options below) — same as mobile
+  const getLayoutMode = useCallback((img) => {
+    if (windowWidth < DESKTOP_SIDE_BY_SIDE) return 'stacked';
+    const aspect = img.w / img.h;
+    // Wide images (landscape) look better stacked on top
+    if (aspect > 1.3) return 'stacked';
+    return 'side-by-side';
+  }, [windowWidth]);
 
+  // ---- Compute expanded image target rect ----
+  const computeTargetRect = useCallback((img) => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const aspect = img.w / img.h;
+    const layout = getLayoutMode(img);
+
+    if (layout === 'side-by-side') {
+      // Desktop side-by-side: image on the left, options panel on the right
+      // Reserve ~400px for the options panel on the right
+      const padding = 40;
+      const optionsPanelWidth = 400;
+      const gapBetween = 40;
+      const availW = vw - padding * 2 - optionsPanelWidth - gapBetween;
+      const maxH = vh - padding * 2;
+
+      let w, h;
+      if (availW / aspect <= maxH) {
+        w = availW;
+        h = availW / aspect;
+      } else {
+        h = maxH;
+        w = maxH * aspect;
+      }
+
+      const top = (vh - h) / 2;
+      const left = padding;
+      return { top, left, width: w, height: h, layout };
+    }
+
+    // Stacked layout (mobile or wide images on desktop)
+    const padding = vw <= 480 ? 16 : vw <= 768 ? 24 : 40;
+    const maxW = vw <= DESKTOP_SIDE_BY_SIDE
+      ? Math.min(vw - padding * 2, 700)
+      : Math.min(vw - padding * 2, 900);
+    const maxH = vh * 0.5;
+
+    let w, h;
+    if (maxW / aspect <= maxH) {
+      w = maxW;
+      h = maxW / aspect;
+    } else {
+      h = maxH;
+      w = maxH * aspect;
+    }
+
+    const left = (vw - w) / 2;
+    const top = padding;
+    return { top, left, width: w, height: h, layout };
+  }, [getLayoutMode]);
+
+  // ---- Open detail view ----
+  const openDetail = useCallback((img) => {
+    const cardEl = cardRefs.current.get(img.id);
+    if (!cardEl) return;
+    const rect = cardEl.getBoundingClientRect();
+
+    savedScrollY.current = window.scrollY;
+
+    setSelectedSize('medium');
+    setSelectedQuality('standard');
+    setQuantity(1);
+    setAddedConfirm(false);
+    setFullResLoaded(false);
+
+    setOriginRect({
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    });
+
+    const target = computeTargetRect(img);
+    setTargetRect(target);
+    setDetailImage(img);
+    setDetailPhase('entering');
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${savedScrollY.current}px`;
+    document.body.style.width = '100%';
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setDetailPhase('open');
+      });
+    });
+  }, [computeTargetRect]);
+
+  // ---- Close detail view ----
+  const closeDetail = useCallback(() => {
+    if (detailPhase === 'closed' || detailPhase === 'closing') return;
+
+    setDetailPhase('closing');
+
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, savedScrollY.current);
+
+    if (detailImage) {
+      const cardEl = cardRefs.current.get(detailImage.id);
+      if (cardEl) {
+        const rect = cardEl.getBoundingClientRect();
+        setOriginRect({
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        });
+      }
+    }
+
+    setTimeout(() => {
+      setDetailPhase('closed');
+      setDetailImage(null);
+      setOriginRect(null);
+      setTargetRect(null);
+      setFullResLoaded(false);
+    }, 500);
+  }, [detailPhase, detailImage]);
+
+  // Escape key to close
+  useEffect(() => {
+    if (detailPhase === 'closed') return;
+    const handleKey = (e) => {
+      if (e.key === 'Escape') closeDetail();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [detailPhase, closeDetail]);
+
+  // ---- Handle Add to Cart ----
+  const handleAddToCart = useCallback(() => {
+    if (!detailImage) return;
+    addToCart(detailImage, selectedSize, selectedQuality, quantity);
+    setAddedConfirm(true);
+    setTimeout(() => setAddedConfirm(false), 2000);
+  }, [detailImage, selectedSize, selectedQuality, quantity, addToCart]);
+
+  // ---- Compute price ----
+  const selectedSizeObj = PRINT_SIZES.find(s => s.id === selectedSize);
+  const selectedQualityObj = PRINT_QUALITIES.find(q => q.id === selectedQuality);
+  const totalPrice = selectedSizeObj && selectedQualityObj
+    ? Math.round(selectedSizeObj.price * selectedQualityObj.priceMultiplier * quantity)
+    : 0;
+
+  // ---- Grid hover handlers ----
   const handleImageMouseMove = useCallback((event, imageId) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const centerX = rect.width * 0.5;
@@ -248,45 +385,149 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
     const boxHalf = 92.5;
-
-    if (
-      mouseX > centerX - boxHalf &&
-      mouseX < centerX + boxHalf &&
-      mouseY > centerY - boxHalf &&
-      mouseY < centerY + boxHalf
-    ) {
+    if (mouseX > centerX - boxHalf && mouseX < centerX + boxHalf &&
+        mouseY > centerY - boxHalf && mouseY < centerY + boxHalf) {
       setHoveredImageId(imageId);
     } else {
       setHoveredImageId(null);
     }
   }, []);
 
-  const handleImageLeave = () => {
-    setHoveredImageId(null);
-  };
+  const handleImageLeave = () => setHoveredImageId(null);
 
-  const openAddToCartModal = (img) => {
-    setSelectedImage(img);
-    setAddToCartOpen(true);
-  };
-
-  // Determine how many items from each column are "above the fold" (first ~2 items per column)
-  const EAGER_COUNT = 3; // First N items per column load eagerly
-
+  const EAGER_COUNT = 3;
   const gap = getGap(windowWidth);
 
-  // Track card ref for IntersectionObserver
   const setCardRef = useCallback((id, el) => {
-    if (el) {
-      cardRefs.current.set(id, el);
-    } else {
-      cardRefs.current.delete(id);
-    }
+    if (el) cardRefs.current.set(id, el);
+    else cardRefs.current.delete(id);
   }, []);
+
+  // ---- Compute the image wrapper style based on phase ----
+  const getImageWrapperStyle = () => {
+    if (!originRect || !targetRect) return { display: 'none' };
+
+    if (detailPhase === 'entering') {
+      return {
+        top: originRect.top,
+        left: originRect.left,
+        width: originRect.width,
+        height: originRect.height,
+      };
+    }
+
+    if (detailPhase === 'open') {
+      return {
+        top: targetRect.top,
+        left: targetRect.left,
+        width: targetRect.width,
+        height: targetRect.height,
+      };
+    }
+
+    if (detailPhase === 'closing') {
+      return {
+        top: originRect.top,
+        left: originRect.left,
+        width: originRect.width,
+        height: originRect.height,
+      };
+    }
+
+    return { display: 'none' };
+  };
+
+  // Layout mode and info panel positioning
+  const layoutMode = detailImage ? getLayoutMode(detailImage) : 'stacked';
+  const isSideBySide = layoutMode === 'side-by-side' && targetRect;
+
+  // For stacked: push info below image. For side-by-side: info goes to the right.
+  const infoStyle = {};
+  if (isSideBySide && targetRect) {
+    infoStyle.position = 'absolute';
+    infoStyle.top = targetRect.top;
+    infoStyle.left = targetRect.left + targetRect.width + 40;
+    infoStyle.width = `calc(100vw - ${targetRect.left + targetRect.width + 40 + 40}px)`;
+    infoStyle.maxWidth = '420px';
+    infoStyle.paddingTop = 0;
+  } else if (targetRect) {
+    infoStyle.paddingTop = targetRect.top + targetRect.height + 20;
+  }
+
+  // ---- Render the options panel (shared between both layouts) ----
+  const renderOptions = () => (
+    <div className="print-detail-options">
+      {/* Print Size */}
+      <div className="print-option-group">
+        <h4>Print Size</h4>
+        <div className="print-size-options">
+          {PRINT_SIZES.map(size => (
+            <button
+              key={size.id}
+              className={`print-size-btn ${selectedSize === size.id ? 'selected' : ''}`}
+              onClick={() => setSelectedSize(size.id)}
+            >
+              <span className="btn-label">{size.name}</span>
+              <span className="btn-sub">{size.dimensions}</span>
+              <span className="btn-price">${size.price}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Print Quality */}
+      <div className="print-option-group">
+        <h4>Print Quality</h4>
+        <div className="print-quality-options">
+          {PRINT_QUALITIES.map(q => (
+            <button
+              key={q.id}
+              className={`print-quality-btn ${selectedQuality === q.id ? 'selected' : ''}`}
+              onClick={() => setSelectedQuality(q.id)}
+            >
+              <span className="btn-label">{q.name}</span>
+              <span className="btn-sub">{q.description}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Quantity */}
+      <div className="print-option-group">
+        <div className="print-quantity-row">
+          <h4>Quantity</h4>
+          <div className="print-quantity-controls">
+            <button
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              disabled={quantity <= 1}
+            >
+              −
+            </button>
+            <span>{quantity}</span>
+            <button onClick={() => setQuantity(quantity + 1)}>+</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Price + Add to Cart */}
+      <div className="print-detail-footer">
+        <span className="print-total-price">${totalPrice}</span>
+        {addedConfirm ? (
+          <span className={`print-added-confirmation ${addedConfirm ? 'show' : ''}`}>
+            Added to Cart ✓
+          </span>
+        ) : (
+          <button className="print-add-to-cart-btn" onClick={handleAddToCart}>
+            Add to Cart
+          </button>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="works-page">
-      {/* Masonry Grid - rendered as flex columns */}
+      {/* Masonry Grid */}
       <div
         className="masonry-grid"
         ref={gridRef}
@@ -307,7 +548,7 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
               display: 'flex',
               flexDirection: 'column',
               gap: `${gap}px`,
-              minWidth: 0, // Allow flex shrink
+              minWidth: 0,
             }}
           >
             {col.items.map((img, itemIdx) => {
@@ -330,12 +571,10 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
                     width={img.w}
                     height={img.h}
                     className="artwork-img"
-                    onClick={() => openImageCarousel(img)}
+                    onClick={() => openDetail(img)}
                     loading={isEager ? 'eager' : 'lazy'}
                     decoding={isEager ? 'sync' : 'async'}
-                    style={{
-                      aspectRatio: `${img.w} / ${img.h}`,
-                    }}
+                    style={{ aspectRatio: `${img.w} / ${img.h}` }}
                   />
                 </div>
               );
@@ -344,28 +583,64 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
         ))}
       </div>
 
-      {/* Image Carousel */}
-      {carouselOpen && (
-        <ImageCarousel
-          artwork={selectedImage}
-          isOpen={carouselOpen}
-          onClose={() => {
-            setCarouselOpen(false);
-            setSelectedImage(null);
+      {/* ============ Detail View Overlay ============ */}
+      {detailPhase !== 'closed' && detailImage && (
+        <div
+          className={`print-detail-overlay ${detailPhase}`}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeDetail();
           }}
-        />
-      )}
+        >
+          {/* Animated image with full-res loading */}
+          <div
+            className={`print-detail-image-wrapper ${detailPhase !== 'entering' ? 'animating' : ''} ${fullResLoaded ? 'full-res-loaded' : ''}`}
+            style={getImageWrapperStyle()}
+          >
+            {/* Thumbnail (shows greyed out while full-res loads) */}
+            <img
+              src={detailImage.thumbnailSrc}
+              alt={detailImage.alt}
+              className={`detail-img-thumbnail ${fullResLoaded ? 'hidden' : ''}`}
+              style={{ aspectRatio: `${detailImage.w} / ${detailImage.h}` }}
+            />
 
-      {/* Add to Cart Modal */}
-      {addToCartOpen && (
-        <AddToCartModal
-          isOpen={addToCartOpen}
-          artwork={selectedImage}
-          onClose={() => {
-            setAddToCartOpen(false);
-            setSelectedImage(null);
-          }}
-        />
+            {/* Full resolution image (loads on top) */}
+            {detailPhase === 'open' && (
+              <img
+                src={detailImage.src}
+                alt={detailImage.alt}
+                className={`detail-img-fullres ${fullResLoaded ? 'loaded' : ''}`}
+                style={{ aspectRatio: `${detailImage.w} / ${detailImage.h}` }}
+                onLoad={() => setFullResLoaded(true)}
+              />
+            )}
+
+            {/* Loading spinner overlay (on top of greyed thumbnail) */}
+            {detailPhase === 'open' && !fullResLoaded && (
+              <div className="detail-loading-overlay">
+                <div className="detail-loading-spinner"></div>
+                <span className="detail-loading-text">Loading full resolution...</span>
+              </div>
+            )}
+          </div>
+
+          {/* Close button */}
+          <button
+            className={`print-detail-close ${detailPhase === 'open' ? 'visible' : ''} ${detailPhase === 'closing' ? 'closing' : ''}`}
+            onClick={closeDetail}
+          >
+            ×
+          </button>
+
+          {/* Info panel */}
+          <div
+            className={`print-detail-info ${isSideBySide ? 'side-by-side' : ''} ${detailPhase === 'open' ? 'visible' : ''} ${detailPhase === 'closing' ? 'closing' : ''}`}
+            style={infoStyle}
+          >
+            <h2 className="print-detail-title">{detailImage.title}</h2>
+            {renderOptions()}
+          </div>
+        </div>
       )}
     </div>
   );
