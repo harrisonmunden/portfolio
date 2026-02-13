@@ -49,8 +49,6 @@
   letter-spacing: 0.05em;
 }
 
-
-
 /* Section Titles */
 .section-title {
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
@@ -96,36 +94,34 @@
   }
 }
 
-/* Keep existing artwork-card styles but update for grid layout */
-.artwork-card {
-  background: none;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0;
-  display: block;
-  transition: all 0.3s cubic-bezier(.33,1.02,.57,.99);
-  cursor: pointer;
-  position: relative;
-  width: 100%;
-}
-
-/* 3D Artwork Grid - JavaScript Controlled Hover Effects */
+/* 3D Artwork Grid - CSS column-count layout (used by Works.jsx) */
 .artwork-grid {
   column-count: 3;
   column-gap: 40px;
   margin-bottom: 24px;
-  margin-top: 120px; /* Move the grid down */
+  margin-top: 120px;
   width: 100%;
   min-height: 100px;
   position: relative;
 }
 
-/* Tablet responsive grid */
+.artwork-grid .artwork-card {
+  break-inside: avoid;
+  margin-bottom: 40px;
+}
+
 @media (max-width: 1024px) {
   .artwork-grid {
     column-count: 3;
     column-gap: 30px;
     margin-top: 100px;
+  }
+}
+
+@media (max-width: 900px) {
+  .artwork-grid {
+    column-count: 2;
+    column-gap: 30px;
   }
 }
 
@@ -137,6 +133,16 @@
   }
 }
 
+@media (max-width: 600px) {
+  .artwork-grid {
+    column-count: 2;
+    column-gap: 14px;
+  }
+  .artwork-grid .artwork-card {
+    margin-bottom: 14px;
+  }
+}
+
 @media (max-width: 480px) {
   .artwork-grid {
     column-count: 2;
@@ -145,59 +151,43 @@
   }
 }
 
+/* Artwork Card - used in both masonry and row layouts */
 .artwork-card {
-  break-inside: avoid;
-  margin-bottom: 40px;
   background: none;
   border-radius: 0;
   box-shadow: none;
   padding: 0;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  display: block;
   transition: all 0.3s cubic-bezier(.33,1.02,.57,.99);
   cursor: pointer;
   position: relative;
   z-index: 1;
-  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
   width: 100%;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
 }
 
+/* Artwork Image */
 .artwork-img {
-  width: 100% !important;
-  height: auto !important;
-  display: block !important;
-  visibility: visible !important;
+  width: 100%;
+  height: auto;
+  display: block;
   border-radius: 0;
   background: #f0f0f0;
   transition: box-shadow 0.3s ease, transform 0.5s cubic-bezier(.22,1.61,.36,1), opacity 0.6s cubic-bezier(.33,1.02,.57,.99);
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
-  opacity: 1 !important;
-  transform: translateY(0) scale(1) !important;
 }
 
+/* Hover effects */
 .artwork-card.hovered .artwork-img {
-  transform: translateY(0) scale(1.08);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  transform: scale(1.08);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   z-index: 2;
 }
 
 .artwork-card.dimmed .artwork-img {
-  transform: translateY(0) scale(0.92);
+  transform: scale(0.92);
   opacity: 0.7;
   z-index: 1;
-}
-
-
-
-.artwork-img.fade-in-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-/* Light shadow on hovered image */
-.artwork-card.hovered .artwork-img {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
 /* Lightbox with smooth transition */
@@ -244,8 +234,6 @@
   padding: 20px;
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
 }
-
-
 
 .lightbox-text {
   color: #fff;
@@ -394,7 +382,7 @@
     min-width: 250px;
     scroll-snap-align: start;
   }
-  
+
   .video-games-row {
     display: flex;
     flex-direction: row;
@@ -418,10 +406,6 @@
   .works-page {
     padding: 100px 40px 30px 40px;
   }
-
-  .artwork-grid {
-    column-gap: 35px;
-  }
 }
 
 @media (max-width: 1024px) {
@@ -439,11 +423,6 @@
 }
 
 @media (max-width: 900px) {
-  .artwork-grid {
-    column-count: 2;
-    column-gap: 30px;
-  }
-
   .works-main-title {
     font-size: 52px;
   }
@@ -508,18 +487,6 @@
     min-width: 220px;
   }
 
-  .artwork-grid {
-    column-count: 2;
-    column-gap: 14px;
-  }
-  .artwork-card {
-    margin-bottom: 14px;
-  }
-  .artwork-img {
-    max-height: none;
-    width: 100%;
-    height: auto;
-  }
   .lightbox-content {
     padding: 4px;
   }
@@ -536,7 +503,7 @@
     width: 200px;
     min-width: 200px;
   }
-  
+
   .video-games-row {
     gap: 8px;
   }
