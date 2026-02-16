@@ -26,7 +26,7 @@ const getGap = (width) => {
 const DESKTOP_SIDE_BY_SIDE = 900;
 
 const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
-  const { addToCart, PRINT_SIZES, PRINT_QUALITIES } = useCart();
+  const { addToCart, PRINT_SIZES } = useCart();
 
   // Grid state
   const [hoveredImageId, setHoveredImageId] = useState(null);
@@ -44,7 +44,6 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
 
   // Cart options state
   const [selectedSize, setSelectedSize] = useState('medium');
-  const [selectedQuality, setSelectedQuality] = useState('standard');
   const [quantity, setQuantity] = useState(1);
   const [addedConfirm, setAddedConfirm] = useState(false);
 
@@ -289,7 +288,6 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
     savedScrollY.current = window.scrollY;
 
     setSelectedSize('medium');
-    setSelectedQuality('standard');
     setQuantity(1);
     setAddedConfirm(false);
     setFullResLoaded(false);
@@ -365,16 +363,15 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
   // ---- Handle Add to Cart ----
   const handleAddToCart = useCallback(() => {
     if (!detailImage) return;
-    addToCart(detailImage, selectedSize, selectedQuality, quantity);
+    addToCart(detailImage, selectedSize, quantity);
     setAddedConfirm(true);
     setTimeout(() => setAddedConfirm(false), 2000);
-  }, [detailImage, selectedSize, selectedQuality, quantity, addToCart]);
+  }, [detailImage, selectedSize, quantity, addToCart]);
 
   // ---- Compute price ----
   const selectedSizeObj = PRINT_SIZES.find(s => s.id === selectedSize);
-  const selectedQualityObj = PRINT_QUALITIES.find(q => q.id === selectedQuality);
-  const totalPrice = selectedSizeObj && selectedQualityObj
-    ? Math.round(selectedSizeObj.price * selectedQualityObj.priceMultiplier * quantity)
+  const totalPrice = selectedSizeObj
+    ? selectedSizeObj.price * quantity
     : 0;
 
   // ---- Grid hover handlers ----
@@ -470,23 +467,6 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
               <span className="btn-label">{size.name}</span>
               <span className="btn-sub">{size.dimensions}</span>
               <span className="btn-price">${size.price}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Print Quality */}
-      <div className="print-option-group">
-        <h4>Print Quality</h4>
-        <div className="print-quality-options">
-          {PRINT_QUALITIES.map(q => (
-            <button
-              key={q.id}
-              className={`print-quality-btn ${selectedQuality === q.id ? 'selected' : ''}`}
-              onClick={() => setSelectedQuality(q.id)}
-            >
-              <span className="btn-label">{q.name}</span>
-              <span className="btn-sub">{q.description}</span>
             </button>
           ))}
         </div>

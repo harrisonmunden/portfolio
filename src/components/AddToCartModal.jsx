@@ -4,19 +4,17 @@ import { useCart } from '../contexts/CartContext';
 import './AddToCartModal.css';
 
 const AddToCartModal = ({ artwork, isOpen, onClose }) => {
-  const { addToCart, PRINT_SIZES, PRINT_QUALITIES } = useCart();
+  const { addToCart, PRINT_SIZES } = useCart();
   const [selectedSize, setSelectedSize] = useState('medium');
-  const [selectedQuality, setSelectedQuality] = useState('standard');
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
-    addToCart(artwork, selectedSize, selectedQuality, quantity);
+    addToCart(artwork, selectedSize, quantity);
     onClose();
   };
 
   const selectedSizeObj = PRINT_SIZES.find(s => s.id === selectedSize);
-  const selectedQualityObj = PRINT_QUALITIES.find(q => q.id === selectedQuality);
-  const totalPrice = Math.round(selectedSizeObj.price * selectedQualityObj.priceMultiplier * quantity);
+  const totalPrice = selectedSizeObj.price * quantity;
 
   return (
     <AnimatePresence>
@@ -36,7 +34,7 @@ const AddToCartModal = ({ artwork, isOpen, onClose }) => {
             onClick={(e) => e.stopPropagation()}
           >
             <button className="modal-close" onClick={onClose}>×</button>
-            
+
             <div className="modal-content">
               <div className="artwork-preview">
                 <img src={artwork.thumbnailSrc} alt={artwork.alt} />
@@ -66,34 +64,10 @@ const AddToCartModal = ({ artwork, isOpen, onClose }) => {
                   </div>
                 </div>
 
-                <div className="option-group">
-                  <h4>Print Quality</h4>
-                  <div className="quality-options">
-                    {PRINT_QUALITIES.map(quality => (
-                      <label key={quality.id} className={`quality-option ${selectedQuality === quality.id ? 'selected' : ''}`}>
-                        <input
-                          type="radio"
-                          name="quality"
-                          value={quality.id}
-                          checked={selectedQuality === quality.id}
-                          onChange={(e) => setSelectedQuality(e.target.value)}
-                        />
-                        <div className="quality-info">
-                          <span className="quality-name">{quality.name}</span>
-                          <span className="quality-description">{quality.description}</span>
-                          <span className="quality-multiplier">
-                            {quality.priceMultiplier === 1 ? 'Base price' : `+${Math.round((quality.priceMultiplier - 1) * 100)}%`}
-                          </span>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
                 <div className="quantity-group">
                   <h4>Quantity</h4>
                   <div className="quantity-selector">
-                    <button 
+                    <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
                     >

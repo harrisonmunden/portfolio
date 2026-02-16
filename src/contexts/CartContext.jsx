@@ -3,38 +3,30 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 const CartContext = createContext();
 
 const PRINT_SIZES = [
-  { id: 'small', name: '8x10"', price: 25, dimensions: '8" × 10"' },
-  { id: 'medium', name: '11x14"', price: 45, dimensions: '11" × 14"' },
-  { id: 'large', name: '16x20"', price: 75, dimensions: '16" × 20"' },
-  { id: 'xlarge', name: '24x30"', price: 125, dimensions: '24" × 30"' }
-];
-
-const PRINT_QUALITIES = [
-  { id: 'standard', name: 'Standard', description: 'High-quality matte finish', priceMultiplier: 1 },
-  { id: 'premium', name: 'Premium', description: 'Museum-quality archival print', priceMultiplier: 1.5 },
-  { id: 'canvas', name: 'Canvas', description: 'Gallery-wrapped canvas', priceMultiplier: 2 }
+  { id: 'small', name: '8x10"', price: 43, dimensions: '8" × 10"' },
+  { id: 'medium', name: '11x14"', price: 50, dimensions: '11" × 14"' },
+  { id: 'large', name: '16x20"', price: 81, dimensions: '16" × 20"' },
+  { id: 'xlarge', name: '24x36"', price: 156, dimensions: '24" × 36"' }
 ];
 
 const cartReducer = (state, action) => {
   switch (action.type) {
     case 'ADD_TO_CART':
-      const { artwork, size, quality, quantity = 1 } = action.payload;
+      const { artwork, size, quantity = 1 } = action.payload;
       const sizeObj = PRINT_SIZES.find(s => s.id === size);
-      const qualityObj = PRINT_QUALITIES.find(q => q.id === quality);
-      const price = Math.round(sizeObj.price * qualityObj.priceMultiplier);
-      
+      const price = sizeObj.price;
+
       const cartItem = {
-        id: `${artwork.id}-${size}-${quality}`,
+        id: `${artwork.id}-${size}`,
         artwork,
         size: sizeObj,
-        quality: qualityObj,
         quantity,
         price,
         totalPrice: price * quantity
       };
 
       const existingItemIndex = state.items.findIndex(item => item.id === cartItem.id);
-      
+
       if (existingItemIndex > -1) {
         const updatedItems = [...state.items];
         updatedItems[existingItemIndex].quantity += quantity;
@@ -44,7 +36,7 @@ const cartReducer = (state, action) => {
           items: updatedItems
         };
       }
-      
+
       return {
         ...state,
         items: [...state.items, cartItem]
@@ -64,7 +56,7 @@ const cartReducer = (state, action) => {
           items: state.items.filter(item => item.id !== itemId)
         };
       }
-      
+
       return {
         ...state,
         items: state.items.map(item =>
@@ -100,7 +92,6 @@ export const CartProvider = ({ children }) => {
           dispatch({ type: 'ADD_TO_CART', payload: {
             artwork: item.artwork,
             size: item.size.id,
-            quality: item.quality.id,
             quantity: item.quantity
           }});
         });
@@ -114,10 +105,10 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('artworkCart', JSON.stringify(state));
   }, [state]);
 
-  const addToCart = (artwork, size, quality, quantity = 1) => {
+  const addToCart = (artwork, size, quantity = 1) => {
     dispatch({
       type: 'ADD_TO_CART',
-      payload: { artwork, size, quality, quantity }
+      payload: { artwork, size, quantity }
     });
   };
 
@@ -149,8 +140,7 @@ export const CartProvider = ({ children }) => {
     clearCart,
     getTotalItems,
     getTotalPrice,
-    PRINT_SIZES,
-    PRINT_QUALITIES
+    PRINT_SIZES
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
@@ -164,4 +154,4 @@ export const useCart = () => {
   return context;
 };
 
-export { PRINT_SIZES, PRINT_QUALITIES };
+export { PRINT_SIZES };

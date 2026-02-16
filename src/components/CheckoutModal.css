@@ -173,6 +173,16 @@
   transform: none;
 }
 
+.checkout-error {
+  background: #fee;
+  color: #c33;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  border: 1px solid #fcc;
+}
+
 /* Success State Styles */
 .order-success {
   padding: 60px 40px;

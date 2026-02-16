@@ -115,7 +115,6 @@ const CartPage = ({ goTo, onCheckoutOpenChange }) => {
                 <h3 className="item-title">{item.artwork.title}</h3>
                 <div className="item-specs">
                   <span className="spec">Size: {item.size.name}</span>
-                  <span className="spec">Quality: {item.quality.name}</span>
                 </div>
                 <div className="item-price">${item.price.toFixed(2)}</div>
               </div>

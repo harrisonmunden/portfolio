@@ -9,6 +9,7 @@ import ProfessionalWork from './components/ProfessionalWork';
 import VideoGamePage from './components/VideoGamePage';
 import CartPage from './components/CartPage';
 import CartIcon from './components/CartIcon';
+import CheckoutSuccess from './components/CheckoutSuccess';
 import { CartProvider } from './contexts/CartContext';
 import { useScrollToTop } from './hooks/useScrollToTop';
 
@@ -288,12 +289,14 @@ const AppContent = () => {
     if (path === '/realtime-artwork') return 'realtime-artwork';
     if (path === '/professional-work') return 'professional-work';
     if (path === '/cart') return 'cart';
+    if (path === '/checkout-success') return 'checkout-success';
     if (path.startsWith('/game/')) return 'game';
     return 'home';
   };
   
   const currentPage = getCurrentPage();
   const isGamePage = currentPage === 'game';
+  const isCheckoutSuccess = currentPage === 'checkout-success';
 
   const goTo = (target) => {
     if (target === 'home') {
@@ -323,8 +326,8 @@ const AppContent = () => {
       minHeight: '100vh', 
       position: 'relative'
     }}>
-      {/* Only show navigation headers and PersonFigure on home/work/cart pages, not on game pages */}
-      {!isGamePage && (
+      {/* Only show navigation headers and PersonFigure on home/work/cart pages, not on game or checkout-success pages */}
+      {!isGamePage && !isCheckoutSuccess && (
         <div style={fadeStyle}>
           <SharedPrintsHeader key="prints-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
           <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
@@ -394,6 +397,18 @@ const AppContent = () => {
               style={{ position: 'relative', zIndex: 1 }}
             >
               <CartPage goTo={goTo} onCheckoutOpenChange={setCheckoutOpen} />
+            </motion.div>
+          } />
+          <Route path="/checkout-success" element={
+            <motion.div
+              key="checkout-success"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={PAGE_BOUNCE}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              <CheckoutSuccess goTo={goTo} />
             </motion.div>
           } />
           <Route path="/game/:gameId" element={
