@@ -18,6 +18,21 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState(false);
+  const [promoError, setPromoError] = useState('');
+  const discountPercent = promoApplied ? 50 : 0;
+  const discountedTotal = promoApplied ? total * 0.5 : total;
+
+  const handleApplyPromo = () => {
+    setPromoError('');
+    if (promoCode.trim().toLowerCase() === 'harrisonisawesome') {
+      setPromoApplied(true);
+    } else {
+      setPromoApplied(false);
+      setPromoError('Invalid promo code');
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,7 +101,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
       // can be lost during external redirects (e.g. to Stripe checkout)
       localStorage.setItem('checkoutFormData', JSON.stringify(formData));
       localStorage.setItem('checkoutItems', JSON.stringify(items));
-      localStorage.setItem('checkoutTotal', total.toFixed(2));
+      localStorage.setItem('checkoutTotal', discountedTotal.toFixed(2));
 
       // Call serverless function to create Stripe Checkout session
       const response = await fetch(stripeConfig.checkoutEndpoint, {
@@ -100,6 +115,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
             aspectRatio: item.artwork.aspectRatio || 'square',
             quantity: item.quantity,
           })),
+          promoCode: promoApplied ? promoCode.trim() : null,
           customerEmail: formData.email,
           customerName: `${formData.firstName} ${formData.lastName}`,
           shippingAddress: {
@@ -281,6 +297,35 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                 </div>
               </div>
 
+              <div className="form-section">
+                <h3>Promo Code</h3>
+                <div className="promo-code-row">
+                  <input
+                    type="text"
+                    id="promoCode"
+                    name="promoCode"
+                    placeholder="Enter promo code"
+                    value={promoCode}
+                    onChange={(e) => {
+                      setPromoCode(e.target.value);
+                      setPromoError('');
+                      if (promoApplied) setPromoApplied(false);
+                    }}
+                    className={promoApplied ? 'promo-applied' : ''}
+                  />
+                  <button
+                    type="button"
+                    className="promo-apply-btn"
+                    onClick={handleApplyPromo}
+                    disabled={!promoCode.trim()}
+                  >
+                    {promoApplied ? 'Applied' : 'Apply'}
+                  </button>
+                </div>
+                {promoError && <p className="promo-error">{promoError}</p>}
+                {promoApplied && <p className="promo-success">50% discount applied!</p>}
+              </div>
+
               <div className="order-summary">
                 <h3>Order Summary</h3>
                 {items && items.map((item) => (
@@ -289,8 +334,20 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                     <span>${item.totalPrice}</span>
                   </div>
                 ))}
+                {promoApplied && (
+                  <>
+                    <div className="summary-item summary-subtotal">
+                      <span>Subtotal</span>
+                      <span>${total.toFixed(2)}</span>
+                    </div>
+                    <div className="summary-item summary-discount">
+                      <span>Promo Discount (50%)</span>
+                      <span>-${(total * 0.5).toFixed(2)}</span>
+                    </div>
+                  </>
+                )}
                 <div className="summary-total">
-                  <span>Total: ${total.toFixed(2)}</span>
+                  <span>Total: ${discountedTotal.toFixed(2)}</span>
                 </div>
               </div>
 

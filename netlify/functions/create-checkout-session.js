@@ -3,10 +3,10 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY_TEST || process.e
 
 // Server-side price validation (mirrors CartContext.jsx pricing per aspect ratio)
 const PRINT_SIZES_BY_ASPECT = {
-  square: { small: 30, medium: 38, large: 75, xlarge: 130 },
-  portrait_4x5: { small: 34, medium: 40, large: 65, xlarge: 115 },
-  landscape_16x9: { small: 28, medium: 36, large: 45, xlarge: 125 },
-  landscape_4x3: { small: 38, medium: 40, large: 75, xlarge: 160 },
+  square: { small: 38, medium: 48, large: 94, xlarge: 163 },
+  portrait_4x5: { small: 43, medium: 50, large: 81, xlarge: 144 },
+  landscape_16x9: { small: 35, medium: 45, large: 56, xlarge: 156 },
+  landscape_4x3: { small: 48, medium: 50, large: 94, xlarge: 200 },
 };
 
 const SIZE_LABELS_BY_ASPECT = {
@@ -43,7 +43,11 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { items, customerEmail, customerName, shippingAddress } = JSON.parse(event.body);
+    const { items, promoCode, customerEmail, customerName, shippingAddress } = JSON.parse(event.body);
+
+    // Validate promo code server-side
+    const validPromo = promoCode && promoCode.trim().toLowerCase() === 'harrisonisawesome';
+    const discountMultiplier = validPromo ? 0.5 : 1;
 
     if (!items || !items.length) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'No items provided' }) };
@@ -66,7 +70,7 @@ exports.handler = async (event) => {
       }
 
       const sizeLabel = item.sizeLabel || labels[item.sizeId] || item.sizeId;
-      const unitPrice = basePrice * 100; // Stripe uses cents
+      const unitPrice = Math.round(basePrice * discountMultiplier * 100); // Stripe uses cents
 
       return {
         price_data: {
@@ -91,6 +95,8 @@ exports.handler = async (event) => {
       metadata: {
         customer_name: customerName,
         shipping_address: JSON.stringify(shippingAddress),
+        promo_code: validPromo ? promoCode.trim() : 'none',
+        discount_applied: validPromo ? '50%' : 'none',
       },
       success_url: `${siteUrl}/#/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/#/cart`,

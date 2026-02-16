@@ -6,28 +6,28 @@ const CartContext = createContext();
 // Prices from Photoworks SF fine art prints (first print pricing)
 const PRINT_SIZES_BY_ASPECT = {
   square: [
-    { id: 'small', name: '8×8"', price: 30, dimensions: '8" × 8"' },
-    { id: 'medium', name: '12×12"', price: 38, dimensions: '12" × 12"' },
-    { id: 'large', name: '20×20"', price: 75, dimensions: '20" × 20"' },
-    { id: 'xlarge', name: '30×30"', price: 130, dimensions: '30" × 30"' },
+    { id: 'small', name: '8×8"', price: 38, dimensions: '8" × 8"' },
+    { id: 'medium', name: '12×12"', price: 48, dimensions: '12" × 12"' },
+    { id: 'large', name: '20×20"', price: 94, dimensions: '20" × 20"' },
+    { id: 'xlarge', name: '30×30"', price: 163, dimensions: '30" × 30"' },
   ],
   portrait_4x5: [
-    { id: 'small', name: '8×10"', price: 34, dimensions: '8" × 10"' },
-    { id: 'medium', name: '11×14"', price: 40, dimensions: '11" × 14"' },
-    { id: 'large', name: '16×20"', price: 65, dimensions: '16" × 20"' },
-    { id: 'xlarge', name: '24×30"', price: 115, dimensions: '24" × 30"' },
+    { id: 'small', name: '8×10"', price: 43, dimensions: '8" × 10"' },
+    { id: 'medium', name: '11×14"', price: 50, dimensions: '11" × 14"' },
+    { id: 'large', name: '16×20"', price: 81, dimensions: '16" × 20"' },
+    { id: 'xlarge', name: '24×30"', price: 144, dimensions: '24" × 30"' },
   ],
   landscape_16x9: [
-    { id: 'small', name: '9×6"', price: 28, dimensions: '9" × 6"' },
-    { id: 'medium', name: '12×8"', price: 36, dimensions: '12" × 8"' },
-    { id: 'large', name: '19×13"', price: 45, dimensions: '19" × 13"' },
-    { id: 'xlarge', name: '40×20"', price: 125, dimensions: '40" × 20"' },
+    { id: 'small', name: '9×6"', price: 35, dimensions: '9" × 6"' },
+    { id: 'medium', name: '12×8"', price: 45, dimensions: '12" × 8"' },
+    { id: 'large', name: '19×13"', price: 56, dimensions: '19" × 13"' },
+    { id: 'xlarge', name: '40×20"', price: 156, dimensions: '40" × 20"' },
   ],
   landscape_4x3: [
-    { id: 'small', name: '12×9"', price: 38, dimensions: '12" × 9"' },
-    { id: 'medium', name: '16×12"', price: 40, dimensions: '16" × 12"' },
-    { id: 'large', name: '24×18"', price: 75, dimensions: '24" × 18"' },
-    { id: 'xlarge', name: '40×30"', price: 160, dimensions: '40" × 30"' },
+    { id: 'small', name: '12×9"', price: 48, dimensions: '12" × 9"' },
+    { id: 'medium', name: '16×12"', price: 50, dimensions: '16" × 12"' },
+    { id: 'large', name: '24×18"', price: 94, dimensions: '24" × 18"' },
+    { id: 'xlarge', name: '40×30"', price: 200, dimensions: '40" × 30"' },
   ],
 };
 
