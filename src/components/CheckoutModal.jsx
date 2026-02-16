@@ -102,7 +102,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
           <div className="checkout-content">
             <h2>Checkout</h2>
 
-            <form onSubmit={handleSubmit} className="checkout-form">
+            <form onSubmit={handleSubmit} className="checkout-form" autoComplete="on">
               <div className="form-section">
                 <h3>Contact Information</h3>
                 <div className="form-row">
@@ -112,6 +112,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       type="text"
                       id="firstName"
                       name="firstName"
+                      autoComplete="given-name"
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
@@ -123,6 +124,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       type="text"
                       id="lastName"
                       name="lastName"
+                      autoComplete="family-name"
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
@@ -137,6 +139,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       type="email"
                       id="email"
                       name="email"
+                      autoComplete="email"
                       value={formData.email}
                       onChange={handleInputChange}
                       required
@@ -148,6 +151,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       type="tel"
                       id="phone"
                       name="phone"
+                      autoComplete="tel"
                       value={formData.phone}
                       onChange={handleInputChange}
                     />
@@ -163,6 +167,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                     type="text"
                     id="address"
                     name="address"
+                    autoComplete="street-address"
                     value={formData.address}
                     onChange={handleInputChange}
                     required
@@ -176,6 +181,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       type="text"
                       id="city"
                       name="city"
+                      autoComplete="address-level2"
                       value={formData.city}
                       onChange={handleInputChange}
                       required
@@ -187,6 +193,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       type="text"
                       id="state"
                       name="state"
+                      autoComplete="address-level1"
                       value={formData.state}
                       onChange={handleInputChange}
                       required
@@ -198,6 +205,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       type="text"
                       id="zipCode"
                       name="zipCode"
+                      autoComplete="postal-code"
                       value={formData.zipCode}
                       onChange={handleInputChange}
                       required
@@ -210,6 +218,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                   <select
                     id="country"
                     name="country"
+                    autoComplete="country-name"
                     value={formData.country}
                     onChange={handleInputChange}
                     required

@@ -53,9 +53,9 @@ const CartPage = ({ goTo, onCheckoutOpenChange }) => {
             style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             <span>Cart</span>
-            <motion.img 
-              src="/GlassyObjects/About/Chevron.png" 
-              alt="chevron" 
+            <motion.img
+              src="/GlassyObjects/About/Chevron.png"
+              alt="chevron"
               className="chevron-img"
               style={{ width: 55, transform: 'rotate(90deg)' }}
             />
@@ -66,7 +66,7 @@ const CartPage = ({ goTo, onCheckoutOpenChange }) => {
           <div className="empty-cart-content">
             <h2>Your cart is empty</h2>
             <p>Discover beautiful artwork to add to your collection</p>
-            <button 
+            <button
               className="browse-artwork-btn"
               onClick={() => goTo && goTo('prints-for-sale')}
             >
@@ -87,9 +87,9 @@ const CartPage = ({ goTo, onCheckoutOpenChange }) => {
           style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
           <span>Cart</span>
-          <motion.img 
-            src="/GlassyObjects/About/Chevron.png" 
-            alt="chevron" 
+          <motion.img
+            src="/GlassyObjects/About/Chevron.png"
+            alt="chevron"
             className="chevron-img"
             style={{ width: 55, transform: 'rotate(90deg)' }}
           />

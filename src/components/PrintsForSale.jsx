@@ -26,7 +26,7 @@ const getGap = (width) => {
 const DESKTOP_SIDE_BY_SIDE = 900;
 
 const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
-  const { addToCart, getSizesForArtwork } = useCart();
+  const { addToCart, getSizesForArtwork, items: cartItems } = useCart();
 
   // Grid state
   const [hoveredImageId, setHoveredImageId] = useState(null);
@@ -366,8 +366,29 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
     if (!detailImage) return;
     addToCart(detailImage, selectedSize, quantity);
     setAddedConfirm(true);
-    setTimeout(() => setAddedConfirm(false), 2000);
   }, [detailImage, selectedSize, quantity, addToCart]);
+
+  // Check if current detail image is already in the cart
+  const isInCart = detailImage
+    ? cartItems.some(item => item.artwork.id === detailImage.id)
+    : false;
+
+  // Navigate to cart (close detail first, then go)
+  const handleSeeCart = useCallback(() => {
+    // Close detail overlay cleanly
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, savedScrollY.current);
+    setDetailPhase('closed');
+    setDetailImage(null);
+    setOriginRect(null);
+    setTargetRect(null);
+    setFullResLoaded(false);
+    // Navigate to cart
+    if (goTo) goTo('cart');
+  }, [goTo]);
 
   // ---- Compute price using per-artwork sizes ----
   const availableSizes = detailImage ? getSizesForArtwork(detailImage) : [];
@@ -491,13 +512,13 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
         </div>
       </div>
 
-      {/* Price + Add to Cart */}
+      {/* Price + Add to Cart / See Cart */}
       <div className="print-detail-footer">
         <span className="print-total-price">${totalPrice}</span>
-        {addedConfirm ? (
-          <span className={`print-added-confirmation ${addedConfirm ? 'show' : ''}`}>
-            Added to Cart ✓
-          </span>
+        {(addedConfirm || isInCart) ? (
+          <button className="print-add-to-cart-btn see-cart" onClick={handleSeeCart}>
+            See Cart →
+          </button>
         ) : (
           <button className="print-add-to-cart-btn" onClick={handleAddToCart}>
             Add to Cart

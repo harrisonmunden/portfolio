@@ -301,21 +301,6 @@ const PersonFigure = ({ page }) => {
         dragElastic={0.5}
         style={{
           position: 'absolute',
-          width: isHome
-            ? (isMobile ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop)
-            : (isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop),
-          height: isHome
-            ? (isMobile ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop)
-            : (isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop),
-          maxWidth: isHome
-            ? (isMobile ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop)
-            : (isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop),
-          maxHeight: isHome
-            ? (isMobile ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop)
-            : (isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop),
-          left: isHome ? `${homeHeadX}px` : `${sharedHeadPosition.x}px`,
-          top: isHome ? `${homeHeadY}px` : `${waveHeadY}px`,
-          opacity: isHome ? 1 : CONFIG.opacity,
           zIndex: isHome ? 5 : 99998,
           cursor: 'grab',
           userSelect: 'none',
@@ -338,7 +323,17 @@ const PersonFigure = ({ page }) => {
           }
         }}
         initial={{ opacity: 1 }}
-        animate={{ opacity: isHome ? 1 : CONFIG.opacity }}
+        animate={{
+          opacity: isHome ? 1 : CONFIG.opacity,
+          left: isHome ? homeHeadX : sharedHeadPosition.x,
+          top: isHome ? homeHeadY : waveHeadY,
+          width: isHome
+            ? (isMobile ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop)
+            : (isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop),
+          height: isHome
+            ? (isMobile ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop)
+            : (isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop),
+        }}
         exit={{ opacity: 0 }}
         transition={HEADER_ANIMATION}
       />
@@ -412,9 +407,6 @@ const PersonFigure = ({ page }) => {
                     height: isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop,
                     maxWidth: isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop,
                     maxHeight: isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop,
-                    left: `${pos.x}px`,
-                    top: `${pos.y}px`,
-                    opacity: CONFIG.opacity,
                     zIndex: isDragged ? 99999 : 99997,
                     cursor: 'grab',
                     userSelect: 'none',
@@ -426,16 +418,18 @@ const PersonFigure = ({ page }) => {
                   onDragStart={() => handleDragStart(index)}
                   onDragEnd={() => handleDragEnd(index)}
                   onDrag={(e, info) => handleDrag(index, e, info)}
-                  initial={{ 
-                    y: pos.startY,
+                  initial={{
+                    top: pos.startY,
+                    left: pos.x,
                     opacity: 0,
                   }}
-                  animate={{ 
-                    y: 0,
+                  animate={{
+                    top: pos.y,
+                    left: pos.x,
                     opacity: CONFIG.opacity,
                   }}
-                  exit={{ 
-                    y: pos.startY,
+                  exit={{
+                    top: pos.startY,
                     opacity: 0,
                   }}
                   transition={{

@@ -382,17 +382,9 @@
   transform: translateY(0);
 }
 
-/* ---- Added to cart confirmation ---- */
-.print-added-confirmation {
-  font-size: 13px;
-  font-weight: 700;
-  color: #4ebd8b;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.print-added-confirmation.show {
-  opacity: 1;
+/* "See Cart" variant after item is added */
+.print-add-to-cart-btn.see-cart {
+  background: #1a1a1a;
 }
 
 /* ---- Responsive ---- */
