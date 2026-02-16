@@ -20,16 +20,23 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
+  const [promoType, setPromoType] = useState(null); // 'half' or 'dollar'
   const [promoError, setPromoError] = useState('');
-  const discountPercent = promoApplied ? 50 : 0;
-  const discountedTotal = promoApplied ? total * 0.5 : total;
+  const discountedTotal = promoType === 'dollar' ? 1 : promoType === 'half' ? total * 0.5 : total;
+  const promoLabel = promoType === 'dollar' ? 'Total reduced to $1.00!' : '50% discount applied!';
 
   const handleApplyPromo = () => {
     setPromoError('');
-    if (promoCode.trim().toLowerCase() === 'harrisonisawesome') {
+    const code = promoCode.trim().toLowerCase();
+    if (code === 'harrisonisawesome') {
       setPromoApplied(true);
+      setPromoType('half');
+    } else if (code === 'freetesty6969') {
+      setPromoApplied(true);
+      setPromoType('dollar');
     } else {
       setPromoApplied(false);
+      setPromoType(null);
       setPromoError('Invalid promo code');
     }
   };
@@ -309,7 +316,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                     onChange={(e) => {
                       setPromoCode(e.target.value);
                       setPromoError('');
-                      if (promoApplied) setPromoApplied(false);
+                      if (promoApplied) { setPromoApplied(false); setPromoType(null); }
                     }}
                     className={promoApplied ? 'promo-applied' : ''}
                   />
@@ -323,7 +330,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                   </button>
                 </div>
                 {promoError && <p className="promo-error">{promoError}</p>}
-                {promoApplied && <p className="promo-success">50% discount applied!</p>}
+                {promoApplied && <p className="promo-success">{promoLabel}</p>}
               </div>
 
               <div className="order-summary">
@@ -341,8 +348,8 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       <span>${total.toFixed(2)}</span>
                     </div>
                     <div className="summary-item summary-discount">
-                      <span>Promo Discount (50%)</span>
-                      <span>-${(total * 0.5).toFixed(2)}</span>
+                      <span>{promoType === 'dollar' ? 'Promo (Test $1)' : 'Promo Discount (50%)'}</span>
+                      <span>-${(total - discountedTotal).toFixed(2)}</span>
                     </div>
                   </>
                 )}

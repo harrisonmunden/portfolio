@@ -1,5 +1,5 @@
-// Uses test key if available, falls back to live key
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY_TEST || process.env.STRIPE_SECRET_KEY);
+// Uses live key, falls back to test key for local development
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY_TEST);
 
 // Server-side price validation (mirrors CartContext.jsx pricing per aspect ratio)
 const PRINT_SIZES_BY_ASPECT = {
@@ -46,44 +46,65 @@ exports.handler = async (event) => {
     const { items, promoCode, customerEmail, customerName, shippingAddress } = JSON.parse(event.body);
 
     // Validate promo code server-side
-    const validPromo = promoCode && promoCode.trim().toLowerCase() === 'harrisonisawesome';
-    const discountMultiplier = validPromo ? 0.5 : 1;
+    const trimmedPromo = promoCode ? promoCode.trim().toLowerCase() : '';
+    const isHalfOff = trimmedPromo === 'harrisonisawesome';
+    const isDollar = trimmedPromo === 'freetesty6969';
+    const validPromo = isHalfOff || isDollar;
 
     if (!items || !items.length) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'No items provided' }) };
     }
 
     // Build line items with server-validated prices
-    const line_items = items.map((item) => {
-      const aspect = item.aspectRatio || 'square';
-      const prices = PRINT_SIZES_BY_ASPECT[aspect];
-      const labels = SIZE_LABELS_BY_ASPECT[aspect];
+    let line_items;
 
-      if (!prices) {
-        throw new Error(`Invalid aspect ratio "${aspect}"`);
-      }
-
-      const basePrice = prices[item.sizeId];
-
-      if (!basePrice) {
-        throw new Error(`Invalid size "${item.sizeId}" for aspect "${aspect}"`);
-      }
-
-      const sizeLabel = item.sizeLabel || labels[item.sizeId] || item.sizeId;
-      const unitPrice = Math.round(basePrice * discountMultiplier * 100); // Stripe uses cents
-
-      return {
+    if (isDollar) {
+      // $1 test promo: single line item for $1 total
+      const itemNames = items.map(i => i.title).join(', ');
+      line_items = [{
         price_data: {
           currency: 'usd',
           product_data: {
-            name: item.title,
-            description: `Fine Art Print - ${sizeLabel}`,
+            name: 'Test Order',
+            description: itemNames,
           },
-          unit_amount: unitPrice,
+          unit_amount: 100, // $1.00
         },
-        quantity: item.quantity,
-      };
-    });
+        quantity: 1,
+      }];
+    } else {
+      line_items = items.map((item) => {
+        const aspect = item.aspectRatio || 'square';
+        const prices = PRINT_SIZES_BY_ASPECT[aspect];
+        const labels = SIZE_LABELS_BY_ASPECT[aspect];
+
+        if (!prices) {
+          throw new Error(`Invalid aspect ratio "${aspect}"`);
+        }
+
+        const basePrice = prices[item.sizeId];
+
+        if (!basePrice) {
+          throw new Error(`Invalid size "${item.sizeId}" for aspect "${aspect}"`);
+        }
+
+        const sizeLabel = item.sizeLabel || labels[item.sizeId] || item.sizeId;
+        const discountMultiplier = isHalfOff ? 0.5 : 1;
+        const unitPrice = Math.round(basePrice * discountMultiplier * 100); // Stripe uses cents
+
+        return {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.title,
+              description: `Fine Art Print - ${sizeLabel}`,
+            },
+            unit_amount: unitPrice,
+          },
+          quantity: item.quantity,
+        };
+      });
+    }
 
     const siteUrl = process.env.SITE_URL || 'http://localhost:5173';
 
@@ -96,7 +117,7 @@ exports.handler = async (event) => {
         customer_name: customerName,
         shipping_address: JSON.stringify(shippingAddress),
         promo_code: validPromo ? promoCode.trim() : 'none',
-        discount_applied: validPromo ? '50%' : 'none',
+        discount_applied: isDollar ? '$1 test' : isHalfOff ? '50%' : 'none',
       },
       success_url: `${siteUrl}/#/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/#/cart`,
