@@ -16,7 +16,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 180px 40px 0px 40px;
+  padding: min(180px, 20vh) 40px 0px 40px;
   position: relative;
   overflow: hidden; /* Prevent any scrolling */
 }
@@ -34,7 +34,7 @@
 .home-text-section {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: clamp(15px, 4vh, 40px);
   position: relative;
   z-index: 10;
 }
@@ -43,7 +43,7 @@
 .name-greeting-row {
   display: flex;
   align-items: flex-start;
-  gap: 40px;
+  gap: min(40px, 5vh);
 }
 
 /* Name Section */
@@ -54,14 +54,14 @@
 }
 
 .name-first {
-  font-size: 108px;
+  font-size: clamp(60px, 12vh, 108px);
   font-weight: 900;
   background: linear-gradient(90deg, #77FFB0 0%, #000000 130%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   padding-left: 150px;
-  padding-top: 10px;
+  padding-top: min(10px, 1.5vh);
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
   line-height: 0.9;
   letter-spacing: 0.085em;
@@ -69,7 +69,7 @@
 }
 
 .name-last {
-  font-size: 108px;
+  font-size: clamp(60px, 12vh, 108px);
   font-weight: 900;
   background: linear-gradient(90deg, #77FFB0 0%, #000000 130%);
   padding-left: 150px;
@@ -87,11 +87,11 @@
   display: flex;
   margin-left: 50px;
   align-items: flex-start;
-  padding-top: 20px;
+  padding-top: min(20px, 3vh);
 }
 
 .greeting-text {
-  font-size: 60px;
+  font-size: clamp(32px, 6.5vh, 60px);
   font-weight: 700;
   color: #1a1a1a;
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
@@ -102,12 +102,12 @@
 .navigation-links {
   display: flex;
   flex-direction: column;
-  gap: 340px;
-  margin-top: 20px;
+  gap: clamp(20px, 6vh, 60px);
+  margin-top: clamp(10px, 2vh, 20px);
 }
 
 .nav-link {
-  font-size: 66px;
+  font-size: clamp(36px, 7vh, 66px);
   font-weight: 700;
   color: #1a1a1a;
   margin-left: 50px;
@@ -125,7 +125,7 @@
 }
 
 .chevron-img {
-  width: 55px;
+  width: clamp(30px, 6vh, 55px);
   height: auto;
   margin-left: 8px;
 }
@@ -134,65 +134,73 @@
 @media (max-width: 1200px) {
   .name-first,
   .name-last {
-    font-size: 80px;
+    font-size: min(80px, 10vh);
     padding-left: 100px;
   }
 
   .greeting-text {
-    font-size: 40px;
+    font-size: min(40px, 5.5vh);
   }
 
   .nav-link {
-    font-size: 40px;
+    font-size: min(40px, 6vh);
   }
 
   .chevron-img {
-    width: 40px;
+    width: min(40px, 5vh);
+  }
+
+  .navigation-links {
+    gap: min(40px, 5vh);
   }
 }
 
 @media (max-width: 1024px) {
   .home-page {
-    padding: 140px 30px 0px 30px;
+    padding: min(140px, 18vh) 30px 0px 30px;
   }
 
   .name-first,
   .name-last {
-    font-size: 68px;
+    font-size: min(68px, 9vh);
     padding-left: 80px;
   }
 
   .greeting-text {
-    font-size: 34px;
+    font-size: min(34px, 5vh);
   }
 
   .nav-link {
-    font-size: 34px;
+    font-size: min(34px, 5.5vh);
   }
 
   .chevron-img {
-    width: 34px;
+    width: min(34px, 4.5vh);
+  }
+
+  .navigation-links {
+    gap: min(35px, 5vh);
   }
 }
 
 @media (max-width: 900px) {
   .home-page {
-    padding: 100px 20px 20px 20px;
+    padding: min(100px, 14vh) 20px 20px 20px;
   }
 
   .name-greeting-row {
     flex-direction: column;
-    gap: 20px;
+    gap: min(20px, 3vh);
   }
 
   .name-first,
   .name-last {
-    font-size: 56px;
+    font-size: min(56px, 8vh);
     padding-left: 50px;
   }
 
   .greeting-text {
-    font-size: 28px;
+    font-size: min(28px, 4.5vh);
   }
 
   .greeting {
@@ -200,12 +208,16 @@
   }
 
   .nav-link {
-    font-size: 28px;
+    font-size: min(28px, 5vh);
     margin-left: 30px;
   }
 
   .chevron-img {
-    width: 28px;
+    width: min(28px, 4vh);
+  }
+
+  .navigation-links {
+    gap: min(30px, 4.5vh);
   }
 
   .home-figure-section {
@@ -216,56 +228,64 @@
 
 @media (max-width: 768px) {
   .home-page {
-    padding: 60px 16px 16px 16px;
+    padding: min(60px, 10vh) 16px 16px 16px;
   }
 
   .name-first,
   .name-last {
-    font-size: 46px;
+    font-size: min(46px, 7vh);
     padding-left: 30px;
   }
 
   .greeting-text {
-    font-size: 22px;
+    font-size: min(22px, 4vh);
   }
 
   .greeting {
     margin-left: 25px;
-    padding-top: 15px;
+    padding-top: min(15px, 2vh);
   }
 
   .nav-link {
-    font-size: 24px;
+    font-size: min(24px, 4.5vh);
     margin-left: 25px;
   }
 
   .chevron-img {
-    width: 24px;
+    width: min(24px, 3.5vh);
+  }
+
+  .navigation-links {
+    gap: min(25px, 4vh);
   }
 }
 
 @media (max-width: 600px) {
   .home-page {
-    padding: 20px 8px 8px 8px;
+    padding: min(20px, 4vh) 8px 8px 8px;
   }
 
   .name-first,
   .name-last {
-    font-size: 32px;
+    font-size: min(32px, 6vh);
     padding-left: 20px;
   }
 
   .greeting-text {
-    font-size: 16px;
+    font-size: min(16px, 3vh);
   }
 
   .nav-link {
-    font-size: 18px;
+    font-size: min(18px, 3.5vh);
     margin-left: 20px;
   }
 
   .chevron-img {
-    width: 20px;
+    width: min(20px, 3vh);
+  }
+
+  .navigation-links {
+    gap: min(20px, 3.5vh);
   }
 
   .home-figure-section {
@@ -274,11 +294,11 @@
   }
 
   .name-greeting-row {
-    gap: 10px;
+    gap: min(10px, 2vh);
   }
 
   .greeting {
     margin-left: 20px;
-    padding-top: 10px;
+    padding-top: min(10px, 2vh);
   }
 }

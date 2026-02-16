@@ -35,15 +35,18 @@ const GAME_PAGE_ANIMATION = {
   ease: 'easeOut',
 };
 
-// Hook for responsive window width tracking
-const useWindowWidth = () => {
-  const [width, setWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
+// Hook for responsive window dimensions tracking
+const useWindowDimensions = () => {
+  const [dims, setDims] = useState(() => ({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
+    height: typeof window !== 'undefined' ? window.innerHeight : 900,
+  }));
 
   useEffect(() => {
     let rafId;
     const handleResize = () => {
       if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => setWidth(window.innerWidth));
+      rafId = requestAnimationFrame(() => setDims({ width: window.innerWidth, height: window.innerHeight }));
     };
     window.addEventListener('resize', handleResize);
     return () => {
@@ -52,7 +55,7 @@ const useWindowWidth = () => {
     };
   }, []);
 
-  return width;
+  return dims;
 };
 
 // Responsive value helper: returns mobile/tablet/desktop value based on width
@@ -63,22 +66,26 @@ const responsive = (width, mobile, tablet, desktop) => {
 };
 
 // Shared header components
-const SharedPrintsHeader = ({ page, goTo, windowWidth }) => {
+const SharedPrintsHeader = ({ page, goTo, windowWidth, windowHeight }) => {
   const isHome = page === 'home';
   const w = windowWidth;
+  const hScale = isHome ? Math.min(1, windowHeight / 900) : 1;
 
   if (!(page === 'home' || page === 'prints-for-sale')) return null;
 
-  const fontSize = isHome
+  const baseFontSize = isHome
     ? responsive(w, 32, Math.round(32 + (66 - 32) * ((w - 600) / (1024 - 600))), 66)
     : responsive(w, 28, Math.round(28 + (88 - 28) * ((w - 600) / (1024 - 600))), 88);
+  const fontSize = isHome ? Math.round(baseFontSize * hScale) : baseFontSize;
   const left = isHome
     ? responsive(w, 25, Math.round(25 + (100 - 25) * ((w - 600) / (1024 - 600))), 100)
     : responsive(w, 20, Math.round(20 + (60 - 20) * ((w - 600) / (1024 - 600))), 60);
-  const top = isHome
+  const baseTop = isHome
     ? responsive(w, 320, Math.round(320 + (460 - 320) * ((w - 600) / (1024 - 600))), 460)
     : responsive(w, 20, Math.round(20 + (50 - 20) * ((w - 600) / (1024 - 600))), 50);
-  const chevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
+  const top = isHome ? Math.round(baseTop * hScale) : baseTop;
+  const baseChevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
+  const chevronWidth = isHome ? Math.round(baseChevronWidth * hScale) : baseChevronWidth;
 
   return (
     <motion.div
@@ -124,22 +131,26 @@ const SharedPrintsHeader = ({ page, goTo, windowWidth }) => {
   );
 };
 
-const SharedRealtimeHeader = ({ page, goTo, windowWidth }) => {
+const SharedRealtimeHeader = ({ page, goTo, windowWidth, windowHeight }) => {
   const isHome = page === 'home';
   const w = windowWidth;
+  const hScale = isHome ? Math.min(1, windowHeight / 900) : 1;
 
   if (!(page === 'home' || page === 'realtime-artwork')) return null;
 
-  const fontSize = isHome
+  const baseFontSize = isHome
     ? responsive(w, 32, Math.round(32 + (66 - 32) * ((w - 600) / (1024 - 600))), 66)
     : responsive(w, 28, Math.round(28 + (88 - 28) * ((w - 600) / (1024 - 600))), 88);
+  const fontSize = isHome ? Math.round(baseFontSize * hScale) : baseFontSize;
   const left = isHome
     ? responsive(w, 25, Math.round(25 + (100 - 25) * ((w - 600) / (1024 - 600))), 100)
     : responsive(w, 20, Math.round(20 + (60 - 20) * ((w - 600) / (1024 - 600))), 60);
-  const top = isHome
+  const baseTop = isHome
     ? responsive(w, 360, Math.round(360 + (540 - 360) * ((w - 600) / (1024 - 600))), 540)
     : responsive(w, 20, Math.round(20 + (50 - 20) * ((w - 600) / (1024 - 600))), 50);
-  const chevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
+  const top = isHome ? Math.round(baseTop * hScale) : baseTop;
+  const baseChevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
+  const chevronWidth = isHome ? Math.round(baseChevronWidth * hScale) : baseChevronWidth;
 
   return (
     <motion.div
@@ -185,22 +196,26 @@ const SharedRealtimeHeader = ({ page, goTo, windowWidth }) => {
   );
 };
 
-const SharedProfessionalHeader = ({ page, goTo, windowWidth }) => {
+const SharedProfessionalHeader = ({ page, goTo, windowWidth, windowHeight }) => {
   const isHome = page === 'home';
   const w = windowWidth;
+  const hScale = isHome ? Math.min(1, windowHeight / 900) : 1;
 
   if (!(page === 'home' || page === 'professional-work')) return null;
 
-  const fontSize = isHome
+  const baseFontSize = isHome
     ? responsive(w, 32, Math.round(32 + (66 - 32) * ((w - 600) / (1024 - 600))), 66)
     : responsive(w, 28, Math.round(28 + (88 - 28) * ((w - 600) / (1024 - 600))), 88);
+  const fontSize = isHome ? Math.round(baseFontSize * hScale) : baseFontSize;
   const left = isHome
     ? responsive(w, 25, Math.round(25 + (100 - 25) * ((w - 600) / (1024 - 600))), 100)
     : responsive(w, 20, Math.round(20 + (60 - 20) * ((w - 600) / (1024 - 600))), 60);
-  const top = isHome
+  const baseTop = isHome
     ? responsive(w, 400, Math.round(400 + (620 - 400) * ((w - 600) / (1024 - 600))), 620)
     : responsive(w, 20, Math.round(20 + (50 - 20) * ((w - 600) / (1024 - 600))), 50);
-  const chevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
+  const top = isHome ? Math.round(baseTop * hScale) : baseTop;
+  const baseChevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
+  const chevronWidth = isHome ? Math.round(baseChevronWidth * hScale) : baseChevronWidth;
 
   return (
     <motion.div
@@ -277,7 +292,7 @@ const AppContent = () => {
   const location = useLocation();
   const [modelViewerOpen, setModelViewerOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const windowWidth = useWindowWidth();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
   // Use custom scroll restoration hook
   useScrollToTop();
@@ -329,9 +344,9 @@ const AppContent = () => {
       {/* Only show navigation headers and PersonFigure on home/work/cart pages, not on game or checkout-success pages */}
       {!isGamePage && !isCheckoutSuccess && (
         <div style={fadeStyle}>
-          <SharedPrintsHeader key="prints-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
-          <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
-          <SharedProfessionalHeader key="professional-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
+          <SharedPrintsHeader key="prints-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} windowHeight={windowHeight} />
+          <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} windowHeight={windowHeight} />
+          <SharedProfessionalHeader key="professional-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} windowHeight={windowHeight} />
           <CartIconNav key="cart-icon" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
           <PersonFigure page={currentPage} />
         </div>

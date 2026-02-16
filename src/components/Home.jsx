@@ -77,13 +77,13 @@ const Home = ({ goTo, hidePrintsNav, hideRealtimeNav, hideProfessionalNav }) => 
             </div>
           </div>
           
-          <div className="navigation-links" style={{display: 'flex !important', flexDirection: 'column !important', gap: '60px !important'}}>
+          <div className="navigation-links">
             {!hidePrintsNav && (
               <motion.button 
                 className="nav-link" 
                 onClick={() => goTo('prints-for-sale')} 
                 layoutId="prints-nav" 
-                style={{background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer', paddingTop: '120px !important'}}
+                style={{background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer'}}
               >
                 <span>prints</span>
                 <motion.img 
@@ -99,7 +99,7 @@ const Home = ({ goTo, hidePrintsNav, hideRealtimeNav, hideProfessionalNav }) => 
                 className="nav-link" 
                 onClick={() => goTo('realtime-artwork')} 
                 layoutId="realtime-nav" 
-                style={{background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer', paddingTop: '120px !important'}}
+                style={{background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer'}}
               >
                 <span>realtime</span>
                 <motion.img 
