@@ -65,7 +65,7 @@ exports.handler = async (event) => {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Test Order',
+            name: 'Print Order',
             description: itemNames,
           },
           unit_amount: 100, // $1.00
