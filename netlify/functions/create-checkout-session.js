@@ -16,9 +16,19 @@ const SIZE_LABELS = {
   xlarge: '24x36"',
 };
 
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  process.env.SITE_URL,
+  'http://localhost:5173',
+  'http://localhost:4173',
+].filter(Boolean);
+
 exports.handler = async (event) => {
+  const origin = event.headers?.origin || '';
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+
   const headers = {
-    'Access-Control-Allow-Origin': process.env.SITE_URL || '*',
+    'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
   };
