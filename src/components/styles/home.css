@@ -35,7 +35,8 @@
   display: flex;
   flex-direction: column;
   gap: 40px;
-  z-index: 2;
+  position: relative;
+  z-index: 10;
 }
 
 /* Name and Greeting Row */

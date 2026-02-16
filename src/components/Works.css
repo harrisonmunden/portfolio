@@ -366,38 +366,32 @@
 }
 
 @media (max-width: 700px) {
+  .section-title {
+    margin: 24px 0 16px 0;
+  }
+
   .models-row {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
     padding-bottom: 8px;
   }
   .model-tile {
-    flex-shrink: 0;
-    width: 250px;
-    min-width: 250px;
-    scroll-snap-align: start;
+    width: 100%;
+    min-width: unset;
   }
 
   .video-games-row {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
     padding-bottom: 8px;
   }
   .video-game-tile {
-    flex-shrink: 0;
-    width: 250px;
-    min-width: 250px;
-    scroll-snap-align: start;
+    width: 100%;
+    min-width: unset;
   }
 }
 
@@ -468,23 +462,23 @@
   }
   .section-title {
     font-size: 18px;
-    margin: 16px 0 8px 0;
+    margin: 20px 0 14px 0;
   }
   .models-row {
-    gap: 12px;
+    gap: 14px;
   }
   .model-tile {
-    width: 220px;
-    min-width: 220px;
+    width: 100%;
+    min-width: unset;
   }
 
   .video-games-row {
-    gap: 12px;
+    gap: 14px;
     margin-bottom: 24px;
   }
   .video-game-tile {
-    width: 220px;
-    min-width: 220px;
+    width: 100%;
+    min-width: unset;
   }
 
   .lightbox-content {
@@ -497,18 +491,18 @@
 
 @media (max-width: 480px) {
   .models-row {
-    gap: 8px;
+    gap: 12px;
   }
   .model-tile {
-    width: 200px;
-    min-width: 200px;
+    width: 100%;
+    min-width: unset;
   }
 
   .video-games-row {
-    gap: 8px;
+    gap: 12px;
   }
   .video-game-tile {
-    width: 200px;
-    min-width: 200px;
+    width: 100%;
+    min-width: unset;
   }
 }

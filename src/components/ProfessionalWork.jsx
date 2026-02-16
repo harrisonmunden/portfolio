@@ -28,25 +28,26 @@ const ProfessionalWork = ({ goTo, hideNav }) => {
         "Game engine & shader scripting, mobile app implementation."
       ]
     },
-    {
-      id: 2,
-      title: "HMI Design Intern",
-      company: "Ford",
-      headerImg: aboutHeaders.Ford,
-      description: [
-        "3D asset creation for concept cars.",
-        "Ergonomics analysis and design.",      ]
-    },
-    {
-      id: 3,
-      title: "Body Designer",
-      company: "Dartmouth Formula Racing",
-      headerImg: aboutHeaders.DFR,
-      description: [
-        "Designed and fabricated race car components.",
-        "Designed and installed a new steering system into the car."
-      ]
-    }
+    // {
+    //   id: 2,
+    //   title: "HMI Design Intern",
+    //   company: "Ford",
+    //   headerImg: aboutHeaders.Ford,
+    //   description: [
+    //     "3D asset creation for concept cars.",
+    //     "Ergonomics analysis and design.",
+    //   ]
+    // },
+    // {
+    //   id: 3,
+    //   title: "Body Designer",
+    //   company: "Dartmouth Formula Racing",
+    //   headerImg: aboutHeaders.DFR,
+    //   description: [
+    //     "Designed and fabricated race car components.",
+    //     "Designed and installed a new steering system into the car."
+    //   ]
+    // }
   ];
 
   const [visibleCount, setVisibleCount] = useState(globalVisibleCount);

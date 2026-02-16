@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useAnimation, animate } from '
 
 const PersonFigure = ({ page }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
   const prevPageRef = useRef(page);
   const isHome = page === 'home';
   const isWork = page === 'work' || page === 'prints-for-sale' || page === 'realtime-artwork';
@@ -10,14 +11,15 @@ const PersonFigure = ({ page }) => {
   const isCart = page === 'cart';
 
   useEffect(() => {
-    const checkMobile = () => {
+    const checkDimensions = () => {
       setIsMobile(window.innerWidth <= 768);
+      setViewportHeight(window.innerHeight);
     };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+
+    checkDimensions();
+    window.addEventListener('resize', checkDimensions);
+
+    return () => window.removeEventListener('resize', checkDimensions);
   }, []);
 
   const CONFIG = {
@@ -170,12 +172,20 @@ const PersonFigure = ({ page }) => {
 
   // After isMobileHead is defined, but before any use of homeHeadX/homeHeadY
   const isMobileHead = isMobile;
-  const homeHeadWidth = isMobileHead ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop;
-  const homeHeadHeight = isMobileHead ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop;
+
+  // Dynamic scale factor for short viewports
+  // Reference height: 900px for desktop, 750px for mobile (where the figure looks correct)
+  const refHeight = isMobileHead ? 750 : 900;
+  const heightScale = Math.min(1, viewportHeight / refHeight);
+
+  const homeHeadWidth = (isMobileHead ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop) * heightScale;
+  const homeHeadHeight = (isMobileHead ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop) * heightScale;
+  const homeBodyWidth = (isMobileHead ? CONFIG.bodySize.mobile : CONFIG.bodySize.desktop) * heightScale;
   const homeHeadX = window.innerWidth * (isMobileHead ? 0.48 : 0.68); // Centered on mobile, 68% on desktop
+  // Place the figure below the text area — use percentage-based Y that scales with height
   const homeHeadY = isMobileHead
-    ? window.innerHeight * 0.55 // 55% down from the top for mobile
-    : window.innerHeight - 520; // existing value for desktop
+    ? viewportHeight * 0.55 // 55% down from the top for mobile
+    : Math.max(viewportHeight * 0.45, viewportHeight - 520 * heightScale); // Scale the offset, floor at 45% down
 
   // Generate wave positions
   const wavePositions = generateWavePositions();
@@ -327,10 +337,10 @@ const PersonFigure = ({ page }) => {
           left: isHome ? homeHeadX : sharedHeadPosition.x,
           top: isHome ? homeHeadY : waveHeadY,
           width: isHome
-            ? (isMobile ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop)
+            ? homeHeadWidth
             : (isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop),
           height: isHome
-            ? (isMobile ? CONFIG.headSize.home.mobile : CONFIG.headSize.home.desktop)
+            ? homeHeadHeight
             : (isMobile ? CONFIG.headSize.mobile : CONFIG.headSize.desktop),
         }}
         exit={{ opacity: 0 }}
@@ -348,13 +358,11 @@ const PersonFigure = ({ page }) => {
             transition={{ duration: 0.3 }}
             style={{
               position: 'absolute',
-              left: isMobile
-                ? `${homeHeadX + (CONFIG.headSize.home.mobile / 2) - (CONFIG.bodySize.mobile / 2)}px`
-                : `${homeHeadX + (CONFIG.headSize.home.desktop / 2) - (CONFIG.bodySize.desktop / 2)}px`,
+              left: `${homeHeadX + (homeHeadWidth / 2) - (homeBodyWidth / 2)}px`,
               top: isMobile
-                ? `${homeHeadY + (CONFIG.headSize.home.mobile * 0.94)}px`
-                : `${homeHeadY + (CONFIG.headSize.home.desktop * 0.85)}px`,
-              width: isMobile ? CONFIG.bodySize.mobile : CONFIG.bodySize.desktop,
+                ? `${homeHeadY + (homeHeadHeight * 0.94)}px`
+                : `${homeHeadY + (homeHeadHeight * 0.85)}px`,
+              width: homeBodyWidth,
               height: 'auto',
               display: 'flex',
               flexDirection: 'column',
@@ -367,7 +375,7 @@ const PersonFigure = ({ page }) => {
               src="/GlassyObjects/About/Body.webp"
               alt="Body"
               style={{
-                width: isMobile ? CONFIG.bodySize.mobile : CONFIG.bodySize.desktop,
+                width: homeBodyWidth,
                 height: 'auto',
                 zIndex: 1,
               }}
