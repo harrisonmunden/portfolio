@@ -250,7 +250,7 @@ const SharedProfessionalHeader = ({ page, goTo, windowWidth }) => {
 const CartIconNav = ({ page, goTo, windowWidth }) => {
   const isMobile = windowWidth <= 600;
 
-  if (!(page === 'home' || page === 'prints-for-sale' || page === 'realtime-artwork' || page === 'professional-work' || page === 'cart')) return null;
+  if (!(page === 'home' || page === 'prints-for-sale' || page === 'realtime-artwork' || page === 'professional-work')) return null;
 
   return (
     <motion.div

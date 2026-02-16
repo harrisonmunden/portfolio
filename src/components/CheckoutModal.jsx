@@ -17,6 +17,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,12 +25,60 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
       ...prev,
       [name]: value
     }));
+    // Clear error for this field when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setError('');
+
+    // Validate required fields
+    const requiredFields = {
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'Email',
+      address: 'Address',
+      city: 'City',
+      state: 'State',
+      zipCode: 'ZIP Code',
+      country: 'Country',
+    };
+
+    const errors = {};
+    for (const [field, label] of Object.entries(requiredFields)) {
+      if (!formData[field] || !formData[field].trim()) {
+        errors[field] = `${label} is required`;
+      }
+    }
+
+    // Validate email format
+    if (formData.email && formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setError('Please fill in all required fields.');
+      // Wait for React to re-render with has-error classes, then scroll to first error
+      setTimeout(() => {
+        const firstErrorField = document.querySelector('.form-group.has-error input, .form-group.has-error select');
+        if (firstErrorField) {
+          firstErrorField.focus();
+          firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 0);
+      return;
+    }
+
+    setFieldErrors({});
+    setIsSubmitting(true);
 
     try {
       // Save form data to localStorage so CheckoutSuccess can send emails
@@ -102,11 +151,11 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
           <div className="checkout-content">
             <h2>Checkout</h2>
 
-            <form onSubmit={handleSubmit} className="checkout-form" autoComplete="on">
+            <form onSubmit={handleSubmit} className="checkout-form" autoComplete="on" noValidate>
               <div className="form-section">
                 <h3>Contact Information</h3>
                 <div className="form-row">
-                  <div className="form-group">
+                  <div className={`form-group${fieldErrors.firstName ? ' has-error' : ''}`}>
                     <label htmlFor="firstName">First Name *</label>
                     <input
                       type="text"
@@ -118,7 +167,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       required
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={`form-group${fieldErrors.lastName ? ' has-error' : ''}`}>
                     <label htmlFor="lastName">Last Name *</label>
                     <input
                       type="text"
@@ -133,7 +182,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                 </div>
 
                 <div className="form-row">
-                  <div className="form-group">
+                  <div className={`form-group${fieldErrors.email ? ' has-error' : ''}`}>
                     <label htmlFor="email">Email *</label>
                     <input
                       type="email"
@@ -161,7 +210,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
 
               <div className="form-section">
                 <h3>Shipping Address</h3>
-                <div className="form-group">
+                <div className={`form-group${fieldErrors.address ? ' has-error' : ''}`}>
                   <label htmlFor="address">Address *</label>
                   <input
                     type="text"
@@ -175,7 +224,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                 </div>
 
                 <div className="form-row">
-                  <div className="form-group">
+                  <div className={`form-group${fieldErrors.city ? ' has-error' : ''}`}>
                     <label htmlFor="city">City *</label>
                     <input
                       type="text"
@@ -187,7 +236,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       required
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={`form-group${fieldErrors.state ? ' has-error' : ''}`}>
                     <label htmlFor="state">State *</label>
                     <input
                       type="text"
@@ -199,7 +248,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                       required
                     />
                   </div>
-                  <div className="form-group">
+                  <div className={`form-group${fieldErrors.zipCode ? ' has-error' : ''}`}>
                     <label htmlFor="zipCode">ZIP Code *</label>
                     <input
                       type="text"
@@ -213,7 +262,7 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
                   </div>
                 </div>
 
-                <div className="form-group">
+                <div className={`form-group${fieldErrors.country ? ' has-error' : ''}`}>
                   <label htmlFor="country">Country *</label>
                   <select
                     id="country"

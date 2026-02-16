@@ -92,9 +92,7 @@ const PersonFigure = ({ page }) => {
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  const LIMIT = 120; // max pixels of drag
   const DRAG_THRESHOLD = 5; // px before pointer move counts as drag
-  const scale = (v) => LIMIT * Math.tanh(v / LIMIT);
 
   // Handler for drag - throttled for performance
   const handleDrag = useCallback((index, event, info) => {
@@ -104,11 +102,11 @@ const PersonFigure = ({ page }) => {
     
     // Framer Motion handles the dragged head's x/y
     // We update neighbors here
-    const scaledX = scale(info.offset.x);
-    const scaledY = scale(info.offset.y);
+    const offsetX = info.offset.x;
+    const offsetY = info.offset.y;
     if (index === 'home') {
-      sharedHeadMotion.set(scaledX);
-      sharedHeadYMotion.set(scaledY);
+      sharedHeadMotion.set(offsetX);
+      sharedHeadYMotion.set(offsetY);
     }
     influence.forEach((factor, i) => {
       if (i === 0) return; // skip self, Framer handles
@@ -116,8 +114,8 @@ const PersonFigure = ({ page }) => {
       const minus = index - i;
       [plus, minus].forEach((neighborIdx) => {
         if (neighborIdx >= 0 && neighborIdx < CONFIG.numHeads) {
-          headMotionValues[neighborIdx].x.set(scaledX * factor);
-          headMotionValues[neighborIdx].y.set(scaledY * factor);
+          headMotionValues[neighborIdx].x.set(offsetX * factor);
+          headMotionValues[neighborIdx].y.set(offsetY * factor);
         }
       });
     });
@@ -202,8 +200,8 @@ const PersonFigure = ({ page }) => {
 
   // Snap back shared head on home drag end
   const handleSharedHeadDragEnd = () => {
-    animate(sharedHeadMotion, 0, { type: 'spring', stiffness: 300, damping: 30 });
-    animate(sharedHeadYMotion, 0, { type: 'spring', stiffness: 300, damping: 30 });
+    animate(sharedHeadMotion, 0, { type: 'spring', stiffness: 200, damping: 13 });
+    animate(sharedHeadYMotion, 0, { type: 'spring', stiffness: 200, damping: 13 });
     setDraggedIndex(null);
   };
 
@@ -298,7 +296,8 @@ const PersonFigure = ({ page }) => {
         alt="Head"
         drag
         dragMomentum={false}
-        dragElastic={0.5}
+        dragElastic={1}
+        dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
         style={{
           position: 'absolute',
           zIndex: isHome ? 5 : 99998,
@@ -316,8 +315,8 @@ const PersonFigure = ({ page }) => {
         onDragEnd={() => isHome ? handleSharedHeadDragEnd() : handleDragEnd(sharedHeadWaveIndex)}
         onDrag={(e, info) => {
           if (isHome) {
-            sharedHeadMotion.set(scale(info.offset.x));
-            sharedHeadYMotion.set(scale(info.offset.y));
+            sharedHeadMotion.set(info.offset.x);
+            sharedHeadYMotion.set(info.offset.y);
           } else {
             handleDrag(sharedHeadWaveIndex, e, info);
           }
