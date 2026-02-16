@@ -1,19 +1,19 @@
 // Uses test key if available, falls back to live key
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY_TEST || process.env.STRIPE_SECRET_KEY);
 
-// Server-side price validation (mirrors CartContext.jsx pricing)
-const PRINT_SIZES = {
-  small: 43,
-  medium: 50,
-  large: 81,
-  xlarge: 156,
+// Server-side price validation (mirrors CartContext.jsx pricing per aspect ratio)
+const PRINT_SIZES_BY_ASPECT = {
+  square: { small: 30, medium: 38, large: 75, xlarge: 130 },
+  portrait_4x5: { small: 34, medium: 40, large: 65, xlarge: 115 },
+  landscape_16x9: { small: 28, medium: 36, large: 45, xlarge: 125 },
+  landscape_4x3: { small: 38, medium: 40, large: 75, xlarge: 160 },
 };
 
-const SIZE_LABELS = {
-  small: '8x10"',
-  medium: '11x14"',
-  large: '16x20"',
-  xlarge: '24x36"',
+const SIZE_LABELS_BY_ASPECT = {
+  square: { small: '8×8"', medium: '12×12"', large: '20×20"', xlarge: '30×30"' },
+  portrait_4x5: { small: '8×10"', medium: '11×14"', large: '16×20"', xlarge: '24×30"' },
+  landscape_16x9: { small: '9×6"', medium: '12×8"', large: '19×13"', xlarge: '40×20"' },
+  landscape_4x3: { small: '12×9"', medium: '16×12"', large: '24×18"', xlarge: '40×30"' },
 };
 
 // Allowed origins for CORS
@@ -51,12 +51,21 @@ exports.handler = async (event) => {
 
     // Build line items with server-validated prices
     const line_items = items.map((item) => {
-      const basePrice = PRINT_SIZES[item.sizeId];
+      const aspect = item.aspectRatio || 'square';
+      const prices = PRINT_SIZES_BY_ASPECT[aspect];
+      const labels = SIZE_LABELS_BY_ASPECT[aspect];
 
-      if (!basePrice) {
-        throw new Error(`Invalid size "${item.sizeId}"`);
+      if (!prices) {
+        throw new Error(`Invalid aspect ratio "${aspect}"`);
       }
 
+      const basePrice = prices[item.sizeId];
+
+      if (!basePrice) {
+        throw new Error(`Invalid size "${item.sizeId}" for aspect "${aspect}"`);
+      }
+
+      const sizeLabel = item.sizeLabel || labels[item.sizeId] || item.sizeId;
       const unitPrice = basePrice * 100; // Stripe uses cents
 
       return {
@@ -64,7 +73,7 @@ exports.handler = async (event) => {
           currency: 'usd',
           product_data: {
             name: item.title,
-            description: `Fine Art Print - ${SIZE_LABELS[item.sizeId]}`,
+            description: `Fine Art Print - ${sizeLabel}`,
           },
           unit_amount: unitPrice,
         },

@@ -32,10 +32,12 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
     setError('');
 
     try {
-      // Save form data to sessionStorage so CheckoutSuccess can send emails
-      sessionStorage.setItem('checkoutFormData', JSON.stringify(formData));
-      sessionStorage.setItem('checkoutItems', JSON.stringify(items));
-      sessionStorage.setItem('checkoutTotal', total.toFixed(2));
+      // Save form data to localStorage so CheckoutSuccess can send emails
+      // Using localStorage instead of sessionStorage because sessionStorage
+      // can be lost during external redirects (e.g. to Stripe checkout)
+      localStorage.setItem('checkoutFormData', JSON.stringify(formData));
+      localStorage.setItem('checkoutItems', JSON.stringify(items));
+      localStorage.setItem('checkoutTotal', total.toFixed(2));
 
       // Call serverless function to create Stripe Checkout session
       const response = await fetch(stripeConfig.checkoutEndpoint, {
@@ -45,6 +47,8 @@ const CheckoutModal = ({ isOpen, onClose, items, total }) => {
           items: items.map(item => ({
             title: item.artwork.title,
             sizeId: item.size.id,
+            sizeLabel: item.size.name,
+            aspectRatio: item.artwork.aspectRatio || 'square',
             quantity: item.quantity,
           })),
           customerEmail: formData.email,

@@ -4,16 +4,18 @@ import { useCart } from '../contexts/CartContext';
 import './AddToCartModal.css';
 
 const AddToCartModal = ({ artwork, isOpen, onClose }) => {
-  const { addToCart, PRINT_SIZES } = useCart();
+  const { addToCart, getSizesForArtwork } = useCart();
   const [selectedSize, setSelectedSize] = useState('medium');
   const [quantity, setQuantity] = useState(1);
+
+  const availableSizes = getSizesForArtwork(artwork);
 
   const handleAddToCart = () => {
     addToCart(artwork, selectedSize, quantity);
     onClose();
   };
 
-  const selectedSizeObj = PRINT_SIZES.find(s => s.id === selectedSize);
+  const selectedSizeObj = availableSizes.find(s => s.id === selectedSize);
   const totalPrice = selectedSizeObj.price * quantity;
 
   return (
@@ -45,7 +47,7 @@ const AddToCartModal = ({ artwork, isOpen, onClose }) => {
                 <div className="option-group">
                   <h4>Print Size</h4>
                   <div className="size-options">
-                    {PRINT_SIZES.map(size => (
+                    {availableSizes.map(size => (
                       <label key={size.id} className={`size-option ${selectedSize === size.id ? 'selected' : ''}`}>
                         <input
                           type="radio"

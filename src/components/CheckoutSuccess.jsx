@@ -17,10 +17,11 @@ const CheckoutSuccess = ({ goTo }) => {
 
     const processOrder = async () => {
       try {
-        // Get saved checkout data from sessionStorage
-        const formDataStr = sessionStorage.getItem('checkoutFormData');
-        const itemsStr = sessionStorage.getItem('checkoutItems');
-        const totalStr = sessionStorage.getItem('checkoutTotal');
+        // Get saved checkout data from localStorage
+        // (localStorage persists through external redirects unlike sessionStorage)
+        const formDataStr = localStorage.getItem('checkoutFormData');
+        const itemsStr = localStorage.getItem('checkoutItems');
+        const totalStr = localStorage.getItem('checkoutTotal');
 
         if (!formDataStr || !itemsStr) {
           setStatus('error');
@@ -75,18 +76,18 @@ const CheckoutSuccess = ({ goTo }) => {
 
         // Clear cart and session data
         clearCart();
-        sessionStorage.removeItem('checkoutFormData');
-        sessionStorage.removeItem('checkoutItems');
-        sessionStorage.removeItem('checkoutTotal');
+        localStorage.removeItem('checkoutFormData');
+        localStorage.removeItem('checkoutItems');
+        localStorage.removeItem('checkoutTotal');
 
         setStatus('success');
       } catch (error) {
         console.error('Error processing order:', error);
         // Payment was still successful even if email fails
         clearCart();
-        sessionStorage.removeItem('checkoutFormData');
-        sessionStorage.removeItem('checkoutItems');
-        sessionStorage.removeItem('checkoutTotal');
+        localStorage.removeItem('checkoutFormData');
+        localStorage.removeItem('checkoutItems');
+        localStorage.removeItem('checkoutTotal');
         setStatus('success');
       }
     };
