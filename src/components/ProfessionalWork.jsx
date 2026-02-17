@@ -22,8 +22,8 @@ const ProfessionalWork = ({ goTo, hideNav }) => {
       company: "Tesla",
       headerImg: aboutHeaders.Tesla,
       description: [
-        "Leading 3D design and engineering for Tesla Energy and Charging. ",
         "Managing the 3D engine for the Tesla Mobile App.",
+        "Leading 3D design and engineering for Tesla Energy. ",
         "3D modeling, texturing, and animation for both baked and real time applications.",
         "Game engine & shader scripting, mobile app implementation."
       ]
@@ -155,7 +155,7 @@ const ProfessionalWork = ({ goTo, hideNav }) => {
           <h2 className="about-intro-title">Hi, I'm Harrison</h2>
           <p className="about-intro-text">
             I'm a technical 3D artist and app developer passionate about creating immersive digital experiences. 
-            With expertise in 3D modeling, shader scripting, and art direction, I make technology more human.
+            Expirienced in 3D modeling, shader scripting, motion design, and art direction.
             Currently based in the Bay Area working at Tesla Motors.
 
             Project details available upon request. 
