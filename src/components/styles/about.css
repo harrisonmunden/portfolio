@@ -17,7 +17,7 @@ body {
 .about-container {
   min-height: 100vh;
   padding: 120px 60px 40px 60px;
-  background-color: #f5f5f5;
+  background-color: transparent;
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
 }
 
@@ -57,7 +57,7 @@ body {
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
   font-size: 24px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #f5f5f5;
   margin-bottom: 16px;
   letter-spacing: 0.03em;
 }
@@ -66,7 +66,7 @@ body {
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
   font-size: 16px;
   line-height: 1.6;
-  color: #333;
+  color: #ccc;
   font-weight: 500;
 }
 
@@ -117,7 +117,6 @@ body {
 
 .shared-about-header,
 .shared-work-header {
-  color: #1a1a1a !important;
   font-weight: 900 !important;
   font-family: 'Martian Mono', 'Courier New', Courier, monospace !important;
   background: none !important;
@@ -150,6 +149,7 @@ body {
   display: block;
   object-fit: contain;
   object-position: left; /* Ensure left alignment */
+  filter: invert(1);
 }
 
 /* Experience Content */
@@ -171,7 +171,7 @@ body {
 .job-title {
   font-size: 24px;
   font-weight: 900;
-  color: #1a1a1a;
+  color: #f5f5f5;
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
   margin: 0;
   line-height: 1.3;
@@ -232,12 +232,13 @@ body {
   flex-shrink: 0;
   display: block;
   align-self: flex-start;
+  filter: invert(1);
 }
 
 .point-text {
   font-size: 17px;
   line-height: 1.4;
-  color: #333;
+  color: #ccc;
   margin: 0;
   flex: 1;
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;

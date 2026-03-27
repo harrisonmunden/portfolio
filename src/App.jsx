@@ -232,9 +232,10 @@ const SharedProfessionalHeader = ({ page, goTo, windowWidth, windowHeight }) => 
         cursor: 'pointer',
         fontSize,
         fontWeight: 900,
-        color: '#1a1a1a',
+        color: isHome ? '#1a1a1a' : '#f5f5f5',
         letterSpacing: '0.085em',
         fontFamily: 'Martian Mono, Courier New, Courier, monospace',
+        transition: 'color 0.6s ease',
       }}
       onClick={() => goTo(isHome ? 'professional-work' : 'home')}
       initial={{ opacity: 1 }}
@@ -252,6 +253,8 @@ const SharedProfessionalHeader = ({ page, goTo, windowWidth, windowHeight }) => 
           width: chevronWidth,
           marginLeft: 8,
           marginTop: 0,
+          filter: isHome ? 'none' : 'grayscale(1)',
+          transition: 'filter 0.6s ease',
         }}
         initial={false}
         animate={{ width: chevronWidth, rotate: isHome ? 0 : 90 }}
@@ -267,6 +270,8 @@ const CartIconNav = ({ page, goTo, windowWidth }) => {
 
   if (!(page === 'home' || page === 'prints-for-sale' || page === 'realtime-artwork' || page === 'professional-work')) return null;
 
+  const isProfessional = page === 'professional-work';
+
   return (
     <motion.div
       className="cart-icon-nav"
@@ -275,9 +280,12 @@ const CartIconNav = ({ page, goTo, windowWidth }) => {
         ...(isMobile ? { left: 20 } : { right: 60 }),
         bottom: isMobile ? 20 : 50,
         zIndex: 9999,
+        opacity: isProfessional ? 0 : 1,
+        pointerEvents: isProfessional ? 'none' : 'auto',
+        transition: 'opacity 0.6s ease',
       }}
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
+      animate={{ opacity: isProfessional ? 0 : 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       transition={HEADER_ANIMATION}
     >
@@ -337,9 +345,11 @@ const AppContent = () => {
   const fadeStyle = (modelViewerOpen || checkoutOpen) ? { opacity: 0, pointerEvents: 'none', transition: 'opacity 0.4s cubic-bezier(.4,2,.6,1)' } : {};
 
   return (
-    <div className="relative z-0 bg-primary" style={{ 
-      minHeight: '100vh', 
-      position: 'relative'
+    <div className="relative z-0 bg-primary" style={{
+      minHeight: '100vh',
+      position: 'relative',
+      backgroundColor: currentPage === 'professional-work' ? '#000000' : '#f5f5f5',
+      transition: 'background-color 0.6s ease',
     }}>
       {/* Only show navigation headers and PersonFigure on home/work/cart pages, not on game or checkout-success pages */}
       {!isGamePage && !isCheckoutSuccess && (
@@ -348,7 +358,12 @@ const AppContent = () => {
           <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} windowHeight={windowHeight} />
           <SharedProfessionalHeader key="professional-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} windowHeight={windowHeight} />
           <CartIconNav key="cart-icon" page={currentPage} goTo={goTo} windowWidth={windowWidth} />
-          <PersonFigure page={currentPage} />
+          <div style={{
+            filter: currentPage === 'professional-work' ? 'grayscale(1)' : 'none',
+            transition: 'filter 0.6s ease',
+          }}>
+            <PersonFigure page={currentPage} />
+          </div>
         </div>
       )}
       
