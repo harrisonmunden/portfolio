@@ -78,6 +78,32 @@
   background-clip: text;
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
   line-height: 0.9;
+  padding-bottom: 0.15em;
+  letter-spacing: 0.085em;
+  white-space: nowrap;
+}
+
+/* Rotating Title */
+.rotating-title-wrapper {
+  position: relative;
+  height: 1.2em;
+  overflow: visible;
+  clip-path: inset(-20% 0 -20% 0);
+  padding-left: 150px;
+  margin-top: 8px;
+  font-size: clamp(30px, 6vh, 54px);
+}
+
+.rotating-title {
+  display: block;
+  font-size: inherit;
+  font-weight: 700;
+  background: linear-gradient(90deg, #4ebd8b 0%, #000000 130%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  line-height: 1;
   letter-spacing: 0.085em;
   white-space: nowrap;
 }
@@ -138,6 +164,11 @@
     padding-left: 100px;
   }
 
+  .rotating-title-wrapper {
+    padding-left: 100px;
+    font-size: min(40px, 5vh);
+  }
+
   .greeting-text {
     font-size: min(40px, 5.5vh);
   }
@@ -164,6 +195,11 @@
   .name-last {
     font-size: min(68px, 9vh);
     padding-left: 80px;
+  }
+
+  .rotating-title-wrapper {
+    padding-left: 80px;
+    font-size: min(34px, 4.5vh);
   }
 
   .greeting-text {
@@ -197,6 +233,11 @@
   .name-last {
     font-size: min(56px, 8vh);
     padding-left: 50px;
+  }
+
+  .rotating-title-wrapper {
+    padding-left: 50px;
+    font-size: min(28px, 4vh);
   }
 
   .greeting-text {
@@ -237,6 +278,11 @@
     padding-left: 30px;
   }
 
+  .rotating-title-wrapper {
+    padding-left: 30px;
+    font-size: min(22px, 3.5vh);
+  }
+
   .greeting-text {
     font-size: min(22px, 4vh);
   }
@@ -271,6 +317,11 @@
     padding-left: 20px;
   }
 
+  .rotating-title-wrapper {
+    padding-left: 20px;
+    font-size: min(16px, 3vh);
+  }
+
   .greeting-text {
     font-size: min(16px, 3vh);
   }
@@ -300,5 +351,12 @@
   .greeting {
     margin-left: 20px;
     padding-top: min(10px, 2vh);
+  }
+}
+
+/* Hide rotating title on very short viewports to prevent overlap */
+@media (max-height: 600px) {
+  .rotating-title-wrapper {
+    display: none;
   }
 }

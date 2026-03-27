@@ -1,10 +1,20 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './styles/home.css';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const roles = ['3D Artist', 'App Developer', 'UX Designer'];
 
 const Home = ({ goTo, hidePrintsNav, hideRealtimeNav, hideProfessionalNav }) => {
   const homeRef = useRef(null);
   const hasTransitioned = useRef(false);
+  const [roleIndex, setRoleIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % roles.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // Completely disable all scrolling on home page
@@ -73,7 +83,21 @@ const Home = ({ goTo, hidePrintsNav, hideRealtimeNav, hideProfessionalNav }) => 
             
             <div className="name-section">
               <h1 className="name-first">Harrison</h1>
-              <h1 className="name-last">Munden</h1>
+              <h1 className="name-last">Munden,</h1>
+              <div className="rotating-title-wrapper">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={roles[roleIndex]}
+                    className="rotating-title"
+                    initial={{ y: 15, opacity: 0, filter: 'blur(2px)' }}
+                    animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+                    exit={{ y: -15, opacity: 0, filter: 'blur(2px)' }}
+                    transition={{ duration: 0.25, ease: [0.65, 0, 0.35, 1] }}
+                  >
+                    {roles[roleIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
             </div>
           </div>
           

@@ -81,7 +81,7 @@ const SharedPrintsHeader = ({ page, goTo, windowWidth, windowHeight }) => {
     ? responsive(w, 25, Math.round(25 + (100 - 25) * ((w - 600) / (1024 - 600))), 100)
     : responsive(w, 20, Math.round(20 + (60 - 20) * ((w - 600) / (1024 - 600))), 60);
   const baseTop = isHome
-    ? responsive(w, 320, Math.round(320 + (460 - 320) * ((w - 600) / (1024 - 600))), 460)
+    ? responsive(w, 320, Math.round(320 + (495 - 320) * ((w - 600) / (1024 - 600))), 495)
     : responsive(w, 20, Math.round(20 + (50 - 20) * ((w - 600) / (1024 - 600))), 50);
   const top = isHome ? Math.round(baseTop * hScale) : baseTop;
   const baseChevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
@@ -146,7 +146,7 @@ const SharedRealtimeHeader = ({ page, goTo, windowWidth, windowHeight }) => {
     ? responsive(w, 25, Math.round(25 + (100 - 25) * ((w - 600) / (1024 - 600))), 100)
     : responsive(w, 20, Math.round(20 + (60 - 20) * ((w - 600) / (1024 - 600))), 60);
   const baseTop = isHome
-    ? responsive(w, 360, Math.round(360 + (540 - 360) * ((w - 600) / (1024 - 600))), 540)
+    ? responsive(w, 360, Math.round(360 + (575 - 360) * ((w - 600) / (1024 - 600))), 575)
     : responsive(w, 20, Math.round(20 + (50 - 20) * ((w - 600) / (1024 - 600))), 50);
   const top = isHome ? Math.round(baseTop * hScale) : baseTop;
   const baseChevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
@@ -211,7 +211,7 @@ const SharedProfessionalHeader = ({ page, goTo, windowWidth, windowHeight }) => 
     ? responsive(w, 25, Math.round(25 + (100 - 25) * ((w - 600) / (1024 - 600))), 100)
     : responsive(w, 20, Math.round(20 + (60 - 20) * ((w - 600) / (1024 - 600))), 60);
   const baseTop = isHome
-    ? responsive(w, 400, Math.round(400 + (620 - 400) * ((w - 600) / (1024 - 600))), 620)
+    ? responsive(w, 400, Math.round(400 + (655 - 400) * ((w - 600) / (1024 - 600))), 655)
     : responsive(w, 20, Math.round(20 + (50 - 20) * ((w - 600) / (1024 - 600))), 50);
   const top = isHome ? Math.round(baseTop * hScale) : baseTop;
   const baseChevronWidth = isHome ? 55 : responsive(w, 29, Math.round(29 + (55 - 29) * ((w - 600) / (1024 - 600))), 55);
