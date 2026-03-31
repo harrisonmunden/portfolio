@@ -3,6 +3,24 @@ import "./styles/about.css";
 import { motion } from 'framer-motion';
 import { useScrollToTop } from '../hooks/useScrollToTop';
 
+// Showcase rows: each video paired with its related screens
+const showcaseRows = [
+  {
+    video: { id: 1, type: 'video', src: '/ProfessionalWork/tesla-recharged-hero-desktop.webm', title: 'Tesla Recharged', description: 'Hero animation for Tesla Recharged campaign' },
+    screens: [
+      { id: 2, type: 'image', src: '/ProfessionalWork/IntroScreen.png', title: 'Intro Screen', description: 'Tesla Mobile App intro screen' },
+      { id: 3, type: 'image', src: '/ProfessionalWork/BatteryCounterfactual.png', title: 'Battery Counterfactual', description: 'Tesla Energy battery counterfactual visualization' },
+      { id: 4, type: 'image', src: '/ProfessionalWork/MoneySaved.png', title: 'Money Saved', description: 'Tesla Energy savings dashboard' },
+    ],
+  },
+  {
+    video: { id: 5, type: 'video', src: '/ProfessionalWork/1-wbjoE2FFqsgX7E.mp4', title: 'Tesla Energy', description: '3D animation for Tesla Energy' },
+    screens: [
+      { id: 6, type: 'image', src: '/ProfessionalWork/1764099355937.png', title: 'Weather', description: 'Tesla weather interface' },
+    ],
+  },
+];
+
 const aboutHeaders = {
   Tesla: '/AboutAssets/About/TeslaAboutHeader-compressed.webp',
   Ford: '/AboutAssets/About/FordAboutHeader-compressed.webp',
@@ -10,6 +28,101 @@ const aboutHeaders = {
 };
 const bulletImg = '/AboutAssets/About/Bullet.webp';
 const chevronImg = '/GlassyObjects/About/Chevron.png';
+
+// Showcase grid card with hover overlay
+const ShowcaseCard = ({ item, className = '' }) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      className={`showcase-card ${className}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="showcase-media-wrapper">
+        {item.type === 'video' ? (
+          <video
+            className="showcase-media"
+            src={item.src}
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        ) : (
+          <img
+            className="showcase-media"
+            src={item.src}
+            alt={item.title}
+            loading="lazy"
+          />
+        )}
+        <div className={`showcase-overlay ${hovered ? 'active' : ''}`}>
+          <span className="showcase-overlay-title">{item.title}</span>
+          <span className="showcase-overlay-desc">{item.description}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Showcase row: video + screens inline, row height matches video aspect ratio
+const ShowcaseRow = ({ row }) => {
+  const rowRef = useRef(null);
+  const [rowHeight, setRowHeight] = useState(0);
+
+  useEffect(() => {
+    const update = () => {
+      if (!rowRef.current) return;
+      const rowWidth = rowRef.current.offsetWidth;
+      const gap = 12;
+      const screenCount = row.screens.length;
+      // Each screen's width = rowHeight * (786/1704)
+      // video width = rowWidth - screenCount * screenWidth - gaps
+      // video height = videoWidth / (16/9)
+      // rowHeight = videoHeight
+      // So: rowHeight = (rowWidth - screenCount * rowHeight * (786/1704) - screenCount * gap) / (16/9)
+      // rowHeight * (16/9) = rowWidth - screenCount * rowHeight * (786/1704) - screenCount * gap
+      // rowHeight * (16/9) + screenCount * rowHeight * (786/1704) = rowWidth - screenCount * gap
+      // rowHeight * ((16/9) + screenCount * (786/1704)) = rowWidth - screenCount * gap
+      const screenAR = 786 / 1704;
+      const videoAR = 16 / 9;
+      const h = (rowWidth - screenCount * gap) / (videoAR + screenCount * screenAR);
+      setRowHeight(Math.round(h));
+    };
+    update();
+    let rafId;
+    const handleResize = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(update);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [row.screens.length]);
+
+  return (
+    <div className="showcase-row" ref={rowRef} style={{ height: rowHeight || 'auto' }}>
+      <ShowcaseCard item={row.video} className="showcase-video-card" />
+      {row.screens.map((item) => (
+        <ShowcaseCard key={item.id} item={item} className="showcase-screen-card" />
+      ))}
+    </div>
+  );
+};
+
+// Showcase grid
+const ShowcaseGrid = () => {
+  return (
+    <div className="showcase-grid">
+      {showcaseRows.map((row) => (
+        <ShowcaseRow key={row.video.id} row={row} />
+      ))}
+    </div>
+  );
+};
 
 const BATCH_SIZE = 1;
 let globalVisibleCount = BATCH_SIZE;
@@ -149,16 +262,17 @@ const ProfessionalWork = ({ goTo, hideNav }) => {
         )}
       </div>
 
+      {/* Showcase Grid */}
+      <ShowcaseGrid />
+
       {/* Photo Section */}
       <div className="about-photo-section">
         <div className="about-intro-section">
-          <h2 className="about-intro-title">Hi, I'm Harrison</h2>
           <p className="about-intro-text">
-            I'm a technical 3D artist and app developer passionate about creating immersive digital experiences. 
             Expirienced in 3D modeling, shader scripting, motion design, and art direction.
             Currently based in the Bay Area working at Tesla Motors.
 
-            Project details available upon request. 
+            Project details available upon request.
           </p>
         </div>
       </div>
