@@ -29,16 +29,17 @@ const aboutHeaders = {
 const bulletImg = '/AboutAssets/About/Bullet.webp';
 const chevronImg = '/GlassyObjects/About/Chevron.png';
 
-// Showcase grid card with hover overlay
+// Showcase media card (video or image) with tap-to-reveal overlay on mobile
 const ShowcaseCard = ({ item, className = '', style = {} }) => {
-  const [hovered, setHovered] = useState(false);
+  const [tapped, setTapped] = useState(false);
 
   return (
     <div
       className={`showcase-card ${className}`}
       style={style}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onClick={() => setTapped((v) => !v)}
+      onMouseEnter={() => setTapped(true)}
+      onMouseLeave={() => setTapped(false)}
     >
       <div className="showcase-media-wrapper">
         {item.type === 'video' ? (
@@ -58,7 +59,7 @@ const ShowcaseCard = ({ item, className = '', style = {} }) => {
             loading="lazy"
           />
         )}
-        <div className={`showcase-overlay ${hovered ? 'active' : ''}`}>
+        <div className={`showcase-overlay ${tapped ? 'active' : ''}`}>
           <span className="showcase-overlay-title">{item.title}</span>
           <span className="showcase-overlay-desc">{item.description}</span>
         </div>
@@ -67,43 +68,43 @@ const ShowcaseCard = ({ item, className = '', style = {} }) => {
   );
 };
 
-// Showcase row: video + screens inline, row height matches video aspect ratio
-const ShowcaseRow = ({ row }) => {
-  const rowRef = useRef(null);
-  const [dims, setDims] = useState({ height: 0, videoWidth: 0, screenWidth: 0 });
+// Showcase section: hero video (75%) + title/desc beside it, screens row below
+// reversed=true puts the title/desc on the left and video on the right
+const ShowcaseSection = ({ row, reversed = false }) => {
+  const heroVideoRef = useRef(null);
+  const [heroHeight, setHeroHeight] = useState(0);
 
   useEffect(() => {
-    const update = () => {
-      if (!rowRef.current) return;
-      const rowWidth = rowRef.current.offsetWidth;
-      const gap = 12;
-      const screenCount = row.screens.length;
-      const screenAR = 786 / 1704; // width/height aspect ratio of phone screens
-      const videoAR = 16 / 9;
-      const h = (rowWidth - screenCount * gap) / (videoAR + screenCount * screenAR);
-      const screenW = h * screenAR;
-      const videoW = h * videoAR;
-      setDims({ height: Math.round(h), videoWidth: Math.round(videoW), screenWidth: Math.round(screenW) });
-    };
+    const el = heroVideoRef.current;
+    if (!el) return;
+    const update = () => setHeroHeight(el.offsetHeight);
     update();
-    let rafId;
-    const handleResize = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(update);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [row.screens.length]);
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="showcase-row" ref={rowRef} style={{ height: dims.height || 'auto' }}>
-      <ShowcaseCard item={row.video} className="showcase-video-card" style={{ width: dims.videoWidth, flexShrink: 0 }} />
-      {row.screens.map((item) => (
-        <ShowcaseCard key={item.id} item={item} className="showcase-screen-card" style={{ width: dims.screenWidth, flexShrink: 0 }} />
-      ))}
+    <div className="showcase-section">
+      <div className={`showcase-hero-row ${reversed ? 'showcase-hero-reversed' : ''}`}>
+        <div className="showcase-hero-video" ref={heroVideoRef}>
+          <ShowcaseCard item={row.video} />
+        </div>
+        <div className="showcase-hero-info">
+          <h3 className="showcase-hero-title">{row.video.title}</h3>
+          <p className="showcase-hero-desc">{row.video.description}</p>
+        </div>
+      </div>
+      {row.screens.length > 0 && (
+        <div
+          className="showcase-screens-container"
+          style={heroHeight ? { height: heroHeight } : {}}
+        >
+          {row.screens.map((item) => (
+            <ShowcaseCard key={item.id} item={item} className="showcase-screen-card" />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -112,8 +113,8 @@ const ShowcaseRow = ({ row }) => {
 const ShowcaseGrid = () => {
   return (
     <div className="showcase-grid">
-      {showcaseRows.map((row) => (
-        <ShowcaseRow key={row.video.id} row={row} />
+      {showcaseRows.map((row, index) => (
+        <ShowcaseSection key={row.video.id} row={row} reversed={index % 2 !== 0} />
       ))}
     </div>
   );
