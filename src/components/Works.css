@@ -392,6 +392,12 @@
   .video-game-tile {
     width: 100%;
     min-width: unset;
+    aspect-ratio: unset;
+  }
+  .video-game-tile .model-tile-img {
+    object-fit: cover;
+    width: 100%;
+    height: auto;
   }
 }
 

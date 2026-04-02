@@ -139,13 +139,13 @@ body {
 }
 
 .showcase-video-card {
-  flex: 1;
+  flex: none;
   min-width: 0;
   height: 100%;
 }
 
 .showcase-screen-card {
-  flex: 0 0 auto;
+  flex: none;
   height: 100%;
 }
 

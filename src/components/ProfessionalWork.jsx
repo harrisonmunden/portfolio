@@ -30,12 +30,13 @@ const bulletImg = '/AboutAssets/About/Bullet.webp';
 const chevronImg = '/GlassyObjects/About/Chevron.png';
 
 // Showcase grid card with hover overlay
-const ShowcaseCard = ({ item, className = '' }) => {
+const ShowcaseCard = ({ item, className = '', style = {} }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
       className={`showcase-card ${className}`}
+      style={style}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -69,7 +70,7 @@ const ShowcaseCard = ({ item, className = '' }) => {
 // Showcase row: video + screens inline, row height matches video aspect ratio
 const ShowcaseRow = ({ row }) => {
   const rowRef = useRef(null);
-  const [rowHeight, setRowHeight] = useState(0);
+  const [dims, setDims] = useState({ height: 0, videoWidth: 0, screenWidth: 0 });
 
   useEffect(() => {
     const update = () => {
@@ -77,18 +78,12 @@ const ShowcaseRow = ({ row }) => {
       const rowWidth = rowRef.current.offsetWidth;
       const gap = 12;
       const screenCount = row.screens.length;
-      // Each screen's width = rowHeight * (786/1704)
-      // video width = rowWidth - screenCount * screenWidth - gaps
-      // video height = videoWidth / (16/9)
-      // rowHeight = videoHeight
-      // So: rowHeight = (rowWidth - screenCount * rowHeight * (786/1704) - screenCount * gap) / (16/9)
-      // rowHeight * (16/9) = rowWidth - screenCount * rowHeight * (786/1704) - screenCount * gap
-      // rowHeight * (16/9) + screenCount * rowHeight * (786/1704) = rowWidth - screenCount * gap
-      // rowHeight * ((16/9) + screenCount * (786/1704)) = rowWidth - screenCount * gap
-      const screenAR = 786 / 1704;
+      const screenAR = 786 / 1704; // width/height aspect ratio of phone screens
       const videoAR = 16 / 9;
       const h = (rowWidth - screenCount * gap) / (videoAR + screenCount * screenAR);
-      setRowHeight(Math.round(h));
+      const screenW = h * screenAR;
+      const videoW = h * videoAR;
+      setDims({ height: Math.round(h), videoWidth: Math.round(videoW), screenWidth: Math.round(screenW) });
     };
     update();
     let rafId;
@@ -104,10 +99,10 @@ const ShowcaseRow = ({ row }) => {
   }, [row.screens.length]);
 
   return (
-    <div className="showcase-row" ref={rowRef} style={{ height: rowHeight || 'auto' }}>
-      <ShowcaseCard item={row.video} className="showcase-video-card" />
+    <div className="showcase-row" ref={rowRef} style={{ height: dims.height || 'auto' }}>
+      <ShowcaseCard item={row.video} className="showcase-video-card" style={{ width: dims.videoWidth, flexShrink: 0 }} />
       {row.screens.map((item) => (
-        <ShowcaseCard key={item.id} item={item} className="showcase-screen-card" />
+        <ShowcaseCard key={item.id} item={item} className="showcase-screen-card" style={{ width: dims.screenWidth, flexShrink: 0 }} />
       ))}
     </div>
   );

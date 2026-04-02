@@ -353,7 +353,7 @@ const AppContent = () => {
     }}>
       {/* Only show navigation headers and PersonFigure on home/work/cart pages, not on game or checkout-success pages */}
       {!isGamePage && !isCheckoutSuccess && (
-        <div style={fadeStyle}>
+        <div style={{ ...fadeStyle, position: 'relative', zIndex: 10 }}>
           <SharedPrintsHeader key="prints-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} windowHeight={windowHeight} />
           <SharedRealtimeHeader key="realtime-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} windowHeight={windowHeight} />
           <SharedProfessionalHeader key="professional-header" page={currentPage} goTo={goTo} windowWidth={windowWidth} windowHeight={windowHeight} />
@@ -361,6 +361,8 @@ const AppContent = () => {
           <div style={{
             filter: currentPage === 'professional-work' ? 'grayscale(1)' : 'none',
             transition: 'filter 0.6s ease',
+            position: 'relative',
+            zIndex: 99999,
           }}>
             <PersonFigure page={currentPage} />
           </div>

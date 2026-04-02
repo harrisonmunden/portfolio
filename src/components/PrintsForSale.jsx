@@ -490,7 +490,6 @@ const PrintsForSale = ({ goTo, hideNav, onModelViewerOpenChange }) => {
               onClick={() => setSelectedSize(size.id)}
             >
               <span className="btn-label">{size.name}</span>
-              <span className="btn-sub">{size.dimensions}</span>
               <span className="btn-price">${size.price}</span>
             </button>
           ))}

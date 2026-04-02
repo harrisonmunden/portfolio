@@ -58,7 +58,6 @@ const AddToCartModal = ({ artwork, isOpen, onClose }) => {
                         />
                         <div className="size-info">
                           <span className="size-name">{size.name}</span>
-                          <span className="size-dimensions">{size.dimensions}</span>
                           <span className="size-price">${size.price}</span>
                         </div>
                       </label>

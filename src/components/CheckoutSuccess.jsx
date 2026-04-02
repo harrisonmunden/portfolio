@@ -46,9 +46,18 @@ const CheckoutSuccess = ({ goTo }) => {
         const customerName = `${formData.firstName} ${formData.lastName}`;
         const orderDate = new Date().toLocaleString();
 
+        // Build shipping address string
+        const shippingAddress = [
+          formData.address,
+          `${formData.city}, ${formData.state} ${formData.zipCode}`,
+          formData.country
+        ].filter(Boolean).join('\n');
+
         const templateParams = {
           customer_name: customerName,
           customer_email: formData.email,
+          customer_phone: formData.phone || 'Not provided',
+          shipping_address: shippingAddress,
           order_summary: orderSummary,
           total_amount: total,
           order_date: orderDate,
@@ -59,7 +68,10 @@ const CheckoutSuccess = ({ goTo }) => {
         await emailjs.send(
           emailjsConfig.serviceId,
           emailjsConfig.templateId,
-          templateParams,
+          {
+            ...templateParams,
+            reply_to: formData.email,
+          },
           emailjsConfig.publicKey
         );
 
@@ -88,7 +100,7 @@ const CheckoutSuccess = ({ goTo }) => {
         localStorage.removeItem('checkoutFormData');
         localStorage.removeItem('checkoutItems');
         localStorage.removeItem('checkoutTotal');
-        setStatus('success');
+        setStatus('email_failed');
       }
     };
 
@@ -103,6 +115,41 @@ const CheckoutSuccess = ({ goTo }) => {
           <h2>Processing your order...</h2>
           <p>Please wait while we confirm your payment.</p>
         </div>
+      </div>
+    );
+  }
+
+  if (status === 'email_failed') {
+    return (
+      <div className="checkout-success-page">
+        <motion.div
+          className="success-container"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="success-checkmark"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          >
+            ✓
+          </motion.div>
+
+          <h2>Payment Successful!</h2>
+
+          <div className="success-details">
+            <p>Your payment went through, but we had trouble sending the confirmation email. Please contact us at <a href="mailto:harrison@mundenstudios.com" style={{ color: '#4a90d9' }}>harrison@mundenstudios.com</a> with your order details so we can confirm your purchase.</p>
+          </div>
+
+          <button
+            className="success-browse-btn"
+            onClick={() => goTo && goTo('prints-for-sale')}
+          >
+            Continue Browsing
+          </button>
+        </motion.div>
       </div>
     );
   }
