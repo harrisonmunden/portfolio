@@ -8,15 +8,15 @@ const showcaseRows = [
   {
     video: { id: 1, type: 'video', src: '/ProfessionalWork/tesla-recharged-hero-desktop.webm', title: 'Tesla Recharged', description: 'Hero animation for Tesla Recharged campaign' },
     screens: [
-      { id: 2, type: 'image', src: '/ProfessionalWork/IntroScreen.png', title: 'Intro Screen', description: 'Tesla Mobile App intro screen' },
-      { id: 3, type: 'image', src: '/ProfessionalWork/BatteryCounterfactual.png', title: 'Battery Counterfactual', description: 'Tesla Energy battery counterfactual visualization' },
-      { id: 4, type: 'image', src: '/ProfessionalWork/MoneySaved.png', title: 'Money Saved', description: 'Tesla Energy savings dashboard' },
+      { id: 2, type: 'image', src: '/ProfessionalWork/IntroScreen.webp', title: 'Intro Screen', description: 'Tesla Mobile App intro screen' },
+      { id: 3, type: 'image', src: '/ProfessionalWork/BatteryCounterfactual.webp', title: 'Battery Counterfactual', description: 'Tesla Energy battery counterfactual visualization' },
+      { id: 4, type: 'image', src: '/ProfessionalWork/MoneySaved.webp', title: 'Money Saved', description: 'Tesla Energy savings dashboard' },
     ],
   },
   {
-    video: { id: 5, type: 'video', src: '/ProfessionalWork/1-wbjoE2FFqsgX7E.mp4', title: 'Tesla Energy', description: '3D animation for Tesla Energy' },
+    video: { id: 5, type: 'video', src: '/ProfessionalWork/1-wbjoE2FFqsgX7E.webm', title: 'Tesla Energy', description: '3D animation for Tesla Energy' },
     screens: [
-      { id: 6, type: 'image', src: '/ProfessionalWork/1764099355937.png', title: 'Weather', description: 'Tesla weather interface' },
+      { id: 6, type: 'image', src: '/ProfessionalWork/1764099355937.webp', title: 'Weather', description: 'Tesla weather interface' },
     ],
   },
 ];
