@@ -84,7 +84,7 @@ const gameData = {
     assets: {
       showcase: [
         { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/Showcase1-compressed.mp4', alt: 'Paparazzi Escape Showcase 1' },
-        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/Showcase2-compressed.mp4', alt: 'Paparazzi Escape Showcase 2' },
+        { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/PaparazziTrailer-compressed.mp4', alt: 'Paparazzi Escape Trailer' },
         { type: 'video', src: '/VideoGameAssets/PaparazziEscapePage/Showcase3-compressed.mp4', alt: 'Paparazzi Escape Showcase 3' }
       ],
       intro: [
@@ -124,11 +124,37 @@ const gameData = {
   }
 };
 
+// Helper: derive the .webm path from an .mp4 path
+const toWebm = (mp4Path) => mp4Path.replace(/\.mp4$/, '.webm');
+
+// Collect all assets from a game into a flat array, deduped by src
+const getAllAssets = (assets) => {
+  const seen = new Set();
+  const all = [];
+  // Order: showcase, techDemo, intro, carVideos, videos, then image groups
+  const keys = [
+    'showcase', 'techDemo', 'intro', 'carVideos', 'videos',
+    'environmentAndCharacters', 'vehiclesAndAccessories',
+    'cityShots', 'accessories', 'posters', 'flowers', 'scenes'
+  ];
+  for (const key of keys) {
+    if (assets[key]) {
+      for (const asset of assets[key]) {
+        const id = asset.src;
+        if (!seen.has(id)) {
+          seen.add(id);
+          all.push(asset);
+        }
+      }
+    }
+  }
+  return all;
+};
+
 const VideoGamePage = () => {
   const navigate = useNavigate();
   const { gameId } = useParams();
-  
-  // Use custom scroll restoration hook
+
   useScrollToTop();
 
   const game = gameData[gameId];
@@ -146,30 +172,35 @@ const VideoGamePage = () => {
     );
   }
 
-  const renderAsset = (asset, index) => {
+  const allAssets = getAllAssets(game.assets);
+  // First video becomes the hero
+  const heroAsset = allAssets.find(a => a.type === 'video');
+  const gridAssets = allAssets.filter(a => a !== heroAsset);
+
+  const renderVideo = (asset, className = '') => (
+    <video
+      key={asset.src}
+      className={className}
+      controls
+      autoPlay
+      loop
+      muted
+      playsInline
+      preload="metadata"
+    >
+      <source src={toWebm(asset.src)} type="video/webm" />
+      <source src={asset.src} type="video/mp4" />
+    </video>
+  );
+
+  const renderGridItem = (asset, index) => {
     if (asset.type === 'video') {
-      const videoType = asset.videoType || 'video/mp4';
-      
       return (
         <div key={index} className="asset-item video-item">
-                  <video 
-                    key={asset.src}
-                    controls
-                    autoPlay
-                    loop
-                    muted
-                    preload="metadata"
-                    style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
-                    onLoadStart={() => {}}
-                    onCanPlay={() => {}}
-                  >
-                    <source src={asset.src} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+          {renderVideo(asset)}
         </div>
       );
     }
-    
     return (
       <div key={index} className="asset-item image-item">
         <img
@@ -178,22 +209,7 @@ const VideoGamePage = () => {
           className="asset-image"
           loading="lazy"
           decoding="async"
-          onError={(e) => console.error('Image failed to load:', asset.src, e)}
-                      onLoad={() => {}}
         />
-      </div>
-    );
-  };
-
-  const renderAssetSection = (title, assets, className = '') => {
-    if (!assets || assets.length === 0) return null;
-    
-    return (
-      <div className={`asset-section ${className}`}>
-        <h3 className="section-title">{title}</h3>
-        <div className="asset-grid">
-          {assets.map((asset, index) => renderAsset(asset, index))}
-        </div>
       </div>
     );
   };
@@ -202,36 +218,32 @@ const VideoGamePage = () => {
     <div className="video-game-page">
       <div className="game-header">
         <div className="title-row">
-          <button 
-            onClick={() => navigate('/realtime-artwork')} 
+          <button
+            onClick={() => navigate('/realtime-artwork')}
             className="back-button"
           >
             <img src="/GlassyObjects/About/Chevron.png" alt="back" />
           </button>
           <h1 className="game-title">{game.title}</h1>
         </div>
-        <div className="game-meta">
-          <span className="game-year">{game.year}</span>
-          {game.tags && game.tags.map((tag, index) => (
-            <span key={index} className="game-tag">{tag}</span>
-          ))}
-        </div>
-        <p className="game-description">{game.description}</p>
       </div>
 
-      {/* Asset Showcase Sections */}
-      <div className="assets-showcase">
-        {renderAssetSection('Showcase Video', game.assets.showcase, 'showcase-videos')}
-        {renderAssetSection('Tech Demo', game.assets.techDemo, 'tech-demo')}
-        {renderAssetSection('Misc. Videos', game.assets.videos, 'videos')}
-        {renderAssetSection('Environment & Characters', game.assets.environmentAndCharacters, 'environment-characters')}
-        {renderAssetSection('Vehicles & Accessories', game.assets.vehiclesAndAccessories, 'vehicles-accessories')}
-        {renderAssetSection('City Shots', game.assets.cityShots, 'city-shots')}
-        {renderAssetSection('Accessories', game.assets.accessories, 'accessories')}
-        {renderAssetSection('Posters', game.assets.posters, 'posters')}
-        {renderAssetSection('Flower Designs', game.assets.flowers, 'flower-designs')}
-        {renderAssetSection('Scene Shots', game.assets.scenes, 'scene-shots')}
-      </div>
+      {/* Hero Video */}
+      {heroAsset && (
+        <div className="hero-video-container">
+          {renderVideo(heroAsset, 'hero-video')}
+          <p className="game-description">{game.description}</p>
+        </div>
+      )}
+
+      {/* All remaining assets in a flat grid */}
+      {gridAssets.length > 0 && (
+        <div className="assets-grid-section">
+          <div className="asset-grid">
+            {gridAssets.map((asset, index) => renderGridItem(asset, index))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

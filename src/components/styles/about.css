@@ -16,7 +16,7 @@ body {
 /* Main Container */
 .about-container {
   min-height: 100vh;
-  padding: 120px 12vw 40px 12vw;
+  padding: 120px 16vw 40px 16vw;
   background-color: transparent;
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
 }
@@ -137,58 +137,53 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: relative;
 }
 
-/* Hero row: video 75% + info 25% */
+/* Hero row: centered video with gutter label */
 .showcase-hero-row {
   display: flex;
-  gap: 16px;
   width: 100%;
-  align-items: stretch;
+  justify-content: center;
+  position: relative;
 }
 
 .showcase-hero-video {
-  flex: 0 0 75%;
+  width: 100%;
   min-width: 0;
   border-radius: 8px;
   overflow: hidden;
 }
 
 .showcase-hero-info {
-  flex: 1;
+  position: absolute;
+  left: -15vw;
+  top: 60px;
+  width: 14vw;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 8px 0;
+  justify-content: flex-start;
+  text-align: left;
 }
 
-.showcase-hero-title {
+.showcase-hero-label {
   font-family: 'Martian Mono', 'Courier New', Courier, monospace;
-  font-size: 22px;
-  font-weight: 700;
-  color: #f5f5f5;
-  margin: 0 0 12px 0;
-  letter-spacing: 0.03em;
-  line-height: 1.3;
-}
-
-.showcase-hero-desc {
-  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
-  font-size: 13px;
-  font-weight: 400;
-  color: #888;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
   margin: 0;
+  letter-spacing: 0.02em;
   line-height: 1.5;
 }
 
-/* Reversed: info on left, video on right */
+/* Reversed layout — title stays in left gutter */
 .showcase-hero-reversed {
-  flex-direction: row-reverse;
+  flex-direction: row;
 }
 
 .showcase-hero-reversed .showcase-hero-info {
-  text-align: right;
-  align-items: flex-end;
+  text-align: left;
+  align-items: flex-start;
 }
 
 /* Screens container below hero — constrained to hero height */
@@ -197,7 +192,7 @@ body {
   gap: 16px;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.07);
   border-radius: 12px;
   padding: 20px;
   overflow: hidden;
@@ -313,11 +308,8 @@ body {
   .showcase-grid {
     gap: 40px;
   }
-  .showcase-hero-title {
-    font-size: 18px;
-  }
-  .showcase-hero-desc {
-    font-size: 12px;
+  .showcase-hero-info {
+    display: none;
   }
 }
 

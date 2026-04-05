@@ -6,7 +6,7 @@ import { useScrollToTop } from '../hooks/useScrollToTop';
 // Showcase rows: each video paired with its related screens
 const showcaseRows = [
   {
-    video: { id: 1, type: 'video', src: '/ProfessionalWork/tesla-recharged-hero-desktop.webm', title: 'Tesla Recharged', description: 'Hero animation for Tesla Recharged campaign' },
+    video: { id: 1, type: 'video', src: '/ProfessionalWork/tesla-recharged-hero-desktop.webm', title: 'Tesla Recharged Campaign and App Experience' },
     screens: [
       { id: 2, type: 'image', src: '/ProfessionalWork/IntroScreen.webp', title: 'Intro Screen', description: 'Tesla Mobile App intro screen' },
       { id: 3, type: 'image', src: '/ProfessionalWork/BatteryCounterfactual.webp', title: 'Battery Counterfactual', description: 'Tesla Energy battery counterfactual visualization' },
@@ -14,7 +14,7 @@ const showcaseRows = [
     ],
   },
   {
-    video: { id: 5, type: 'video', src: '/ProfessionalWork/1-wbjoE2FFqsgX7E.webm', title: 'Tesla Energy', description: '3D animation for Tesla Energy' },
+    video: { id: 5, type: 'video', src: '/ProfessionalWork/1-wbjoE2FFqsgX7E.webm', title: 'Live weather visualization inside the Tesla App' },
     screens: [
       { id: 6, type: 'image', src: '/ProfessionalWork/1764099355937.webp', title: 'Weather', description: 'Tesla weather interface' },
     ],
@@ -91,8 +91,7 @@ const ShowcaseSection = ({ row, reversed = false }) => {
           <ShowcaseCard item={row.video} />
         </div>
         <div className="showcase-hero-info">
-          <h3 className="showcase-hero-title">{row.video.title}</h3>
-          <p className="showcase-hero-desc">{row.video.description}</p>
+          <p className="showcase-hero-label">{row.video.title}</p>
         </div>
       </div>
       {row.screens.length > 0 && (
