@@ -155,36 +155,6 @@ body {
   overflow: hidden;
 }
 
-.showcase-hero-info {
-  position: absolute;
-  left: -15vw;
-  top: 60px;
-  width: 14vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  text-align: left;
-}
-
-.showcase-hero-label {
-  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
-  font-size: 12px;
-  font-weight: 500;
-  color: #fff;
-  margin: 0;
-  letter-spacing: 0.02em;
-  line-height: 1.5;
-}
-
-/* Reversed layout — title stays in left gutter */
-.showcase-hero-reversed {
-  flex-direction: row;
-}
-
-.showcase-hero-reversed .showcase-hero-info {
-  text-align: left;
-  align-items: flex-start;
-}
 
 /* Screens container below hero — constrained to hero height */
 .showcase-screens-container {
@@ -308,9 +278,6 @@ body {
   .showcase-grid {
     gap: 40px;
   }
-  .showcase-hero-info {
-    display: none;
-  }
 }
 
 @media (max-width: 600px) {
@@ -319,19 +286,8 @@ body {
     margin-top: 16px;
     margin-bottom: 24px;
   }
-  .showcase-hero-row {
-    flex-direction: column;
-    gap: 12px;
-  }
-  .showcase-hero-reversed {
-    flex-direction: column;
-  }
   .showcase-hero-video {
-    flex: none;
     width: 100%;
-  }
-  .showcase-hero-info {
-    display: none;
   }
   .showcase-screens-container {
     gap: 8px;

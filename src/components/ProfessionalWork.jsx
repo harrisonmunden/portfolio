@@ -8,9 +8,9 @@ const showcaseRows = [
   {
     video: { id: 1, type: 'video', src: '/ProfessionalWork/tesla-recharged-hero-desktop.webm', title: 'Tesla Recharged Campaign and App Experience' },
     screens: [
-      { id: 2, type: 'image', src: '/ProfessionalWork/IntroScreen.webp', title: 'Intro Screen', description: 'Tesla Mobile App intro screen' },
-      { id: 3, type: 'image', src: '/ProfessionalWork/BatteryCounterfactual.webp', title: 'Battery Counterfactual', description: 'Tesla Energy battery counterfactual visualization' },
-      { id: 4, type: 'image', src: '/ProfessionalWork/MoneySaved.webp', title: 'Money Saved', description: 'Tesla Energy savings dashboard' },
+      { id: 2, type: 'image', src: '/ProfessionalWork/IntroScreen.webp', title: 'Personalized stats inside the mobile app' },
+      { id: 3, type: 'image', src: '/ProfessionalWork/BatteryCounterfactual.webp', title: 'Personalized stats inside the mobile app' },
+      { id: 4, type: 'image', src: '/ProfessionalWork/MoneySaved.webp', title: 'Personalized stats inside the mobile app' },
     ],
   },
   {
@@ -61,16 +61,14 @@ const ShowcaseCard = ({ item, className = '', style = {} }) => {
         )}
         <div className={`showcase-overlay ${tapped ? 'active' : ''}`}>
           <span className="showcase-overlay-title">{item.title}</span>
-          <span className="showcase-overlay-desc">{item.description}</span>
         </div>
       </div>
     </div>
   );
 };
 
-// Showcase section: hero video (75%) + title/desc beside it, screens row below
-// reversed=true puts the title/desc on the left and video on the right
-const ShowcaseSection = ({ row, reversed = false }) => {
+// Showcase section: hero video + screens row below
+const ShowcaseSection = ({ row }) => {
   const heroVideoRef = useRef(null);
   const [heroHeight, setHeroHeight] = useState(0);
 
@@ -86,12 +84,9 @@ const ShowcaseSection = ({ row, reversed = false }) => {
 
   return (
     <div className="showcase-section">
-      <div className={`showcase-hero-row ${reversed ? 'showcase-hero-reversed' : ''}`}>
+      <div className="showcase-hero-row">
         <div className="showcase-hero-video" ref={heroVideoRef}>
           <ShowcaseCard item={row.video} />
-        </div>
-        <div className="showcase-hero-info">
-          <p className="showcase-hero-label">{row.video.title}</p>
         </div>
       </div>
       {row.screens.length > 0 && (
@@ -113,7 +108,7 @@ const ShowcaseGrid = () => {
   return (
     <div className="showcase-grid">
       {showcaseRows.map((row, index) => (
-        <ShowcaseSection key={row.video.id} row={row} reversed={index % 2 !== 0} />
+        <ShowcaseSection key={row.video.id} row={row} />
       ))}
     </div>
   );
