@@ -122,6 +122,16 @@ body {
   background: none !important;
 }
 
+/* Showcase subtitle */
+.showcase-subtitle {
+  font-family: 'Martian Mono', 'Courier New', Courier, monospace;
+  font-size: 11px;
+  font-weight: 400;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
 /* Showcase Grid */
 .showcase-grid {
   display: flex;
@@ -153,6 +163,15 @@ body {
   min-width: 0;
   border-radius: 8px;
   overflow: hidden;
+}
+
+.showcase-hero-video .showcase-card {
+  height: auto;
+}
+
+.showcase-hero-video .showcase-media {
+  width: 100%;
+  height: auto;
 }
 
 
@@ -197,6 +216,7 @@ body {
   border-radius: 8px;
   cursor: default;
   height: 100%;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .showcase-media-wrapper {

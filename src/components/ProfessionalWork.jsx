@@ -6,17 +6,17 @@ import { useScrollToTop } from '../hooks/useScrollToTop';
 // Showcase rows: each video paired with its related screens
 const showcaseRows = [
   {
-    video: { id: 1, type: 'video', src: '/ProfessionalWork/tesla-recharged-hero-desktop.webm', title: 'Tesla Recharged Campaign and App Experience' },
+    video: { id: 1, type: 'video', src: '/ProfessionalWork/tesla-recharged-hero-desktop.webm', title: 'Tesla Recharged Campaign and App Experience', aspect: 1536 / 894 },
     screens: [
-      { id: 2, type: 'image', src: '/ProfessionalWork/IntroScreen.webp', title: 'Personalized stats inside the mobile app' },
-      { id: 3, type: 'image', src: '/ProfessionalWork/BatteryCounterfactual.webp', title: 'Personalized stats inside the mobile app' },
-      { id: 4, type: 'image', src: '/ProfessionalWork/MoneySaved.webp', title: 'Personalized stats inside the mobile app' },
+      { id: 2, type: 'image', src: '/ProfessionalWork/IntroScreen.webp', title: 'Personalized stats inside the mobile app', aspect: 786 / 1704 },
+      { id: 3, type: 'image', src: '/ProfessionalWork/BatteryCounterfactual.webp', title: 'Personalized stats inside the mobile app', aspect: 786 / 1704 },
+      { id: 4, type: 'image', src: '/ProfessionalWork/MoneySaved.webp', title: 'Personalized stats inside the mobile app', aspect: 786 / 1704 },
     ],
   },
   {
-    video: { id: 5, type: 'video', src: '/ProfessionalWork/1-wbjoE2FFqsgX7E.webm', title: 'Live weather visualization inside the Tesla App' },
+    video: { id: 5, type: 'video', src: '/ProfessionalWork/1-wbjoE2FFqsgX7E.webm', title: 'Live weather visualization inside the Tesla App', aspect: 16 / 9 },
     screens: [
-      { id: 6, type: 'image', src: '/ProfessionalWork/1764099355937.webp', title: 'Weather', description: 'Tesla weather interface' },
+      { id: 6, type: 'image', src: '/ProfessionalWork/1764099355937.webp', title: 'Parameterized weather system in the mobile app', aspect: 928 / 1716 },
     ],
   },
 ];
@@ -32,11 +32,12 @@ const chevronImg = '/GlassyObjects/About/Chevron.png';
 // Showcase media card (video or image) with tap-to-reveal overlay on mobile
 const ShowcaseCard = ({ item, className = '', style = {} }) => {
   const [tapped, setTapped] = useState(false);
+  const aspectStyle = item.aspect ? { aspectRatio: `${item.aspect}` } : {};
 
   return (
     <div
       className={`showcase-card ${className}`}
-      style={style}
+      style={{ ...style, ...aspectStyle }}
       onClick={() => setTapped((v) => !v)}
       onMouseEnter={() => setTapped(true)}
       onMouseLeave={() => setTapped(false)}
